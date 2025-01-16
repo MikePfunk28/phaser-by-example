@@ -1,4 +1,10 @@
-export default class GameOver extends Phaser.Scene {
+import { getAssetPath } from "/src/utils/assetLoader";
+import Player from '/src/gameobjects/player';
+import Generator from '/src/gameobjects/generator';
+import * as Phaser from 'phaser';
+import SceneOrderManager from '/src/utils/SceneOrderManager';
+
+export default class gameover extends Phaser.Scene {
   constructor() {
     super({ key: "gameover" });
   }
@@ -57,6 +63,6 @@ export default class GameOver extends Phaser.Scene {
   }
 
   startGame() {
-    this.scene.start("game");
+    this.scene.start("map4_game4");
   }
 }

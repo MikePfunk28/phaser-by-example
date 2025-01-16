@@ -1,0 +1,51 @@
+{
+    "zones": [{
+        "name": "downtown",
+        "x": 400,
+        "y": 300,
+        "scale": 1,
+        "icons": [{
+                "name": "Arch_AWS-Cost-Explorer_48.png",
+                "category": "Arch_Cloud-Finanacial-Management",
+                "x": 300,
+                "y": 200,
+                "questionTypes": ["Cost Management", "CE"]
+            },
+            {
+                "name": "Arch_AWS-Cloud-Map_48.png",
+                "category": "Arch_Networking-Content-Delivery",
+                "x": 500,
+                "y": 200,
+                "questionTypes": ["Networking", "CDN"]
+            },
+            {
+                "name": "Arch_AWS-Application-Composer_48.png",
+                "category": "Arch_Developer-Tools",
+                "x": 350,
+                "y": 300,
+                "questionTypes": ["Developer Tools", "AC"]
+            },
+            {
+                "name": "Arch_AWS=Database-Migration-Service_48.png",
+                "category": "Arch_Containers",
+                "x": 450,
+                "y": 300,
+                "questionTypes": ["Elastic-Container-Registry", "ECR"]
+            },
+            {
+                "name": "Arch_Amazon-SageMaker_48.png",
+                "category": "Arch_Artificial-Intelligence",
+                "x": 150,
+                "y": 250,
+                "questionTypes": ["SageMaker", "SM"]
+            }
+        ]
+    }],
+    "defaultZoom": 1,
+    "boundaries": {
+        "minX": 0,
+        "maxX": 800,
+        "minY": 0,
+        "maxY": 600
+    }
+}

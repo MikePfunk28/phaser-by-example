@@ -1,25 +1,19 @@
 import { defineConfig } from 'vite';
-
-const phasermsg = () => {
-    return {
-        name: 'phasermsg',
-        buildStart() {
-            process.stdout.write(`Building for production...\n`);
-        },
-        buildEnd() {
-            const line = "---------------------------------------------------------";
-            const msg = `❤️❤️❤️ Tell us about your game! - games@phaser.io ❤️❤️❤️`;
-            process.stdout.write(`${line}\n${msg}\n${line}\n`);
-            
-            process.stdout.write(`✨ Done ✨\n`);
-        }
-    }
-}   
+import path from 'path';
 
 export default defineConfig({
-    base: './',
-    logLevel: 'warning',
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, './src'), // This sets '@' to point to the 'src' directory
+            'gameobjects': path.resolve(__dirname, '../src/gameobjects'),
+            'scenes': path.resolve(__dirname, '../src/scenes'),
+            'utils': path.resolve(__dirname, '../src/utils'),
+            'src': path.resolve(__dirname, '../src')
+        }
+    },
+    base: '/assets/',
     build: {
+        sourcemap: false,
         rollupOptions: {
             output: {
                 manualChunks: {
@@ -30,18 +24,16 @@ export default defineConfig({
         minify: 'terser',
         terserOptions: {
             compress: {
-                passes: 2
+                passes: 2,
+                drop_console: true
             },
             mangle: true,
             format: {
                 comments: false
             }
-        }
+        },
+        assetsInlineLimit: 4096,
+        chunkSizeWarningLimit: 1000,
+        reportCompressedSize: false
     },
-    server: {
-        port: 8080
-    },
-    plugins: [
-        phasermsg()
-    ]
 });

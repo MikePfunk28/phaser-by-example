@@ -28,12 +28,13 @@
     "build": "vite build --config vite/config.prod.mjs"
   },
   "devDependencies": {
-      "terser": "^5.28.1",
-      "vite": "^5.1.4"
+    "terser": "^5.28.1",
+    "vite": "^5.1.4"
   },
   "dependencies": {
-    "phaser": "^3.80.1",
     "@mikewesthad/dungeon": "^2.0.1",
+    "dungeon": "file:",
+    "phaser": "^3.87.0",
     "phaser-matter-collision-plugin": "^1.0.0"
   }
 }

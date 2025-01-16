@@ -1,0 +1,19 @@
+{
+  "name": "phaser-by-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "phaser": "^3.87.0",
+    "phaser-by-example": "file:"
+  },
+  "devDependencies": {
+    "vite": "^6.0.7"
+  }
+}

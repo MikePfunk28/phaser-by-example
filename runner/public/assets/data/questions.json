@@ -1,0 +1,1156 @@
+[{
+        "question": "You're designing a machine learning pipeline for real-time fraud detection in a large e-commerce platform using AWS services. Which combination of services would be most suitable for this use case?",
+        "options": {
+            "A": "Amazon SageMaker, Amazon Kinesis, AWS Lambda, Amazon DynamoDB",
+            "B": "Amazon Rekognition, Amazon S3, AWS Glue, Amazon Redshift",
+            "C": "Amazon Comprehend, Amazon EC2, Amazon RDS, AWS Batch",
+            "D": "AWS DeepLens, Amazon Polly, Amazon Lex, Amazon ElastiCache"
+        },
+        "answer": "A",
+        "explanation": "Amazon SageMaker is used for building, training, and deploying ML models. Amazon Kinesis ingests real-time streaming data. AWS Lambda provides serverless compute for preprocessing or triggering actions. Amazon DynamoDB is a NoSQL database for fast data access.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "question": "Your team is developing a complex natural language processing model using Amazon SageMaker. The model requires frequent updates and retraining. Which approach would be most efficient for managing model versions and deploying updates?",
+        "options": {
+            "A": "Use SageMaker Pipelines with A/B testing and automatic rollback",
+            "B": "Manually version control models in S3 and update endpoints using the AWS Console",
+            "C": "Implement a custom CI/CD pipeline using AWS CodePipeline and AWS Lambda",
+            "D": "Use Amazon ECS to containerize the model and deploy updates via rolling releases"
+        },
+        "answer": "A",
+        "explanation": "SageMaker Pipelines automates the ML workflow, including data preprocessing, training, evaluation, and deployment. A/B testing allows comparing different model versions, and automatic rollback ensures stability.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "question": "A financial services company wants to implement a machine learning solution for predicting stock market trends. They need to process vast amounts of historical and real-time data. Which AWS architecture would best support this requirement while optimizing for cost and performance?",
+        "options": {
+            "A": "Use Amazon Kinesis for data ingestion, AWS Glue for ETL, Amazon S3 for storage, and Amazon SageMaker for model training and inference",
+            "B": "Implement an on-premises Hadoop cluster connected to AWS via Direct Connect, with Amazon EMR for processing",
+            "C": "Use Amazon MSK for data streaming, Amazon Redshift for data warehousing, and Amazon EC2 with GPUs for model training",
+            "D": "Leverage Amazon QuickSight for data visualization, Amazon Athena for querying, and Amazon Forecast for predictions"
+        },
+        "answer": "A",
+        "explanation": "Kinesis Data Streams ingests high-volume streaming data. Kinesis Data Analytics performs real-time processing and anomaly detection. SageMaker can be used for more complex ML-based anomaly detection models.",
+        "image": "/public/assets/images/services16/Arch_Analytics/48/Arch_Amazon-Kinesis_48.png"
+    },
+    {
+        "question": "You're tasked with implementing a recommendation engine for a video streaming service using deep learning. The model needs to be retrained daily with new user interaction data. What's the most efficient and cost-effective way to orchestrate this process?",
+        "options": {
+            "A": "Use AWS Step Functions to coordinate data preparation, model training, and deployment tasks",
+            "B": "Implement a custom scheduling solution using Amazon EC2 instances and cron jobs",
+            "C": "Use AWS Batch to manage the daily retraining jobs and update the model",
+            "D": "Leverage Amazon EventBridge to trigger AWS Lambda functions for each step of the process"
+        },
+        "answer": "A",
+        "explanation": "Step Functions allows you to define workflows that orchestrate multiple AWS services, making it ideal for managing the steps involved in retraining and deploying a model. It provides better visibility and error handling than custom solutions.",
+        "image": "/public/assets/images/services16/Arch_App-Integration/48/Arch_AWS-Step-Functions_48.png"
+    },
+    {
+        "question": "A healthcare company is developing an AI-powered diagnostic tool using medical imaging. They need to ensure data privacy, comply with HIPAA regulations, and optimize for low-latency inference. Which AWS configuration would best meet these requirements?",
+        "options": {
+            "A": "Use Amazon SageMaker with VPC endpoints, AWS KMS for encryption, and Amazon EFS for secure storage",
+            "B": "Implement the solution on-premises and use AWS Outposts for low-latency processing",
+            "C": "Use Amazon EC2 instances with GPUs in a dedicated VPC, with AWS Shield for DDoS protection",
+            "D": "Leverage Amazon Rekognition Medical and Amazon HealthLake for HIPAA-compliant image analysis"
+        },
+        "answer": "A",
+        "explanation": "Using Amazon SageMaker within a Virtual Private Cloud (VPC) with VPC endpoints isolates the ML environment. AWS Key Management Service (KMS) provides encryption for data at rest and in transit, fulfilling HIPAA requirements for data protection. Amazon Elastic File System (EFS) offers secure and scalable file storage. This combination ensures data privacy, HIPAA compliance, and allows for efficient model training and inference.",
+        "image": "/public/assets/images/services16/Arch_Security-Identity-Compliance/48/Arch_AWS-Key-Management-Service_48.png"
+    },
+    {
+        "question": "Your team is building a multi-tenant SaaS application that uses machine learning to provide personalized experiences. How would you design the ML infrastructure to ensure data isolation and cost allocation per tenant?",
+        "options": {
+            "A": "Use separate SageMaker instances for each tenant with resource tagging for billing",
+            "B": "Implement a single shared ML model with data encryption and access controls at the application layer",
+            "C": "Use Amazon EKS with Kubernetes namespaces to isolate tenant workloads and SageMaker operators for ML tasks",
+            "D": "Leverage Amazon Personalize with separate datasets and campaigns for each tenant"
+        },
+        "answer": "D",
+        "explanation": "Amazon Personalize is designed for building recommendation systems and allows you to create separate datasets and campaigns for each tenant, ensuring data isolation and accurate personalization.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-Personalize_48.png"
+    },
+    {
+        "question": "A retail company wants to implement a computer vision solution for inventory management across thousands of stores. They need to process images from edge devices and centralize analysis. Which architecture would be most suitable?",
+        "options": {
+            "A": "Use AWS IoT Greengrass on edge devices, AWS IoT Core for device management, and Amazon Rekognition for image analysis",
+            "B": "Implement Amazon SageMaker Neo to optimize models for edge devices and use AWS Snowball Edge for offline processing",
+            "C": "Use Amazon Kinesis Video Streams to ingest video data and Amazon EC2 with GPUs for centralized processing",
+            "D": "Deploy AWS Panorama appliances in stores and use AWS Lambda for serverless image processing"
+        },
+        "answer": "A",
+        "explanation": "AWS IoT Greengrass enables local processing on edge devices. AWS IoT Core provides secure device connectivity and management. Amazon Rekognition performs centralized image analysis in the cloud.",
+        "image": "/public/assets/images/services16/Arch_Internet-of-Things/48/Arch_AWS-IoT-Greengrass_48.png"
+    },
+    {
+        "question": "You're designing a natural language processing pipeline that needs to handle multiple languages and dialects. The solution should be scalable and cost-effective. Which combination of AWS services would you recommend?",
+        "options": {
+            "A": "Amazon Translate for translation, Amazon Comprehend for entity recognition, and Amazon Elastic Inference for cost-optimized inference",
+            "B": "Amazon Polly for text-to-speech, Amazon Transcribe for speech-to-text, and Amazon EC2 Spot Instances for batch processing",
+            "C": "Amazon Lex for conversational interfaces, Amazon Kendra for intelligent search, and AWS Fargate for containerized NLP tasks",
+            "D": "Custom models deployed on SageMaker with Automatic Model Tuning, and Amazon Elastic Inference for optimized serving"
+        },
+        "answer": "A",
+        "explanation": "Amazon Translate handles multilingual text. Amazon Comprehend provides NLP capabilities like entity recognition and sentiment analysis. Elastic Inference reduces the cost of deploying deep learning models for inference.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-Translate_48.png"
+    },
+    {
+        "question": "A financial institution is implementing a real-time anomaly detection system for transaction monitoring. They need to process millions of transactions per second and detect fraudulent patterns instantly. Which AWS architecture would you propose?",
+        "options": {
+            "A": "Use Amazon Kinesis Data Streams for ingestion, Amazon Kinesis Data Analytics for real-time processing, and Amazon SageMaker for ML-based anomaly detection",
+            "B": "Implement Amazon MSK for data streaming, Amazon EMR for batch processing, and custom ML models on EC2 instances",
+            "C": "Use AWS IoT Core for data ingestion, AWS Lambda for serverless processing, and Amazon Lookout for Metrics for anomaly detection",
+            "D": "Leverage Amazon DynamoDB Streams for change data capture, Amazon Kinesis Data Firehose for data delivery, and Amazon Fraud Detector for analysis"
+        },
+        "answer": "A",
+        "explanation": "Amazon Kinesis Data Streams is designed for high-throughput, real-time data ingestion. Amazon Kinesis Data Analytics allows for real-time processing of streaming data using SQL or Apache Flink for immediate anomaly detection. Amazon SageMaker can be used to build and train more sophisticated machine learning models for detecting complex fraudulent patterns. This combination provides a scalable and low-latency solution for real-time transaction monitoring.",
+        "image": "/public/assets/images/services16/Arch_Analytics/48/Arch_Amazon-Kinesis-Data-Streams_48.png"
+    },
+    {
+        "question": "Your team is developing a reinforcement learning model for autonomous drone navigation. The training process requires massive computational resources and frequent human intervention. How would you design the training infrastructure on AWS?",
+        "options": {
+            "A": "Use Amazon SageMaker RL with managed spot training and checkpointing for cost optimization",
+            "B": "Implement a custom solution using Amazon EC2 P4 instances with Elastic Fabric Adapter for distributed training",
+            "C": "Leverage AWS Batch with GPU-enabled compute environments and AWS Step Functions for workflow management",
+            "D": "Use Amazon EKS with Kubeflow for orchestrating distributed training jobs and Amazon FSx for Lustre for high-performance storage"
+        },
+        "answer": "A",
+        "explanation": "Amazon SageMaker RL simplifies the process of training reinforcement learning models. Managed spot training utilizes spare EC2 capacity for cost optimization. Checkpointing allows you to save the training progress and resume from where you left off, which is crucial for long-running RL training jobs and when dealing with potential interruptions from spot instances. This approach balances performance and cost-effectiveness for resource-intensive RL tasks.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker-Studio-Lab_48.png"
+    },
+    {
+        "question": "An organization is using EBS volumes with their EC2 instances and wants to implement a disaster recovery strategy. Which of the following combinations provides the highest level of data protection and availability across multiple Availability Zones?",
+        "options": {
+            "A": "EBS snapshots and Multi-Attach volumes",
+            "B": "EBS snapshots and Cross-Region Replication",
+            "C": "EBS snapshots, Cross-Region Replication, and Multi-Attach volumes",
+            "D": "EBS snapshots, Cross-Region Replication, and AWS Backup"
+        },
+        "answer": "D",
+        "explanation": "This combination leverages multiple AWS services for a comprehensive DR strategy. EBS snapshots provide point-in-time backups. Cross-Region Replication enables DR across regions. AWS Backup centralizes backup management, automating processes and providing policy-based schedules and retention, including cross-region and cross-account backups. This aligns with the 3-2-1 backup rule.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.png"
+    },
+    {
+        "question": "Your company is running a high-performance computing (HPC) application that requires extremely low latency and high IOPS. Which EBS volume type would be most suitable for this workload?",
+        "options": {
+            "A": "General Purpose SSD (gp3)",
+            "B": "Provisioned IOPS SSD (io2)",
+            "C": "Throughput Optimized HDD (st1)",
+            "D": "Cold HDD (sc1)"
+        },
+        "answer": "B",
+        "explanation": "io2 (and especially io2 Block Express) are designed for highest performance with consistent low latency and high IOPS (up to 256,000 for io2 Block Express). They are ideal for I/O-intensive workloads like HPC and mission-critical databases. Other options are not optimized for this level of performance.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.png"
+    },
+    {
+        "question": "A financial services company needs to ensure that their EBS volumes meet specific compliance requirements for data encryption. Which of the following statements is true regarding EBS encryption?",
+        "options": {
+            "A": "EBS encryption can only be enabled at volume creation and cannot be changed later",
+            "B": "EBS encryption keys can be shared across AWS accounts for cross-account snapshot copying",
+            "C": "AWS managed KMS keys cannot be used for EBS encryption; only customer-managed keys are allowed",
+            "D": "EBS encryption supports both symmetric and asymmetric encryption keys"
+        },
+        "answer": "B",
+        "explanation": "KMS-managed keys *can* be shared across accounts for secure cross-account snapshot copying, which is essential for DR and multi-account strategies. Encryption *can* be changed on existing volumes (via snapshot copy). AWS managed keys *can* be used. EBS uses *symmetric* (AES-256) encryption.",
+        "image": "/public/assets/images/services16/Arch_Security-Identity-Compliance/48/Arch_AWS-Key-Management-Service_48.png"
+    },
+    {
+        "question": "Your organization is implementing a backup strategy for EBS volumes. Which of the following statements about EBS snapshots is NOT correct?",
+        "options": {
+            "A": "Snapshots are incremental and only store changed blocks since the last snapshot",
+            "B": "Snapshots can be shared across AWS accounts and regions",
+            "C": "Snapshot deletion is based on a first-in, first-out (FIFO) policy",
+            "D": "You can create automated snapshot lifecycles using Amazon Data Lifecycle Manager"
+        },
+        "answer": "C",
+        "explanation": "Snapshot deletion is *not* FIFO. Users explicitly delete snapshots. DLM automates creation and deletion based on policies but doesn't inherently enforce FIFO. Snapshots *are* incremental and shareable, and DLM automates their lifecycle.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.png.png"
+    },
+    {
+        "question": "A company is experiencing performance issues with their EBS volumes. Which of the following metrics should they monitor to identify potential bottlenecks?",
+        "options": {
+            "A": "VolumeQueueLength, VolumeReadOps, VolumeWriteOps",
+            "B": "CPUUtilization, NetworkIn, NetworkOut",
+            "C": "DiskReadOps, DiskWriteOps, DiskReadBytes",
+            "D": "VolumeTotalReadTime, VolumeTotalWriteTime, VolumeIdleTime"
+        },
+        "answer": "A",
+        "explanation": "`VolumeQueueLength` directly indicates I/O bottlenecks. `VolumeReadOps` and `VolumeWriteOps` show read/write rates. These are EBS-specific. Other options are general server/disk metrics, less precise for EBS troubleshooting.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.png"
+    },
+    {
+        "question": "Your team is designing a solution that requires consistent low-latency performance for a large-scale database. Which EBS volume type and configuration would you recommend?",
+        "options": {
+            "A": "io2 Block Express volumes with Multi-Attach enabled",
+            "B": "gp3 volumes with maximum provisioned IOPS and throughput",
+            "C": "RAID 0 array of st1 volumes",
+            "D": "Single large-capacity sc1 volume"
+        },
+        "answer": "A",
+        "explanation": "io2 Block Express offers the highest IOPS and throughput with consistent sub-millisecond latency. Multi-Attach allows concurrent attachment for clustered databases. This is optimal for demanding database workloads. Other options trade off latency or are unsuitable for databases.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.png"
+    },
+    {
+        "question": "A DevOps team wants to implement a cost-effective solution for storing and analyzing EBS snapshots. Which AWS service or feature would be most appropriate for this use case?",
+        "options": {
+            "A": "Amazon S3 Glacier Deep Archive",
+            "B": "AWS Backup",
+            "C": "Amazon EBS Snapshot Archive",
+            "D": "AWS Storage Gateway"
+        },
+        "answer": "C",
+        "explanation": "EBS Snapshot Archive is specifically for low-cost, long-term snapshot storage. It's cheaper than standard snapshots or S3 Glacier for this purpose. AWS Backup is for backup management, not archival. Storage Gateway is for hybrid cloud.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.png"
+    },
+    {
+        "question": "Your organization needs to migrate large amounts of data from on-premises storage to EBS volumes in AWS. Which of the following methods would be most efficient for transferring petabytes of data?",
+        "options": {
+            "A": "AWS Direct Connect with AWS DataSync",
+            "B": "AWS Snowball Edge with AWS OpsHub",
+            "C": "AWS Storage Gateway in cached volume mode",
+            "D": "Amazon S3 Transfer Acceleration with multi-part upload"
+        },
+        "answer": "B",
+        "explanation": "For petabytes, Snowball Edge (physical device) is most efficient, bypassing network limitations. OpsHub simplifies Snowball management. Direct Connect/DataSync is for ongoing sync, not bulk migration. Storage Gateway is for hybrid cloud, not bulk migration. S3 Transfer Acceleration is for S3, not EBS.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_AWS-Snowball-Edge_48.png"
+    },
+    {
+        "question": "A company is running a critical application that requires 99.999% durability for its EBS volumes. Which of the following strategies would best meet this requirement?",
+        "options": {
+            "A": "Using io2 Block Express volumes with Multi-Attach",
+            "B": "Implementing RAID 1 across multiple EBS volumes",
+            "C": "Utilizing EBS snapshots with cross-region replication",
+            "D": "Employing Amazon EFS with cross-AZ replication"
+        },
+        "answer": "C",
+        "explanation": "Cross-region snapshot replication provides the highest protection against regional outages, effectively achieving 99.999% durability at the application level. Other options improve availability within a region, not across regions. EFS is a different service.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.png"
+    },
+    {
+        "question": "Your team is tasked with optimizing the cost of EBS snapshots while maintaining compliance with data retention policies. Which combination of AWS services and features would you recommend?",
+        "options": {
+            "A": "Amazon Data Lifecycle Manager and AWS Backup",
+            "B": "AWS Backup and S3 Intelligent-Tiering",
+            "C": "Amazon Data Lifecycle Manager and EBS Snapshot Archive",
+            "D": "AWS Backup and AWS Storage Gateway"
+        },
+        "answer": "C",
+        "explanation": "DLM automates snapshot lifecycle management. Snapshot Archive provides a low-cost tier for long-term storage, balancing cost and compliance. Other options don't directly address low-cost snapshot archival.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.png"
+    },
+    {
+        "question": "A financial institution needs to ensure that their EBS volumes are protected against accidental deletion or modification. Which AWS features or services should they implement to achieve this goal?",
+        "options": {
+            "A": "IAM policies, AWS Organizations SCPs, and AWS Config Rules",
+            "B": "VPC endpoints, Network ACLs, and Security Groups",
+            "C": "AWS KMS with custom key policies and AWS CloudTrail",
+            "D": "AWS Shield, AWS WAF, and Amazon GuardDuty"
+        },
+        "answer": "A",
+        "explanation": "IAM policies provide fine-grained access control to EBS resources, restricting actions like deletion or modification based on user, group, or role. SCPs (Service Control Policies) enforce organization-wide governance, preventing actions even if IAM policies within an account would otherwise allow them. Config Rules continuously monitor EBS volume configurations and alert on deviations from desired states, providing detective controls. This combination offers a multi-layered approach to protection.",
+        "image": "/public/assets/images/services16/Arch_Management-Governance/48/Arch_AWS-Config_48.png"
+    },
+    {
+        "question": "Your organization is implementing a multi-region disaster recovery strategy for applications using EBS volumes. Which of the following approaches provides the lowest Recovery Time Objective (RTO)?",
+        "options": {
+            "A": "Using AWS Backup with cross-region copy",
+            "B": "Implementing continuous replication with AWS DataSync",
+            "C": "Utilizing EBS snapshots with automated cross-region copying",
+            "D": "Employing Amazon EC2 Image Builder with multi-region AMIs"
+        },
+        "answer": "C",
+        "explanation": "Automated cross-region copying of EBS snapshots allows for the fastest recovery. Snapshots are already in the target region, ready to be restored to new volumes. AWS Backup with cross-region copy introduces an extra step of restoring from the backup vault. DataSync is for ongoing synchronization, not rapid failover. AMIs are for instance recovery, not direct volume recovery.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.png"
+    },
+    {
+        "question": "A company is experiencing inconsistent performance with their EBS volumes attached to EC2 instances. Which of the following factors could be contributing to this issue?",
+        "options": {
+            "A": "EC2 instance types not optimized for EBS",
+            "B": "Insufficient burst credits for gp2 volumes",
+            "C": "Network congestion within the VPC",
+            "D": "All of the above"
+        },
+        "answer": "D",
+        "explanation": "All options can cause inconsistent EBS performance. Some instance types have limited EBS bandwidth. gp2 volumes rely on burst credits; depletion leads to performance throttling. Network congestion within the VPC can impact EBS I/O. Therefore, all of the above are potential causes.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.png"
+    },
+    {
+        "question": "Your team needs to implement a solution for securely sharing EBS snapshots with external partners. Which combination of AWS services and features would you recommend?",
+        "options": {
+            "A": "AWS RAM, KMS, and IAM policies",
+            "B": "AWS Organizations, STS, and VPC peering",
+            "C": "AWS Transfer Family, S3, and CloudFront",
+            "D": "AWS Direct Connect, VPN, and Transit Gateway"
+        },
+        "answer": "A",
+        "explanation": "AWS RAM (Resource Access Manager) allows sharing EBS snapshots with other AWS accounts. KMS (Key Management Service) is used to manage the encryption keys for the snapshots, ensuring secure sharing. IAM policies control access to the shared snapshots within the partner's account. This combination ensures secure and controlled sharing. The other options are not directly related to secure snapshot sharing.",
+        "image": "/public/assets/images/services16/Arch_Security-Identity-Compliance/48/Arch_AWS-Resource-Access-Manager_48.png"
+    },
+    {
+        "question": "A healthcare organization needs to implement a solution for long-term retention of EBS snapshots while minimizing costs. Which of the following approaches would be most suitable?",
+        "options": {
+            "A": "Using Amazon S3 Glacier Deep Archive with lifecycle policies",
+            "B": "Implementing EBS Snapshot Archive with automated tiering",
+            "C": "Utilizing AWS Backup with cross-region replication",
+            "D": "Employing Amazon EFS with lifecycle management"
+        },
+        "answer": "B",
+        "explanation": "EBS Snapshot Archive is specifically designed for low-cost, long-term storage of EBS snapshots. Automated tiering within Snapshot Archive moves snapshots to the archive tier based on defined policies, minimizing costs. S3 Glacier Deep Archive is for general data archival, not optimized for EBS snapshots. AWS Backup is a backup management service, not a storage tier. EFS is a file system service, not for EBS snapshots.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.png"
+    },
+    {
+        "question": "Which SageMaker feature would you use to automatically tune hyperparameters for your machine learning model?",
+        "options": {
+            "A": "SageMaker Debugger",
+            "B": "SageMaker Autopilot",
+            "C": "SageMaker Hyperparameter Tuning",
+            "D": "SageMaker RL"
+        },
+        "answer": "C",
+        "explanation": "SageMaker Hyperparameter Tuning automates the process of finding optimal hyperparameters using algorithms like Bayesian optimization. It runs multiple training jobs in parallel, saving time and improving model performance.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "question": "You want to use a built-in algorithm for your churn prediction model. Which of the following SageMaker built-in algorithms is most suitable for this binary classification problem?",
+        "options": {
+            "A": "K-Means",
+            "B": "XGBoost",
+            "C": "DeepAR",
+            "D": "Object2Vec"
+        },
+        "answer": "B",
+        "explanation": "XGBoost is a powerful gradient boosting algorithm well-suited for binary classification tasks like churn prediction. It handles various data types and provides feature importance insights.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker-Studio-Lab_48.png"
+    },
+    {
+        "question": "To prepare your data for training, you need to convert it into a format suitable for the chosen algorithm. Which SageMaker feature can help you with this task?",
+        "options": {
+            "A": "SageMaker Processing",
+            "B": "SageMaker Feature Store",
+            "C": "SageMaker Data Wrangler",
+            "D": "SageMaker Ground Truth"
+        },
+        "answer": "A",
+        "explanation": "SageMaker Processing is designed for data preprocessing, feature engineering, and model evaluation. It allows running custom scripts at scale to transform data into the required format.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "question": "You want to ensure that your model's predictions are explainable to business stakeholders. Which SageMaker capability should you use?",
+        "options": {
+            "A": "SageMaker Model Monitor",
+            "B": "SageMaker Clarify",
+            "C": "SageMaker Debugger",
+            "D": "SageMaker Experiments"
+        },
+        "answer": "B",
+        "explanation": "SageMaker Clarify provides model explainability by offering methods like feature importance and SHAP values. It also helps detect and mitigate bias in models and datasets.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker-Studio-Lab_48.png"
+    },
+    {
+        "question": "After deploying your model, you notice that its performance degrades over time. Which SageMaker feature can help you detect and address this issue?",
+        "options": {
+            "A": "SageMaker Edge Manager",
+            "B": "SageMaker Neo",
+            "C": "SageMaker Model Monitor",
+            "D": "SageMaker Pipelines"
+        },
+        "answer": "C",
+        "explanation": "SageMaker Model Monitor continuously monitors model quality in production, detecting drift in model performance and data quality over time. It can trigger alerts when issues are found.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "question": "You need to store and manage the features used in your churn prediction model. Which SageMaker capability is best suited for this purpose?",
+        "options": {
+            "A": "SageMaker Studio",
+            "B": "SageMaker Feature Store",
+            "C": "SageMaker Data Wrangler",
+            "D": "SageMaker Processing"
+        },
+        "answer": "B",
+        "explanation": "SageMaker Feature Store is a centralized repository for storing, retrieving, and managing ML features. It supports real-time and batch access and provides feature versioning.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "question": "To optimize the performance of your deployed model, you want to compile it for specific hardware. Which SageMaker feature should you use?",
+        "options": {
+            "A": "SageMaker Edge Manager",
+            "B": "SageMaker Neo",
+            "C": "SageMaker Inferentia",
+            "D": "SageMaker Elastic Inference"
+        },
+        "answer": "B",
+        "explanation": "SageMaker Neo compiles models for optimal performance on various hardware platforms, improving inference latency and throughput. It supports various ML frameworks and hardware targets.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "question": "You want to create a workflow that automates the entire machine learning lifecycle for your churn prediction model. Which SageMaker feature is most appropriate?",
+        "options": {
+            "A": "SageMaker Experiments",
+            "B": "SageMaker Autopilot",
+            "C": "SageMaker Pipelines",
+            "D": "SageMaker Studio"
+        },
+        "answer": "C",
+        "explanation": "SageMaker Pipelines automates the entire ML lifecycle, from data preparation to model deployment, enabling reproducible and version-controlled workflows.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "question": "To ensure data privacy and compliance, you need to train your model without direct access to the raw customer data. Which SageMaker feature can help with this requirement?",
+        "options": {
+            "A": "SageMaker Ground Truth",
+            "B": "SageMaker Processing",
+            "C": "SageMaker Feature Store",
+            "D": "SageMaker Clarify"
+        },
+        "answer": "B",
+        "explanation": "While not a direct privacy solution, SageMaker Processing can be used to implement custom privacy-preserving techniques or anonymize data before training. This allows training without direct access to raw sensitive data.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "question": "You want to use a custom Docker container for training your churn prediction model. Where should you store this container?",
+        "options": {
+            "A": "Amazon S3",
+            "B": "Amazon ECR",
+            "C": "Amazon EFS",
+            "D": "Amazon EBS"
+        },
+        "answer": "B",
+        "explanation": "Amazon ECR (Elastic Container Registry) is the correct service for storing and managing Docker container images used with SageMaker. It integrates seamlessly with SageMaker for training and inference.",
+        "image": "/public/assets/images/services16/Arch_Containers/48/Arch_Amazon-Elastic-Container-Registry_48.png"
+    },
+    {
+        "question": "Which SageMaker deployment option would you choose for real-time predictions with low latency?",
+        "options": {
+            "A": "SageMaker Batch Transform",
+            "B": "SageMaker Hosting Services",
+            "C": "SageMaker Serverless Inference",
+            "D": "SageMaker Edge"
+        },
+        "answer": "B",
+        "explanation": "SageMaker Hosting Services is designed for real-time inference with low latency and high availability. It manages endpoints, scaling, and monitoring for deployed models.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker-Studio-Lab_48.png"
+    },
+    {
+        "question": "You need to retrain your model periodically with new data. Which SageMaker feature can help automate this process?",
+        "options": {
+            "A": "SageMaker Autopilot",
+            "B": "SageMaker Pipelines",
+            "C": "SageMaker Processing",
+            "D": "SageMaker Experiments"
+        },
+        "answer": "B",
+        "explanation": "SageMaker Pipelines can automate the entire ML workflow, including scheduled retraining with new data. This ensures consistent and up-to-date models.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "question": "To monitor the resource utilization of your training job, which AWS service would you integrate with SageMaker?",
+        "options": {
+            "A": "Amazon CloudWatch",
+            "B": "AWS X-Ray",
+            "C": "Amazon Inspector",
+            "D": "AWS Config"
+        },
+        "answer": "A",
+        "explanation": "Amazon CloudWatch provides comprehensive monitoring of AWS resources, including SageMaker training jobs. It offers metrics on CPU, memory, GPU utilization, and more.",
+        "image": "/public/assets/images/services16/Arch_Management-Governance/48/Arch_Amazon-CloudWatch_48.png"
+    },
+    {
+        "question": "You want to use a notebook instance for development but need to ensure it's only accessible within your VPC. How can you achieve this?",
+        "options": {
+            "A": "Use SageMaker Studio",
+            "B": "Enable VPC-only mode for the notebook instance",
+            "C": "Use SageMaker Processing jobs",
+            "D": "Deploy the notebook on an EC2 instance"
+        },
+        "answer": "B",
+        "explanation": "Enabling VPC-only mode for a SageMaker notebook instance restricts access to within your VPC, enhancing security and meeting compliance requirements.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker-Studio-Lab_48.png"
+    },
+    {
+        "question": "To version control your machine learning experiments, including data, code, and models, which SageMaker feature should you use?",
+        "options": {
+            "A": "SageMaker Model Registry",
+            "B": "SageMaker Lineage Tracking",
+            "C": "SageMaker Experiments",
+            "D": "SageMaker Pipelines"
+        },
+        "answer": "C",
+        "explanation": "SageMaker Experiments helps organize, track, and compare ML experiments, capturing metadata about data, code, parameters, and results for version control and reproducibility.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: Which of the following is NOT a foundation model provider available through Amazon Bedrock?",
+        "options": {
+            "A": "Anthropic",
+            "B": "AI21 Labs",
+            "C": "OpenAI",
+            "D": "Stability AI"
+        },
+        "answer": "C",
+        "explanation": "OpenAI is not currently a foundation model provider available through Amazon Bedrock. Bedrock offers models from Anthropic, AI21 Labs, Stability AI, and Amazon itself (Titan).",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: What is the primary advantage of using Amazon Bedrock over directly integrating with individual AI model providers?",
+        "options": {
+            "A": "Lower latency for model inference",
+            "B": "Simplified access and management through a single API",
+            "C": "Unlimited free usage of all foundation models",
+            "D": "Automatic model training on customer data"
+        },
+        "answer": "B",
+        "explanation": "The primary advantage is simplified access and management through a single API, streamlining integration with multiple foundation models from different providers.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker-Studio-Lab_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: Which AWS service is best suited for deploying custom ML models alongside Bedrock foundation models?",
+        "options": {
+            "A": "Amazon SageMaker",
+            "B": "AWS Lambda",
+            "C": "Amazon EC2",
+            "D": "AWS Fargate"
+        },
+        "answer": "A",
+        "explanation": "Amazon SageMaker is the best choice for deploying custom ML models. It provides a comprehensive platform for building, training, and deploying ML models, and integrates well with Bedrock.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-SageMaker_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: When using Amazon Bedrock, how are the foundation models hosted?",
+        "options": {
+            "A": "On the customer's EC2 instances",
+            "B": "In the customer's VPC",
+            "C": "By AWS in a fully managed environment",
+            "D": "On-premises in the customer's data center"
+        },
+        "answer": "C",
+        "explanation": "Foundation models in Bedrock are hosted and managed by AWS, providing a fully managed service that simplifies usage and maintenance.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-Bedrock_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: Which of the following is a valid use case for Amazon Bedrock?",
+        "options": {
+            "A": "Training custom deep learning models",
+            "B": "Generating human-like text for chatbots",
+            "C": "Hosting static websites",
+            "D": "Managing relational databases"
+        },
+        "answer": "B",
+        "explanation": "Generating human-like text for chatbots is a valid use case for Bedrock, leveraging its natural language processing capabilities. Training custom models is better suited for SageMaker.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-Bedrock_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: How does Amazon Bedrock handle data privacy and security?",
+        "options": {
+            "A": "All data is shared across customers for model improvement",
+            "B": "Customer data is not used to train or improve the foundation models",
+            "C": "Data is stored indefinitely for troubleshooting purposes",
+            "D": "Customers must manually encrypt all data before sending it to Bedrock"
+        },
+        "answer": "B",
+        "explanation": "Customer data sent to Bedrock is not used to train or improve the foundation models, ensuring data privacy and compliance.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-Bedrock_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: Which AWS service can be used to create a serverless API for your Bedrock-powered application?",
+        "options": {
+            "A": "Amazon API Gateway",
+            "B": "AWS App Runner",
+            "C": "Amazon ECS",
+            "D": "AWS Elastic Beanstalk"
+        },
+        "answer": "A",
+        "explanation": "Amazon API Gateway is ideal for creating serverless APIs to access Bedrock models, providing features like authentication, authorization, and request throttling.",
+        "image": "/public/assets/images/services16/Arch_Networking-Content-Delivery/48/Arch_Amazon-API-Gateway_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: What is the recommended way to handle high-volume, concurrent requests to Bedrock foundation models?",
+        "options": {
+            "A": "Increase the instance size of the Bedrock service",
+            "B": "Implement client-side batching and request throttling",
+            "C": "Use Amazon SQS to queue all requests",
+            "D": "Deploy the foundation models to multiple regions"
+        },
+        "answer": "B",
+        "explanation": "Client-side batching and request throttling are recommended for handling high-volume requests, optimizing efficiency and preventing overload.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-Bedrock_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: How can you monitor the performance and usage of Bedrock foundation models?",
+        "options": {
+            "A": "By installing a third-party monitoring agent",
+            "B": "Using Amazon CloudWatch metrics and logs",
+            "C": "Through the AWS Cost Explorer only",
+            "D": "By querying the models directly for performance data"
+        },
+        "answer": "B",
+        "explanation": "Amazon CloudWatch provides metrics and logs for monitoring Bedrock performance and usage, allowing for proactive monitoring and troubleshooting.",
+        "image": "/public/assets/images/services16/Arch_Management-Governance/48/Arch_Amazon-CloudWatch_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: Which of the following is true regarding the pricing model for Amazon Bedrock?",
+        "options": {
+            "A": "Fixed monthly fee regardless of usage",
+            "B": "Pay-per-hour for reserved capacity",
+            "C": "Pay-per-second of compute time used",
+            "D": "Free tier with unlimited requests"
+        },
+        "answer": "C",
+        "explanation": "Amazon Bedrock uses a pay-per-second pricing model for compute time used, aligning costs with actual usage.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-Bedrock_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: What AWS service can be used to orchestrate workflows that involve multiple Bedrock model invocations and other AWS services?",
+        "options": {
+            "A": "AWS Step Functions",
+            "B": "Amazon MQ",
+            "C": "AWS Batch",
+            "D": "Amazon ECS"
+        },
+        "answer": "A",
+        "explanation": "AWS Step Functions is designed for orchestrating complex workflows involving multiple AWS services, including Bedrock, enabling the creation of robust AI applications.",
+        "image": "/public/assets/images/services16/Arch_App-Integration/48/Arch_AWS-Step-Functions_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: How can you ensure that your Bedrock-powered application remains available if there's an outage in a single AWS region?",
+        "options": {
+            "A": "Enable cross-region replication for Bedrock",
+            "B": "Use Amazon Route 53 with multi-region deployment",
+            "C": "Increase the number of Bedrock API requests",
+            "D": "Subscribe to the Bedrock Enterprise support plan"
+        },
+        "answer": "B",
+        "explanation": "Using Amazon Route 53 with a multi-region deployment allows for failover to a healthy region in case of an outage, ensuring high availability.",
+        "image": "/public/assets/images/services16/Arch_Networking-Content-Delivery/48/Arch_Amazon-Route-53_48.pngg"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: Which security feature does Amazon Bedrock provide to protect sensitive information in model inputs and outputs?",
+        "options": {
+            "A": "Automatic redaction of personally identifiable information (PII)",
+            "B": "End-to-end encryption of all data in transit and at rest",
+            "C": "Integration with AWS KMS for encryption key management",
+            "D": "Built-in firewall to block malicious requests"
+        },
+        "answer": "C",
+        "explanation": "Amazon Bedrock integrates with AWS KMS for encryption key management, allowing you to control and manage the encryption of your data.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-Bedrock_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: What is the maximum input token limit for most foundation models in Amazon Bedrock?",
+        "options": {
+            "A": "1,000 tokens",
+            "B": "2,048 tokens",
+            "C": "4,096 tokens",
+            "D": "8,192 tokens"
+        },
+        "answer": "C",
+        "explanation": "Most foundation models in Amazon Bedrock have a maximum input token limit of 4,096 tokens, which defines the context window for the model.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-Bedrock_48.png"
+    },
+    {
+        "problem_description": "You are a cloud architect working for a large e-commerce company that wants to implement AI-powered features across its platform. The company has decided to use Amazon Bedrock to access various foundation models for different use cases. Your task is to design and implement solutions that leverage Bedrock's capabilities while adhering to AWS best practices and considering factors such as cost, performance, and security.",
+        "question": "Given the problem description: How can you customize the behavior of foundation models in Amazon Bedrock without fine-tuning?",
+        "options": {
+            "A": "By modifying the model's source code",
+            "B": "Through prompt engineering and few-shot learning",
+            "C": "By training a separate model to control the foundation model",
+            "D": "Using Amazon SageMaker's hyperparameter tuning"
+        },
+        "answer": "B",
+        "explanation": "Prompt engineering and few-shot learning are effective ways to customize the behavior of foundation models in Bedrock without the need for fine-tuning, allowing for quick adaptation to specific tasks.",
+        "image": "/public/assets/images/services16/Arch_Artificial-Intelligence/48/Arch_Amazon-Bedrock_48.png"
+    },
+    {
+        "problem_description": "You are the lead cloud architect for a multinational financial services company that is migrating its core banking application to AWS. The application handles sensitive customer data, including personally identifiable information (PII) and financial records. Your task is to design a highly secure, compliant, and scalable architecture that meets strict regulatory requirements while optimizing for performance and cost-efficiency.",
+        "question": "Which combination of AWS services would provide the most comprehensive data protection strategy for data-in-transit and data-at-rest in this scenario?",
+        "options": {
+            "A": "AWS KMS, AWS Certificate Manager, and AWS CloudHSM",
+            "B": "Amazon Macie, AWS WAF, and AWS Shield",
+            "C": "AWS Secrets Manager, AWS Systems Manager, and AWS Config",
+            "D": "Amazon GuardDuty, AWS Security Hub, and AWS Inspector"
+        },
+        "answer": "A",
+        "explanation": "AWS KMS manages encryption keys for data at rest. ACM manages SSL/TLS certificates for data in transit. CloudHSM provides hardware security modules for enhanced key protection, crucial for meeting strict regulatory requirements in the financial sector.",
+        "image": "/public/assets/images/services16/Arch_Security-Identity-Compliance/48/Arch_AWS-CloudHSM_48.png"
+    },
+    {
+        "question": "In the context of the banking application, how can you ensure that all data stored in Amazon S3 is encrypted and that the encryption keys are properly managed?",
+        "options": {
+            "A": "Enable default encryption on S3 buckets and use AWS-managed keys",
+            "B": "Use client-side encryption with customer-managed keys stored in AWS KMS",
+            "C": "Implement server-side encryption with customer-managed keys in AWS KMS and enable bucket key for cost optimization",
+            "D": "Utilize AWS CloudHSM for key management and S3 server-side encryption"
+        },
+        "answer": "C",
+        "explanation": "Server-side encryption with customer-managed keys (SSE-CMK) in AWS KMS provides control over encryption keys and integrates with S3. Bucket keys further reduce costs by decreasing KMS API calls.",
+        "image": "/public/assets/images/services16/Arch_Security-Identity-Compliance/48/Arch_AWS-Key-Management-Service_48.png"
+    },
+    {
+        "question": "To comply with data residency requirements, you need to ensure that certain PII never leaves a specific AWS Region. Which service or feature would be most appropriate to enforce this policy?",
+        "options": {
+            "A": "VPC endpoints with restrictive policies",
+            "B": "AWS Organizations with Service Control Policies (SCPs)",
+            "C": "IAM policies with geo-restrictions",
+            "D": "AWS Control Tower with customized guardrails"
+        },
+        "answer": "B",
+        "explanation": "Service Control Policies (SCPs) in AWS Organizations allow you to define guardrails that apply to all accounts within an organization, including restricting actions based on AWS Regions.",
+        "image": "/public/assets/images/services16/Arch_Management-Governance/48/Arch_AWS-Organizations_48.png"
+    },
+    {
+        "question": "Your security team wants to implement a comprehensive monitoring and alerting system for potential security threats. Which combination of services would provide the most holistic view of the environment's security posture?",
+        "options": {
+            "A": "Amazon CloudWatch, AWS CloudTrail, and Amazon SNS",
+            "B": "AWS Security Hub, Amazon GuardDuty, and AWS Config",
+            "C": "AWS WAF, AWS Shield, and Amazon Inspector",
+            "D": "Amazon Macie, AWS Firewall Manager, and AWS Systems Manager"
+        },
+        "answer": "B",
+        "explanation": "AWS Security Hub aggregates security findings from various services like GuardDuty (threat detection) and AWS Config (configuration management) to provide a centralized view of security posture.",
+        "image": "/public/assets/images/services16/Arch_Security-Identity-Compliance/48/Arch_AWS-Security-Hub_48.png"
+    },
+    {
+        "question": "To meet compliance requirements, you need to prove that your AWS environment has not been tampered with and that all configuration changes are authorized. Which service or feature would be most suitable for this purpose?",
+        "options": {
+            "A": "AWS Config with conformance packs",
+            "B": "AWS CloudTrail with log file integrity validation",
+            "C": "Amazon CloudWatch with custom metrics and alarms",
+            "D": "AWS Trusted Advisor with security checks"
+        },
+        "answer": "B",
+        "explanation": "AWS CloudTrail logs API calls made within your AWS account. Log file integrity validation ensures that the logs haven't been tampered with, providing evidence of authorized changes.",
+        "image": "/public/assets/images/services16/Arch_Management-Governance/48/Arch_AWS-CloudTrail_48.png"
+    },
+    {
+        "question": "In the event of a regional failure, you need to ensure that the banking application can be recovered with minimal data loss and downtime. Which disaster recovery strategy would be most appropriate, considering both RPO and RTO requirements?",
+        "options": {
+            "A": "Pilot light in a secondary region with continuous data replication",
+            "B": "Warm standby with multi-region active-passive configuration",
+            "C": "Multi-region active-active architecture with global routing",
+            "D": "Cold standby with periodic data backups to a secondary region"
+        },
+        "answer": "C",
+        "explanation": "A multi-region active-active architecture with global routing provides the lowest RPO (Recovery Point Objective) and RTO (Recovery Time Objective) by having the application running in multiple regions simultaneously.",
+        "image": "/public/assets/images/services16/Arch_Management-Governance/48/Arch_AWS-Global-Accelerator_48.png"
+    },
+    {
+        "question": "To enhance database security, you decide to implement additional access controls beyond standard IAM policies. Which feature would provide the most granular control over database access while integrating with the application's existing authentication system?",
+        "options": {
+            "A": "Amazon RDS Proxy with IAM authentication",
+            "B": "AWS Secrets Manager with automatic rotation",
+            "C": "Amazon Cognito with fine-grained access control",
+            "D": "AWS Directory Service with SQL Server Windows Authentication"
+        },
+        "answer": "A",
+        "explanation": "Amazon RDS Proxy allows you to use IAM authentication for database access, providing granular control and integrating with existing IAM policies.",
+        "image": "/public/assets/images/services16/Arch_Database/48/Arch_Amazon-RDS_48.png"
+    },
+    {
+        "question": "Your team needs to securely share sensitive documents with external auditors. Which solution would provide the most secure and controlled access to these documents?",
+        "options": {
+            "A": "Amazon WorkDocs with encryption and sharing controls",
+            "B": "Amazon S3 with presigned URLs and server-side encryption",
+            "C": "AWS Transfer Family with SFTP and IAM roles",
+            "D": "Amazon AppStream 2.0 with temporary credentials"
+        },
+        "answer": "B",
+        "explanation": "S3 with presigned URLs allows you to grant temporary, time-limited access to specific objects. Server-side encryption ensures data at rest is protected.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Simple-Storage-Service_48.png"
+    },
+    {
+
+        "question": "To comply with data retention policies, you need to implement a system that automatically archives and deletes data based on predefined rules. Which combination of services would be most suitable for this requirement?",
+        "options": {
+            "A": "Amazon S3 Lifecycle policies and S3 Glacier",
+            "B": "AWS Backup with lifecycle management and cross-region copy",
+            "C": "Amazon EFS with lifecycle management and EFS-to-EFS backup",
+            "D": "AWS Storage Gateway with tape gateway and virtual tapes"
+        },
+        "answer": "A",
+        "explanation": "S3 Lifecycle policies automate the transition of objects to different storage classes (including Glacier for archiving) based on predefined rules, enabling automated data retention and deletion.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Simple-Storage-Service_48.png"
+    },
+    {
+        "question": "Your security team wants to implement a centralized logging solution that can handle logs from multiple AWS accounts and on-premises systems. Which architecture would be most scalable and cost-effective for this purpose?",
+        "options": {
+            "A": "Centralized CloudWatch Logs with log groups and metric filters",
+            "B": "Kinesis Data Firehose with S3 and Athena for analysis",
+            "C": "Elasticsearch Service with Logstash and Kibana (ELK stack)",
+            "D": "AWS CloudTrail with organization trail and S3 bucket policies"
+        },
+        "answer": "B",
+        "explanation": "Kinesis Data Firehose can ingest logs from various sources, deliver them to S3 for durable storage, and then use Athena for querying and analysis, providing a scalable and cost-effective centralized logging solution.",
+        "image": "/public/assets/images/services16/Arch_Analytics/48/Arch_Amazon-Athena_48.png"
+    },
+    {
+        "question": "To protect against DDoS attacks, which combination of AWS services and best practices should be implemented for the banking application's public-facing endpoints?",
+        "options": {
+            "A": "AWS Shield Advanced, AWS WAF, and Amazon CloudFront",
+            "B": "Amazon Route 53 with health checks, AWS Global Accelerator, and Elastic Load Balancing",
+            "C": "AWS Network Firewall, AWS Transit Gateway, and VPC Flow Logs",
+            "D": "Both A and B"
+        },
+        "answer": "D",
+        "explanation": "Both options contribute to DDoS protection. AWS Shield",
+        "image": "/public/assets/images/services16/Arch_Networking-Content-Delivery/48/Arch_AWS-Shield_48.png"
+    },
+    {
+        "question": "You're designing a microservices architecture using Amazon ECS. Which of the following combinations would provide the most cost-effective and scalable solution for inter-service communication?",
+        "options": {
+            "A": "AWS App Mesh and AWS X-Ray",
+            "B": "Amazon API Gateway and AWS Lambda",
+            "C": "Amazon EventBridge and AWS Step Functions",
+            "D": "AWS App Mesh and Amazon ECS Service Discovery"
+        },
+        "answer": "D",
+        "explanation": "AWS App Mesh provides service-to-service communication with rich traffic management capabilities, while ECS Service Discovery enables service registration and discovery within the ECS cluster.",
+        "image": "/public/assets/images/services16/Arch_Containers/48/Arch_Amazon-ECS_48.png"
+    },
+    {
+        "question": "In a multi-account AWS environment, you need to implement a solution that allows sharing of container images across accounts while maintaining strict access controls. Which approach would be most suitable?",
+        "options": {
+            "A": "Use ECR cross-account replication",
+            "B": "Implement ECR pull-through cache repositories",
+            "C": "Set up cross-account IAM roles for ECR access",
+            "D": "Use AWS Organizations and Service Control Policies"
+        },
+        "answer": "A",
+        "explanation": "ECR cross-account replication allows you to replicate images from a source ECR repository in one AWS account to a destination ECR repository in another account, while IAM policies control access.",
+        "image": "/public/assets/images/services16/Arch_Containers/48/Arch_Amazon-ECR_48.png"
+    },
+    {
+        "question": "True or False: When using Amazon ECS with the Fargate launch type, you can directly attach an EBS volume to your containers for persistent storage.",
+        "type": "true/false",
+        "answer": "False",
+        "explanation": "Fargate does not support direct EBS volume attachments. Use EFS or other network file systems for persistent storage with Fargate.",
+        "image": "/public/assets/images/services16/Arch_Containers/48/Arch_AWS-Fargate_48.png"
+    },
+    {
+        "question": "You're optimizing an ECS cluster that runs CPU-intensive batch processing jobs. Which of the following configurations would likely provide the best performance-to-cost ratio?",
+        "options": {
+            "A": "Fargate launch type with Spot capacity providers",
+            "B": "EC2 launch type with a mix of On-Demand and Spot Instances",
+            "C": "EC2 launch type with Graviton2-based instances",
+            "D": "Fargate launch type with Compute Savings Plans"
+        },
+        "answer": "B",
+        "explanation": "EC2 with a mix of On-Demand and Spot instances allows you to leverage cost-effective Spot capacity for fault-tolerant batch workloads, while On-Demand instances provide predictable capacity.",
+        "image": "/public/assets/images/services16/Arch_Compute/48/Arch_Amazon-EC2_48.png"
+    },
+    {
+        "question": "In an ECS task definition, you've specified a container that requires 4 vCPUs and 8GB of memory. However, your tasks are failing to start. What could be the cause, and how would you troubleshoot this issue?",
+        "options": {
+            "A": "The container is exceeding its resource limits",
+            "B": "The ECS agent is outdated",
+            "C": "The EC2 instances in your cluster are too small",
+            "D": "The task execution role lacks necessary permissions"
+        },
+        "answer": "C",
+        "explanation": "If the EC2 instances in your cluster don't have enough resources (CPU or memory) to meet the task requirements, the tasks will fail to start. Check the instance types in your cluster and scale them up if needed.",
+        "image": "/public/assets/images/services16/Arch_Compute/48/Arch_Amazon-EC2_48.png"
+    },
+    {
+        "question": "True or False: When using Amazon ECS with the EC2 launch type, you can use different container runtimes like containered or cri-o instead of Docker.",
+        "type": "true/false",
+        "answer": "True",
+        "explanation": "ECS with EC2 launch type supports multiple container runtimes through the Amazon ECS-optimized AMI.",
+        "image": "/public/assets/images/services16/Arch_Compute/48/Arch_Amazon-EC2_48.png"
+    },
+    {
+        "question": "Which of the following is NOT a valid strategy for reducing ECS task startup times?",
+        "options": {
+            "A": "Using ECR pull-through cache repositories",
+            "B": "Implementing custom AMIs with pre-cached container images",
+            "C": "Utilizing EFS for persistent storage",
+            "D": "Configuring task placement strategies"
+        },
+        "answer": "C",
+        "explanation": "EFS is a network file system and while useful for shared persistent storage, it does not directly improve container startup times. Pre-cached images, pull-through caches, and placement strategies are effective for faster startups.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-EFS_48.png"
+    },
+    {
+        "question": "True or False: When using AWS Fargate, you can specify the exact vCPU and memory combinations for your tasks, allowing for fine-grained control over resource allocation.",
+        "type": "true/false",
+        "answer": "False",
+        "explanation": "Fargate offers predefined vCPU and memory combinations. You select a combination that's closest to your needs, but you can't specify arbitrary values.",
+        "image": "/public/assets/images/services16/Arch_Containers/48/Arch_AWS-Fargate_48.png"
+    },
+    {
+        "question": "A large enterprise is migrating its on-premises applications to AWS. They need to ensure that their EC2 instances can securely access services like S3 and DynamoDB without traversing the public internet. Which combination of AWS services and features would best address this requirement?",
+        "options": {
+            "A": "VPC Endpoints and PrivateLink",
+            "B": "NAT Gateway and Internet Gateway",
+            "C": "Direct Connect and VPN",
+            "D": "Transit Gateway and Global Accelerator"
+        },
+        "answer": "A",
+        "explanation": "VPC Endpoints and PrivateLink allow EC2 instances to privately connect to AWS services like S3 and DynamoDB without using the public internet, enhancing security and reducing latency.",
+        "image": "/public/assets/images/services16/Arch_Networking-Content-Delivery/48/Arch_Amazon-Virtual-Private-Cloud_48.png"
+    },
+    {
+        "question": "Your company is running a multi-tier application using ECS on EC2. The application suddenly experiences a spike in traffic, causing increased CPU utilization. Which sequence of actions would provide the most efficient and cost-effective solution to handle the load while ensuring high availability?",
+        "options": {
+            "A": "Increase the desired count of tasks in the ECS service, then scale out the EC2 Auto Scaling group",
+            "B": "Scale out the EC2 Auto Scaling group, then increase the desired count of tasks in the ECS service",
+            "C": "Switch to Fargate for automatic scaling of both compute and container resources",
+            "D": "Implement ECS capacity providers with managed scaling and use spot instances for cost optimization"
+        },
+        "answer": "D",
+        "explanation": "Using ECS capacity providers with managed scaling allows automatic scaling of ECS tasks and underlying EC2 instances efficiently. Incorporating spot instances optimizes cost while maintaining high availability.",
+        "image": "/public/assets/images/services16/Arch_Compute/48/Arch_Amazon-EC2_48.png"
+    },
+    {
+        "question": "A financial services company is deploying a Kubernetes cluster on EKS. They need to ensure that all pod-to-pod communication is encrypted and that pods can only communicate with other pods they're explicitly allowed to. Which combination of technologies and configurations would best meet these requirements?",
+        "options": {
+            "A": "Amazon VPC CNI, Calico for network policy, and Istio for service mesh",
+            "B": "AWS App Mesh, Kubernetes Network Policies, and encryption in transit for EKS",
+            "C": "AWS PrivateLink, Security Groups for Pods, and VPC Flow Logs",
+            "D": "Cilium CNI, Envoy proxies, and AWS Certificate Manager for TLS"
+        },
+        "answer": "A",
+        "explanation": "Amazon VPC CNI integrates Kubernetes with VPC networking. Calico provides robust network policies for pod communication control, and Istio adds a service mesh layer for encrypted communication between pods.",
+        "image": "/public/assets/images/services16/Arch_Containers/48/Arch_Amazon-Elastic-Kubernetes-Service_48.png"
+    },
+    {
+        "question": "Your team is tasked with optimizing the performance of an EC2-based application that processes large amounts of data. The application is CPU-intensive and would benefit from hardware acceleration. Which EC2 instance type and feature combination would provide the best performance boost while maintaining compatibility with existing EC2 workflows?",
+        "options": {
+            "A": "C6gn instances with Arm-based Graviton2 processors",
+            "B": "P4d instances with NVIDIA A100 Tensor Core GPUs",
+            "C": "F1 instances with FPGAs for custom hardware acceleration",
+            "D": "C6i instances with Intel Xeon Scalable processors and Nitro System"
+        },
+        "answer": "D",
+        "explanation": "C6i instances with Intel Xeon Scalable processors provide high CPU performance suitable for CPU-intensive applications. The Nitro System offers hardware acceleration and enhances compatibility with existing EC2 workflows.",
+        "image": "/public/assets/images/services16/Arch_Compute/48/Arch_Amazon-EC2_48.png"
+    },
+    {
+        "question": "A global company is running a multi-region application using ECS on EC2. They need to implement a solution that provides global load balancing, improves latency for users worldwide, and ensures business continuity in case of regional failures. Which combination of AWS services would best meet these requirements?",
+        "options": {
+            "A": "Global Accelerator, Route 53 with latency-based routing, and CloudFront",
+            "B": "Application Load Balancer, Cross-Region VPC Peering, and Route 53 health checks",
+            "C": "Network Load Balancer, Transit Gateway, and AWS Global Network",
+            "D": "Elastic Load Balancing, Inter-Region VPC Peering, and Amazon CloudFront"
+        },
+        "answer": "A",
+        "explanation": "AWS Global Accelerator provides global load balancing and static IP addresses. Route 53 with latency-based routing directs traffic to the nearest region, and CloudFront caches content globally, reducing latency and ensuring availability.",
+        "image": "/public/assets/images/services16/Arch_Networking-Content-Delivery/48/Arch_AWS-Global-Accelerator_48.png"
+    },
+    {
+        "question": "Your organization is implementing a zero-trust security model for its AWS infrastructure. Which combination of AWS services and features would provide the most comprehensive implementation of this model for EC2 instances and ECS tasks?",
+        "options": {
+            "A": "IAM roles, Security Groups, and VPC Flow Logs",
+            "B": "AWS Identity Center, AWS Network Firewall, and AWS Systems Manager Session Manager",
+            "C": "AWS Certificate Manager, AWS Secrets Manager, and AWS Private CA",
+            "D": "AWS IAM, Security Groups for Pods, AWS PrivateLink, and AWS Systems Manager"
+        },
+        "answer": "D",
+        "explanation": "AWS IAM provides identity and access management. Security Groups for Pods control network access at the pod level. AWS PrivateLink ensures private connectivity, and AWS Systems Manager allows secure management of instances and tasks, aligning with the zero-trust model.",
+        "image": "/public/assets/images/services16/Arch_Security-Identity-Compliance/48/Arch_AWS-Secrets-Manager_48.png"
+    },
+    {
+        "question": "A company is running a critical application on EC2 instances behind an Application Load Balancer. They need to implement a solution that can automatically mitigate DDoS attacks and other web-based threats. Which combination of AWS services and configurations would provide the most comprehensive protection?",
+        "options": {
+            "A": "AWS Shield Advanced, AWS WAF, and Amazon GuardDuty",
+            "B": "Network ACLs, Security Groups, and VPC Flow Logs",
+            "C": "AWS Firewall Manager, AWS Network Firewall, and AWS Config",
+            "D": "Amazon Inspector, AWS Systems Manager, and AWS Trusted Advisor"
+        },
+        "answer": "A",
+        "explanation": "AWS Shield Advanced provides DDoS protection, AWS WAF offers a web application firewall to block malicious traffic, and Amazon GuardDuty continuously monitors for threats, providing comprehensive protection against DDoS and web-based attacks.",
+        "image": "/public/assets/images/services16/Arch_Security-Identity-Compliance/48/Arch_AWS-WAF_48.png"
+    },
+    {
+        "question": "Your team is designing a highly available and scalable architecture for a stateful application using EKS. The application requires shared storage that can handle high I/O operations and provide consistent low latency. Which storage solution would best meet these requirements?",
+        "options": {
+            "A": "Amazon EFS with provisioned throughput mode",
+            "B": "Amazon EBS volumes with Multi-Attach enabled",
+            "C": "Amazon FSx for Lustre with persistent file systems",
+            "D": "Amazon S3 with S3 Access Points and VPC endpoints"
+        },
+        "answer": "C",
+        "explanation": "Amazon FSx for Lustre provides high-performance, low-latency shared storage ideal for stateful applications on EKS. Its persistent file systems handle high I/O operations and ensure data availability across the cluster.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-FSx-for-Lustre_48.png"
+    },
+    {
+        "question": "A financial institution is migrating its on-premises data processing workload to AWS. They need to ensure that their EC2 instances have access to bare metal performance, isolated tenancy, and the ability to bring their own hypervisor. Which EC2 instance type and feature combination would best meet these requirements?",
+        "options": {
+            "A": "i3.metal instances with EC2 Bare Metal",
+            "B": "c5.metal instances with Nitro Enclaves",
+            "C": "r5.metal instances with Dedicated Hosts",
+            "D": "m5.metal instances with EC2 Instance Connect"
+        },
+        "answer": "A",
+        "explanation": "i3.metal instances provide bare metal performance, offering direct access to hardware and support for custom hypervisors. They ensure isolated tenancy for enhanced security and performance.",
+        "image": "/public/assets/images/services16/Arch_Compute/48/Arch_Amazon-EC2_48.png"
+    },
+    {
+        "question": "Your organization is implementing a multi-account AWS strategy and needs to ensure consistent network security policies across all accounts. Which combination of AWS services and features would provide the most efficient and scalable solution for centralized network security management?",
+        "options": {
+            "A": "AWS Organizations, AWS Firewall Manager, and AWS Network Firewall",
+            "B": "AWS Control Tower, VPC Sharing, and Transit Gateway Network Manager",
+            "C": "AWS IAM Identity Center, AWS Config, and AWS Systems Manager",
+            "D": "AWS Security Hub, Amazon Inspector, and AWS Resource Access Manager"
+        },
+        "answer": "A",
+        "explanation": "AWS Organizations allows centralized management of multiple AWS accounts. AWS Firewall Manager centrally configures and manages firewall rules, and AWS Network Firewall provides advanced network protections. Together, they ensure consistent network security policies across all accounts.",
+        "image": "/public/assets/images/services16/Arch_Security-Identity-Compliance/48/Arch_AWS-Network-Firewall_48.png"
+    },
+    {
+        "question": "A company is using Amazon S3 to store large video files. They want to implement a solution that allows users to stream portions of these videos without downloading the entire file. Which S3 feature should they use?",
+        "options": {
+            "A": "S3 Select",
+            "B": "S3 Intelligent-Tiering",
+            "C": "S3 Byte-Range Fetches",
+            "D": "S3 Transfer Acceleration"
+        },
+        "answer": "C",
+        "explanation": "S3 Byte-Range Fetches allow streaming portions of large files.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-S3_48.png"
+    },
+    {
+        "question": "An application running on EC2 instances needs to access a DynamoDB table. What is the most secure way to grant this access?",
+        "options": {
+            "A": "Use IAM user credentials",
+            "B": "Use IAM roles",
+            "C": "Store AWS access keys in the EC2 instance",
+            "D": "Use a VPC endpoint for DynamoDB"
+        },
+        "answer": "B",
+        "explanation": "IAM roles are the most secure way to grant EC2 instances access to AWS resources.",
+        "image": "/public/assets/images/services16/Arch_Security-Identity-Compliance/48/Arch_AWS-Identity-and-Access-Management_48.png"
+    },
+    {
+        "question": "A company wants to ensure that all data stored in their S3 buckets is encrypted. Which of the following is the MOST efficient way to achieve this?",
+        "options": {
+            "A": "Use client-side encryption for all objects",
+            "B": "Enable default encryption on the S3 bucket",
+            "C": "Use server-side encryption with customer-provided keys (SSE-C)",
+            "D": "Manually encrypt each object before uploading"
+        },
+        "answer": "B",
+        "explanation": "Enabling default encryption on the S3 bucket is the most efficient way to ensure all data is encrypted.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-S3_48.png"
+    },
+    {
+        "question": "An organization is using AWS Organizations and wants to restrict the types of EC2 instances that can be launched across all accounts. Which AWS feature should they use?",
+        "options": {
+            "A": "IAM policies",
+            "B": "Security groups",
+            "C": "Service Control Policies (SCPs)",
+            "D": "AWS Config rules"
+        },
+        "answer": "C",
+        "explanation": "Service Control Policies (SCPs) can restrict EC2 instance types across all accounts in an organization.",
+        "image": "/public/assets/images/services16/Arch_Management-Governance/48/Arch_AWS-Organizations_48.png"
+    },
+    {
+        "question": "A web application experiences high traffic during business hours but low traffic at night. Which EC2 Auto Scaling policy would be most cost-effective?",
+        "options": {
+            "A": "Simple scaling",
+            "B": "Step scaling",
+            "C": "Target tracking scaling",
+            "D": "Scheduled scaling"
+        },
+        "answer": "D",
+        "explanation": "Scheduled scaling is most cost-effective for predictable traffic patterns.",
+        "image": "/public/assets/images/services16/Arch_Compute/48/Arch_Amazon-EC2-Auto-Scaling_48.png"
+    },
+    {
+        "question": "An application needs to process messages in the exact order they were sent, with no message loss. Which AWS service is best suited for this requirement?",
+        "options": {
+            "A": "Amazon SQS Standard Queue",
+            "B": "Amazon SQS FIFO Queue",
+            "C": "Amazon SNS",
+            "D": "AWS Step Functions"
+        },
+        "answer": "B",
+        "explanation": "SQS FIFO Queue ensures exact order processing with no message loss.",
+        "image": "/public/assets/images/services16/Arch_App-Integration/48/Arch_Amazon-Simple-Queue-Service_48.png"
+    },
+    {
+        "question": "A company wants to analyze their AWS cost and usage data. Which AWS service should they use?",
+        "options": {
+            "A": "AWS Trusted Advisor",
+            "B": "AWS Cost Explorer",
+            "C": "AWS Budgets",
+            "D": "Amazon QuickSight"
+        },
+        "answer": "B",
+        "explanation": "AWS Cost Explorer is designed for analyzing cost and usage data.",
+        "image": "/public/assets/images/services16/Arch_Cloud-Financial-Management/48/Arch_AWS-Cost-Explorer_48.png"
+    },
+    {
+        "question": "An application needs to store session data that can be quickly accessed by multiple EC2 instances. Which AWS service is most appropriate?",
+        "options": {
+            "A": "Amazon RDS",
+            "B": "Amazon DynamoDB",
+            "C": "Amazon ElastiCache",
+            "D": "Amazon EFS"
+        },
+        "answer": "C",
+        "explanation": "Amazon ElastiCache is ideal for storing session data with quick access.",
+        "image": "/public/assets/images/services16/Arch_Database/48/Arch_Amazon-ElastiCache_48.png"
+    },
+    {
+        "question": "A company wants to run containers without managing the underlying infrastructure. Which AWS service should they use?",
+        "options": {
+            "A": "Amazon ECS with EC2 launch type",
+            "B": "Amazon EKS",
+            "C": "AWS Fargate",
+            "D": "Amazon EC2"
+        },
+        "answer": "C",
+        "explanation": "AWS Fargate allows running containers without managing infrastructure.",
+        "image": "/public/assets/images/services16/Arch_Compute/48/Arch_AWS-Fargate_48.png"
+    },
+    {
+        "question": "An organization wants to implement a disaster recovery solution with minimal downtime and data loss. Which AWS service combination is most suitable?",
+        "options": {
+            "A": "S3 cross-region replication and EC2 Auto Scaling",
+            "B": "RDS Multi-AZ and CloudFront",
+            "C": "Route 53 with failover routing and EC2 in multiple regions",
+            "D": "AWS Backup and S3 Glacier"
+        },
+        "answer": "C",
+        "explanation": "Route 53 with failover routing and EC2 in multiple regions provides minimal downtime and data loss.",
+        "image": "/public/assets/images/services16/Arch_Networking-Content-Delivery/48/Arch_Amazon-Route-53_48.png"
+    },
+    {
+        "question": "A company needs to process large amounts of streaming data in real-time. Which AWS service should they use?",
+        "options": {
+            "A": "Amazon Redshift",
+            "B": "Amazon Kinesis Data Streams",
+            "C": "Amazon SQS",
+            "D": "AWS Glue"
+        },
+        "answer": "B",
+        "explanation": "Amazon Kinesis Data Streams is designed for processing large amounts of streaming data in real-time.",
+        "image": "/public/assets/images/services16/Arch_Analytics/48/Arch_Amazon-Kinesis_48.png"
+    },
+    {
+        "question": "An application needs to trigger actions based on changes to objects in an S3 bucket. Which feature should be used?",
+        "options": {
+            "A": "S3 Event Notifications",
+            "B": "S3 Lifecycle policies",
+            "C": "S3 Versioning",
+            "D": "S3 Access Points"
+        },
+        "answer": "A",
+        "explanation": "S3 Event Notifications trigger actions based on changes to S3 objects.",
+        "image": "/public/assets/images/services16/Arch_Storage/48/Arch_Amazon-Simple-Storage-Service_48.png"
+    }
+
+]

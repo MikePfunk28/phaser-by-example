@@ -1,20 +1,24 @@
-export default class Generator {
+// src/gameobjects/Generator.js
+
+import * as Phaser from 'phaser';
+import Icon from "./icons";
+import Player from "./player";
+
+export default class Generator extends Phaser.GameObjects.GameObject {
   constructor(scene) {
+    super(scene, 'Generator');
     this.scene = scene;
-    this.scene.time.delayedCall(2000, () => this.init(), null, this);
-    this.pinos = 0;
+    this.init();
   }
 
   init() {
     this.generateCloud();
     this.generateObstacle();
     this.generateCoin();
+    this.generateIcon();
+    this.generateButton();
   }
-  /*
-This is the function that generates the clouds. It creates a new cloud and then calls itself again after a random amount of time.
 
-This is done using the Phaser `time.delayedCall` function.
-*/
   generateCloud() {
     new Cloud(this.scene);
     this.scene.time.delayedCall(
@@ -30,7 +34,7 @@ This is done using the Phaser `time.delayedCall` function.
       new Obstacle(
         this.scene,
         800,
-        this.scene.height - Phaser.Math.Between(32, 128)
+        this.scene.scale.height - Phaser.Math.Between(32, 128)
       )
     );
     this.scene.time.delayedCall(
@@ -46,28 +50,46 @@ This is done using the Phaser `time.delayedCall` function.
       new Coin(
         this.scene,
         800,
-        this.scene.height - Phaser.Math.Between(32, 128)
+        this.scene.scale.height - Phaser.Math.Between(32, 128)
       )
     );
     this.scene.time.delayedCall(
       Phaser.Math.Between(500, 1500),
-      () => this.generateCoin(1),
+      () => this.generateCoin(),
+      null,
+      this
+    );
+  }
+
+  generateIcon() {
+    new Icon(this.scene, Phaser.Math.Between(100, 700), Phaser.Math.Between(100, 500));
+    this.scene.time.delayedCall(
+      Phaser.Math.Between(3000, 5000),
+      () => this.generateIcon(),
+      null,
+      this
+    );
+  }
+
+  generateButton() {
+    new Button(this.scene, Phaser.Math.Between(100, 700), Phaser.Math.Between(100, 500));
+    this.scene.time.delayedCall(
+      Phaser.Math.Between(3000, 5000),
+      () => this.generateButton(),
       null,
       this
     );
   }
 }
 
-/*
-This is a game object that represents a cloud. It's a simple rectangle with a random size and position. We use a tween to move it from right to left, and then destroy it when it's out of the screen.
-*/
+/* 
+ * Cloud Class
+ */
 class Cloud extends Phaser.GameObjects.Rectangle {
-  constructor(scene, x, y) {
-    const finalY = y || Phaser.Math.Between(0, 100);
-    super(scene, x, finalY, 98, 32, 0xffffff);
+  constructor(scene, x = 800, y = Phaser.Math.Between(0, 100)) {
+    super(scene, x, y, 98, 32, 0xffffff);
     scene.add.existing(this);
     const alpha = 1 / Phaser.Math.Between(1, 3);
-
     this.setScale(alpha);
     this.init();
   }
@@ -84,17 +106,17 @@ class Cloud extends Phaser.GameObjects.Rectangle {
   }
 }
 
-/*
-This is a game object that represents an obstacle. It works exactly like the cloud, but it's a red rectangle that is part of the obstacles group that we created in the `game` scene. It can kill the player if it touches it.
-*/
+/* 
+ * Obstacle Class
+ */
 class Obstacle extends Phaser.GameObjects.Rectangle {
-  constructor(scene, x, y) {
+  constructor(scene, x = 800, y = Phaser.Math.Between(32, 368)) { // Assuming scene.scale.height = 400
     super(scene, x, y, 32, 32, 0xff0000);
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.body.setAllowGravity(false);
     const alpha = 1 / Phaser.Math.Between(1, 3);
-
+    this.setScale(alpha);
     this.init();
   }
 
@@ -107,22 +129,30 @@ class Obstacle extends Phaser.GameObjects.Rectangle {
         this.destroy();
       },
     });
+
+    // Add collision with player if necessary
+    this.body.setVelocityX(-200);
+    // Example collision handling:
+    // this.scene.physics.add.overlap(this, this.scene.player, this.handleCollision, null, this);
+  }
+
+  handleCollision(obstacle, player) {
+    // Handle collision logic (e.g., end game)
+    this.scene.gameOver();
   }
 }
 
-/*
-This is a game object that represents a coin. It's an animated sprite that is part of the coins group that we created in the `game` scene. It moves like the previous cloud and the obstacle objects.
-
-It can increase the player's score if it touches it.
-*/
+/* 
+ * Coin Class
+ */
 class Coin extends Phaser.GameObjects.Sprite {
-  constructor(scene, x, y) {
+  constructor(scene, x = 800, y = Phaser.Math.Between(32, 368)) {
     super(scene, x, y, "coin");
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.body.setAllowGravity(false);
     const alpha = 1 / Phaser.Math.Between(1, 3);
-
+    this.setScale(alpha);
     this.init();
   }
 
@@ -137,13 +167,61 @@ class Coin extends Phaser.GameObjects.Sprite {
     });
 
     const coinAnimation = this.scene.anims.create({
-      key: "coin",
+      key: "coin_anim",
       frames: this.scene.anims.generateFrameNumbers("coin", {
         start: 0,
         end: 7,
       }),
       frameRate: 8,
+      repeat: -1
     });
-    this.play({ key: "coin", repeat: -1 });
+    this.play({ key: "coin_anim", repeat: -1 });
+
+    // Example collision handling:
+    // this.scene.physics.add.overlap(this, this.scene.player, this.collectCoin, null, this);
+  }
+
+  collectCoin(coin, player) {
+    // Increase score
+    this.scene.score += 50;
+    this.scene.updateScore();
+    // Play sound if necessary
+    this.scene.playSound('coinCollect');
+    // Destroy the coin
+    coin.destroy();
+  }
+}
+
+/* 
+ * Button Class
+ */
+class Button extends Phaser.GameObjects.Rectangle {
+  constructor(scene, x = 800, y = Phaser.Math.Between(100, 500)) {
+    super(scene, x, y, 32, 32, 0x00ff00); // Green rectangle for visibility
+    scene.add.existing(this);
+    scene.physics.add.existing(this);
+    this.body.setAllowGravity(false);
+    this.setInteractive();
+    this.init();
+  }
+
+  init() {
+    this.scene.tweens.add({
+      targets: this,
+      x: { from: 1024, to: -100 },
+      duration: 2000,
+      onComplete: () => {
+        this.destroy();
+      },
+    });
+
+    // Add interaction if necessary
+    this.setInteractive();
+    this.on('pointerdown', () => {
+      // Handle button click
+      console.log('Button Clicked');
+      // Example: Pause or perform an action
+      this.scene.togglePause();
+    });
   }
 }

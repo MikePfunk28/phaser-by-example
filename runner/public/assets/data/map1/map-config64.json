@@ -1,0 +1,100 @@
+{
+    "zones": [{
+        "name": "sort_selection",
+        "x": 400,
+        "y": 300,
+        "scale": 1,
+        "icons": [{
+                "name": "map1scene164.png",
+                "category": "Arch_Security-Identity-Compliance",
+                "x": 300,
+                "y": 200,
+                "questionTypes": ["Security", "GD"]
+            },
+            {
+                "name": "map1scene264.png",
+                "category": "Arch_Amazon-Athena",
+                "x": 500,
+                "y": 200,
+                "questionTypes": ["Analytics", "AA"]
+            },
+            {
+                "name": "map1scene364.png",
+                "category": "Arch_Storage",
+                "x": 350,
+                "y": 300,
+                "questionTypes": ["Storage", "SB"]
+            },
+            {
+                "name": "map1scene464.png",
+                "category": "Arch_Containers",
+                "x": 450,
+                "y": 300,
+                "questionTypes": ["Container", "ECR"]
+            },
+            {
+                "name": "map2scene164.png",
+                "category": "Arch_Artificial-Intelligence",
+                "x": 150,
+                "y": 250,
+                "questionTypes": ["SageMaker", "SM"]
+            },
+            {
+                "name": "map2scene264.png",
+                "category": "Arch_Security-Identity-Compliance",
+                "x": 300,
+                "y": 200,
+                "questionTypes": ["Security", "GD"]
+            },
+            {
+                "name": "map2scene364.png",
+                "category": "Arch_Amazon-Athena",
+                "x": 500,
+                "y": 200,
+                "questionTypes": ["Analytics", "AA"]
+            },
+            {
+                "name": "map2scene464.png",
+                "category": "Arch_Storage",
+                "x": 350,
+                "y": 300,
+                "questionTypes": ["Storage", "SB"]
+            },
+            {
+                "name": "map3scene164.png",
+                "category": "Arch_Containers",
+                "x": 450,
+                "y": 300,
+                "questionTypes": ["Container", "ECR"]
+            },
+            {
+                "name": "map3scene264.png",
+                "category": "Arch_Artificial-Intelligence",
+                "x": 150,
+                "y": 250,
+                "questionTypes": ["SageMaker", "SM"]
+            },
+            {
+                "name": "map3scene364.png",
+                "category": "Arch_Security-Identity-Compliance",
+                "x": 300,
+                "y": 200,
+                "questionTypes": ["Security", "GD"]
+            },
+            {
+                "name": "map3scene464.png",
+                "category": "Arch_Amazon-Athena",
+                "x": 500,
+                "y": 200,
+                "questionTypes": ["Analytics", "AA"]
+            }
+        ]
+    }],
+    "defaultZoom": 1,
+    "boundaries": {
+        "minX": 0,
+        "maxX": 800,
+        "minY": 0,
+        "maxY": 600
+    }
+}
