@@ -2,11 +2,11 @@ import { getAssetPath } from "/src/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import * as Phaser from 'phaser';
-import SceneOrderManager from '/src/utils/SceneOrderManager';
+
 
 export default class GameScene3 extends Phaser.Scene {
     constructor() {
-        super({ key: 'map1_game3' });
+        super({ key: 'map1scene3' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -98,7 +98,7 @@ export default class GameScene3 extends Phaser.Scene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map1_game3');
+                this.scene.start('map1scene3');
             }, 2000);
         }
     }
@@ -120,7 +120,7 @@ export default class GameScene3 extends Phaser.Scene {
                     this.load.image(`icon_${icon.name}`, relevantQuestion.image);
                 } else {
                     // Fallback to constructing the path based on the pattern
-                    // Example: public/assets/images/services16/Arch_Storage/16/Arch_Amazon-Simple-Storage-Service_16.png
+                    // Example: public/assets/images/services16/Arch_StorageArch_Amazon-Simple-Storage-Service_16.png
                     const iconPath = `assets/images/services16/${icon.category}/48/${icon.name}`;
                     console.log('Loading icon with constructed path:', iconPath);
                     this.load.image(`icon_${icon.name}`, iconPath);

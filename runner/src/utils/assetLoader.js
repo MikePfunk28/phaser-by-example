@@ -1,7 +1,7 @@
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import * as Phaser from 'phaser';
-import SceneOrderManager from '/src/utils/SceneOrderManager';
+
 
 // Helper function to handle asset paths in both dev and production
 export function getAssetPath(path) {

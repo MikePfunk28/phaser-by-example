@@ -2,7 +2,7 @@ import { getAssetPath } from "/src/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import * as Phaser from 'phaser'; // Default import
-import SceneOrderManager from '/src/utils/SceneOrderManager';
+
 
 export default class GameScene2 extends Phaser.Scene {
     constructor() {
@@ -260,7 +260,7 @@ export default class GameScene2 extends Phaser.Scene {
                         console.log('All 5 questions answered, transitioning to Space Invaders...');
                         this.cameras.main.fade(1000, 0, 0, 0, false, (camera, progress) => {
                             if (progress === 1) {
-                                this.scene.start('space_invaders', { nextScene: 'map1scene2', score: this.score });
+                                this.scene.start('map1scene2', { nextScene: 'space_invaders', score: this.score });
                             }
                         });
                     }
@@ -281,5 +281,18 @@ export default class GameScene2 extends Phaser.Scene {
             backgroundColor: '#000',
             padding: { x: 10, y: 5 }
         }).setScrollFactor(0).setDepth(200);
+    }
+
+    transitionToNextScene() {
+        if (this.isTransitioning) return;
+
+        this.isTransitioning = true;
+        this.cameras.main.fadeOut(500);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start('space_invaders', {
+                nextScene: 'map1scene3',
+                score: this.score
+            });
+        });
     }
 }

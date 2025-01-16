@@ -1,6 +1,6 @@
 import { getAssetPath } from "/src/utils/assetLoader";
 import * as Phaser from 'phaser';
-import SceneOrderManager from '/src/utils/SceneOrderManager';
+
 
 export default class SpaceInvadersScene extends Phaser.Scene {
     constructor() {

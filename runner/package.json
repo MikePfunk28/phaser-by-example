@@ -1,10 +1,10 @@
 {
   "name": "phaser-by-example",
-  "productName": "Runner",
+  "productName": "AWS Certification Trainer",
   "main": "index.html",
   "type": "module",
   "window": {
-    "title": "Runner",
+    "title": "AWS Certification Trainer",
     "width": 800,
     "height": 600,
     "fullscreen": false,
@@ -12,18 +12,19 @@
     "icon": "customIcon.png"
   },
   "version": "0.0.1",
-  "description": "Game for Phaser by Example",
+  "description": "AWS Certification Training Game",
   "repository": {
     "url": "https://github.com"
   },
   "license": "MIT",
   "scripts": {
-    "dev": "vite --config vite/config.dev.mjs",
-    "build": "vite build --config vite/config.prod.mjs",
-    "preview": "vite preview --config vite/config.prod.mjs",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
@@ -34,8 +35,6 @@
     "vite": "^6.0.7"
   },
   "dependencies": {
-    "phaser": "^3.87.0",
-    "phaser-by-example": "file:",
-    "react": "^19.0.0"
+    "phaser": "^3.87.0"
   }
 }

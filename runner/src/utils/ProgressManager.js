@@ -2,7 +2,7 @@ import { getAssetPath } from "/src/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import * as Phaser from 'phaser';
-import SceneOrderManager from '/src/utils/SceneOrderManager';
+
 
 export default class ProgressManager {
     constructor() {
@@ -12,8 +12,12 @@ export default class ProgressManager {
             multiShot: 1,
             score: 0
         };
+
+        this.scene = new SpaceInvadersScene();
+        this.nextScene = 'SceneSelectionScene';
         this.loadProgress();
     }
+
 
     loadProgress() {
         const saved = localStorage.getItem('gameProgress');

@@ -5,39 +5,39 @@
         "y": 300,
         "scale": 1,
         "icons": [{
-                "name": "Arch_AWS-Glue_48.png",
-                "category": "Arch_Analytics",
+                "name": "Arch_Amazon-Route-53_48.png",
+                "category": "Arch_Networking-Content-Delivery",
                 "x": 300,
                 "y": 200,
-                "questionTypes": ["Analytics", "ETL"]
+                "questionTypes": ["Networking", "DNS"]
             },
             {
                 "name": "Arch_Amazon-Athena_48.png",
-                "category": "Arch_Amazon-Athena",
+                "category": "Arch_Networking-Content-Delivery",
                 "x": 500,
                 "y": 200,
-                "questionTypes": ["Analtyics", "AA"]
+                "questionTypes": ["Networking", "CDN"]
             },
             {
-                "name": "Arch_Amazon-Simple-Queue-Service_48.png",
-                "category": "Arch_App-Integration",
+                "name": "Arch_AWS-WAF_48.png",
+                "category": "Arch_Security-Identity-Compliance",
                 "x": 350,
                 "y": 300,
-                "questionTypes": ["Integration", "Messaging"]
+                "questionTypes": ["Security", "WAF"]
             },
             {
-                "name": "Arch_Amazon-Elastic-Container-Registry_48.png",
-                "category": "Arch_Containers",
+                "name": "Arch_AWS-WAF_48.png",
+                "category": "Arch_Security-Identity-Compliance",
                 "x": 450,
                 "y": 300,
-                "questionTypes": ["Container", "ECR"]
+                "questionTypes": ["Security", "WAF"]
             },
             {
-                "name": "Arch_Amazon-SageMaker_48.png",
-                "category": "Arch_Artificial-Intelligence",
+                "name": "Res_Amazon-VPC_Internet-Gateway_48.png",
+                "category": "Res_Networking-Content-Delivery",
                 "x": 150,
                 "y": 250,
-                "questionTypes": ["SageMaker", "SM"]
+                "questionTypes": ["Networking", "VPC"]
             }
         ]
     }],

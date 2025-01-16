@@ -1,3 +1,4 @@
+import * as Phaser from 'phaser';
 import BootScene from "./scenes/bootscene";
 import GameOver from "./scenes/gameover";
 import GameScene from "./scenes/map1/GameScene";

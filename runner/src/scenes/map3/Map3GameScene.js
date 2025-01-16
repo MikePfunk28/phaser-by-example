@@ -2,11 +2,11 @@ import { getAssetPath } from "/src/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import * as Phaser from 'phaser';
-import SceneOrderManager from '/src/utils/SceneOrderManager';
+
 
 export default class Map3GameScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'map3_game1' });
+        super({ key: 'map3scene1' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -98,7 +98,7 @@ export default class Map3GameScene extends Phaser.Scene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map3_game1');
+                this.scene.start('map3scene1');
             }, 2000);
         }
     }
@@ -286,7 +286,7 @@ export default class Map3GameScene extends Phaser.Scene {
                     if (this.answeredQuestions === 5) {
                         console.log('All 5 questions answered, transitioning to Space Invaders...');
                         setTimeout(() => {
-                            this.scene.start('space_invaders', { nextScene: 'map3_game2' });
+                            this.scene.start('space_invaders', { nextScene: 'map3scene2' });
                         }, 3000);
                     }
                 }, 2000);

@@ -2,7 +2,7 @@ import { getAssetPath } from "/src/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import * as Phaser from 'phaser'; // Default import
-import SceneOrderManager from '/src/utils/SceneOrderManager';
+
 
 export default class GameScene4 extends Phaser.Scene {
     constructor() {

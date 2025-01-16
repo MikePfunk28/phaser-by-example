@@ -5,39 +5,25 @@
         "y": 300,
         "scale": 1,
         "icons": [{
-                "name": "Arch_AWS-Shield_48.png",
-                "category": "Arch_Security-Identity-Compliance",
+                "name": "Res_Amazon-VPC_NAT-Gateway_48.png",
+                "category": "Arch_Networking-Content-Delivery",
                 "x": 300,
                 "y": 200,
-                "questionTypes": ["Security", "DDoS"]
+                "questionTypes": ["Subnet", "NAT"]
             },
             {
-                "name": "Arch_Amazon-SageMaker_48.png",
-                "category": "Arch_Artificial-Intelligence",
+                "name": "Res_Amazon-VPC_NAT-Gateway_48.png",
+                "category": "Arch_Networking-Content-Delivery",
                 "x": 500,
                 "y": 200,
-                "questionTypes": ["ML", "AI"]
+                "questionTypes": ["Subnet", "NAT"]
             },
             {
-                "name": "Arch_Amazon-Kinesis_48.png",
-                "category": "Arch_Analytics",
-                "x": 350,
-                "y": 300,
-                "questionTypes": ["Analytics", "Streaming"]
-            },
-            {
-                "name": "Arch_AWS-Key-Management-Service_48.png",
-                "category": "Arch_Security-Identity-Compliance",
-                "x": 450,
-                "y": 300,
-                "questionTypes": ["Security", "Encryption"]
-            },
-            {
-                "name": "Arch_Amazon-CloudWatch_48.png",
-                "category": "Arch_Management-Governance",
+                "name": "Res_Amazon-VPC_Internet-Gateway_48.png",
+                "category": "Res_Networking-Content-Delivery",
                 "x": 150,
                 "y": 250,
-                "questionTypes": ["Monitoring", "Governance"]
+                "questionTypes": ["Networking", "VPC"]
             }
         ]
     }],

@@ -1,11 +1,11 @@
 import { getAssetPath } from "/src/utils/assetLoader";
 import * as Phaser from 'phaser';
-import SceneOrderManager from '/src/utils/SceneOrderManager';
+
 
 export default class MainMenu extends Phaser.Scene {
     constructor() {
         super('MainMenu');
-        this.sceneManager = new SceneOrderManager();
+
     }
 
     preload() {
@@ -39,6 +39,12 @@ export default class MainMenu extends Phaser.Scene {
                 text: 'Space Invaders Practice',
                 scene: 'space_invaders',
                 data: { nextScene: 'sort_selection' },
+                description: 'Practice while defending against space invaders!'
+            },
+            {
+                text: 'Start AWS Trainer',
+                scene: 'AWS Trainer',
+                data: { nextScene: 'map1scene1' },
                 description: 'Practice while defending against space invaders!'
             }
         ];

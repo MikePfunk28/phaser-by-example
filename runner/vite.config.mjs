@@ -4,6 +4,7 @@ import { loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd());
+    const isProd = mode === 'production';
 
     return {
         resolve: {
@@ -16,19 +17,32 @@ export default defineConfig(({ mode }) => {
         },
         base: env.VITE_BASE_URL || '/',
         build: {
+            sourcemap: !isProd,
             chunkSizeWarningLimit: 2000,
             outDir: 'dist',
             rollupOptions: {
-                external: ['phaser'],
                 output: {
-                    globals: {
-                        phaser: 'Phaser'
+                    manualChunks: {
+                        phaser: ['phaser']
                     }
                 }
-            }
+            },
+            ...(isProd && {
+                minify: 'terser',
+                terserOptions: {
+                    compress: {
+                        passes: 2,
+                        drop_console: true
+                    },
+                    mangle: true,
+                    format: {
+                        comments: false
+                    }
+                }
+            })
         },
         optimizeDeps: {
-            exclude: ['phaser']
+            include: ['phaser']
         },
         server: {
             port: 8080,

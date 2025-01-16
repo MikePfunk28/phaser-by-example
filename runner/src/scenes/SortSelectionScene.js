@@ -1,6 +1,6 @@
 import { getAssetPath } from "/src/utils/assetLoader";
 import * as Phaser from 'phaser';
-import SceneOrderManager from '/src/utils/SceneOrderManager';
+
 
 export default class SortSelectionScene extends Phaser.Scene {
     constructor() {
@@ -8,9 +8,17 @@ export default class SortSelectionScene extends Phaser.Scene {
         this.score = 0;
         this.currentMap = 1;
         this.selected = null;
-        this.sceneManager = new SceneOrderManager();
         this.thumbnails = [];
         this.connections = [];
+
+    }
+    init(data) {
+        this.score = data.score || 0;
+        this.currentMap = data.currentMap || 1;
+        this.selected = data.selected || null;
+        this.thumbnails = data.thumbnails || [];
+        this.connections = data.connections || [];
+        this.progress = data.progress || 0;
     }
 
     preload() {
@@ -31,6 +39,32 @@ export default class SortSelectionScene extends Phaser.Scene {
         this.load.image('map3scene264', getAssetPath('images/map3scene264.png'));
         this.load.image('map3scene364', getAssetPath('images/map3scene364.png'));
         this.load.image('map3scene464', getAssetPath('images/map3scene464.png'));
+
+        this.load.json('map-config', getAssetPath('data/map1/map-config.json'));
+        this.load.json('questions', getAssetPath('data/questions.json'));
+        this.load.bitmapFont('arcade',
+            getAssetPath('fonts/arcade.png'),
+            getAssetPath('fonts/arcade.xml')
+        );
+        this.load.json('map-config', getAssetPath('data/map1/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map1/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map1/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map1/map-config4.json'));
+
+        this.load.json('map-config', getAssetPath('data/map2/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map2/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map2/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map2/map-config4.json'));
+
+        this.load.json('map-config', getAssetPath('data/map3/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map3/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map3/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map3/map-config4.json'));
+
+        this.load.json('map-config', getAssetPath('data/map4/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map4/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map4/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map4/map-config4.json'));
     }
 
     create() {

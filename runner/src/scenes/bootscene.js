@@ -1,5 +1,6 @@
 import { getAssetPath } from "../utils/assetLoader";
 import * as Phaser from 'phaser';
+import PreLoader from "./PreLoader"
 
 export default class BootScene extends Phaser.Scene {
     constructor() {
@@ -36,6 +37,6 @@ export default class BootScene extends Phaser.Scene {
 
     create() {
         // Transition to MainMenu scene
-        this.scene.start('MainMenu');
+        this.scene.start('PreLoader');
     }
 }

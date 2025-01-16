@@ -1,1 +1,2 @@
-VITE_BASE_URL=/assets/
+VITE_API_URL=https://prod.api.example.com
+VITE_MODE=production

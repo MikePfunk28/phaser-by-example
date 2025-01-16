@@ -1,0 +1,41 @@
+Overview:
+* Amazon Q Game Developer Game - AWS Trainer
+* Trivia game with map and AWS Icons, which you can pick to be prompted a question.
+* If you answer correctly, you get points, and you use spend those points to upgrade your character.
+* Potentially add a feature allowing you to spend points on items, maybe they help you answer, or you get strong.
+* In-between each round of Trivia, which is 5 questions, you play spaceinvaders, and can pump that up.
+* Eventually I will finish adding the player and he will interact with the game's objects.
+
+
+Game Project Assets:
+* AWS Icons for Services, and Resources, only 48x48, or really 64x64 size icons. 
+    * Got from AWS, 64px by 64px, maps are 1024x768, but we display 800x600
+* Map Images, map sections, divide each map into four, each being their own scene.
+    * One map per scene, one map-config.json per map, and one config.js file for the scene.
+* Create images for assets in the game, buttons, players, NPCs or enemies, any other maps.  Consider a tilemap, and 
+* Create map-config.json for map files
+* Create js file for each map or scene to handle the logic for that scene.
+* Using vite for preview server.
+
+
+Scene Structure:
+* SceneTransition helps scenes transition?  So does that count as a scene"?
+* BootScene, PreLoader, are just loading scenes basically.
+* However once I added a boot and preloader it broke, but I also added sortselectionscene.
+
+Battle System:
+* Currently just handling trivia plus space-invaders.
+
+Get Working:
+* Make sure the key in the js matches the key in the json.
+
+Features Needed to be added:
+* Player Character
+* Player Character Inventory
+* Player Character Stats
+* Player Character Skills
+* Player Character Abilities
+* Player Character Upgrades
+* Player Character Inventory
+
+
