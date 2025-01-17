@@ -1,7 +1,7 @@
 import { getAssetPath } from "/src/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
-import * as Phaser from 'phaser';
+import Phaser from 'phaser';
 
 
 export default class Preloader extends Phaser.Scene {
@@ -113,7 +113,7 @@ export default class Preloader extends Phaser.Scene {
 
         // Set up the map based on config
         const activeZone = mapConfig.zones[0];
-        const map = this.add.image(activeZone.x, activeZone.y, 'map1scene1');
+        const map = this.add.image(activeZone.x, activeZone.y, '/');
         map.setScale(activeZone.scale);
 
         // Load AWS icons after we have the config

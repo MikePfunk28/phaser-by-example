@@ -1,5 +1,5 @@
 import { getAssetPath } from "/src/utils/assetLoader";
-import * as Phaser from 'phaser';
+import Phaser from 'phaser';
 
 
 export default class SortSelectionScene extends Phaser.Scene {

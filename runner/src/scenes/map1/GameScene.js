@@ -1,7 +1,7 @@
 import { getAssetPath } from "@/utils/assetLoader";
 import Player from '@/gameobjects/player';
 import Generator from '@/gameobjects/generator';
-import * as Phaser from 'phaser';
+import Phaser from 'phaser';
 
 
 export default class GameScene extends Phaser.Scene {

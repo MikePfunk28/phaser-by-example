@@ -1,6 +1,6 @@
 import { getAssetPath } from "../utils/assetLoader";
-import * as Phaser from 'phaser';
-import PreLoader from "./PreLoader"
+import Phaser from 'phaser';
+
 
 export default class BootScene extends Phaser.Scene {
     constructor() {
@@ -8,12 +8,18 @@ export default class BootScene extends Phaser.Scene {
     }
 
     preload() {
+        console.log('BootScene preload started')
         // Show loading text
         const loadingText = this.add.text(400, 300, 'Loading...', {
             fontFamily: 'Arial',
             fontSize: 24,
             color: '#ffffff'
         }).setOrigin(0.5);
+
+        this.load.on('complete', () => {
+            console.log('BootScene: preload complete');
+            loadingText.destroy();
+        });
 
         // Create loading bar
         const progressBar = this.add.graphics();
@@ -32,11 +38,18 @@ export default class BootScene extends Phaser.Scene {
             progressBar.destroy();
             progressBox.destroy();
             loadingText.destroy();
+
+
         });
     }
 
     create() {
         // Transition to MainMenu scene
+        console.log('BootScene: create called')
         this.scene.start('PreLoader');
+    }
+
+    update() {
+        this.scene.next('MainMenu')
     }
 }

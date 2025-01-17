@@ -1,4 +1,4 @@
-import * as Phaser from 'phaser';
+import Phaser from 'phaser';
 import BootScene from "./scenes/bootscene";
 import GameOver from "./scenes/gameover";
 import GameScene from "./scenes/map1/GameScene";
@@ -24,6 +24,8 @@ import SpaceInvadersScene from "./scenes/SpaceInvadersScene";
 import SortSelectionScene from './scenes/SortSelectionScene';
 import PreLoader from './scenes/PreLoader';
 import MainMenu from './scenes/MainMenu';
+import ProgressManager from "./utils/ProgressManager";
+import assetLoader from "./utils/assetLoader";
 
 const config = {
   type: Phaser.AUTO,
@@ -97,6 +99,11 @@ const config = {
     GameOver
   ]
 };
+const getAsset = new assetLoader(getAssetPath);
+const progressManager = new ProgressManager();
+const sceneTransition = new SceneTransition();
+
+
 
 window.addEventListener('load', () => {
   window.game = new Phaser.Game(config);

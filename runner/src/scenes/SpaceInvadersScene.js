@@ -1,12 +1,18 @@
 import { getAssetPath } from "/src/utils/assetLoader";
-import * as Phaser from 'phaser';
+import Phaser from 'phaser';
+import loadProgress, { updateStats } from './utils/ProgressManager';
 
 
 export default class SpaceInvadersScene extends Phaser.Scene {
     constructor() {
         super({ key: 'space_invaders' });
-        this.progressManager = new ProgressManager();
-        this.nextScene = 'SceneSelectionScene';
+        this.scene = new Phaser.Scene("space_invaders");
+        ProgressManager(loadProgress);
+        ProgressManager(updateStats)
+        assetLoader(getAssetPath);
+
+        // TODO: remove this, but SceneTransistion allows for a smooth transition.
+        //this.nextScene = 'SceneSelectionScene';
 
         // Progression system
         this.upgrades = {
@@ -155,6 +161,7 @@ export default class SpaceInvadersScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+        this.loadProgress(updateStats);
     }
 
     spawnPowerUp() {
@@ -578,5 +585,6 @@ export default class SpaceInvadersScene extends Phaser.Scene {
                 difficulty: this.difficulty
             });
         });
+        SceneTransition.to(this, 'SortSelectionScene', { level: 1 });
     }
 } 

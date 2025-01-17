@@ -1,6 +1,6 @@
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
-import * as Phaser from 'phaser';
+import Phaser from 'phaser';
 
 
 // Helper function to handle asset paths in both dev and production

@@ -38,4 +38,103 @@ Features Needed to be added:
 * Player Character Upgrades
 * Player Character Inventory
 
+Checks:
+1. Check for Errors in the Browser Console
+Open your browser's developer tools (usually by pressing F12 or Ctrl+Shift+I).
 
+Go to the "Console" tab and look for any error messages. These messages can provide clues about what might be going wrong.
+
+2. Verify File Paths
+Ensure that all the imported scene files (e.g., BootScene, GameScene, etc.) are correctly located in the specified directories.
+
+For example, if BootScene is supposed to be in ./scenes/bootscene.js, make sure that file exists in the correct location.
+
+3. Check for Missing Dependencies
+Ensure that Phaser is correctly installed. If you're using a package manager like npm, make sure Phaser is listed in your package.json and installed.
+
+Run npm install or yarn install to ensure all dependencies are installed.
+
+4. Audio Context Initialization
+Modern browsers require user interaction to initialize audio. Your code already handles this with the initAudio function, but ensure that the audio context is correctly initialized.
+
+If you're still having issues with audio, try commenting out the audio-related code temporarily to see if the game runs without it.
+
+5. Check for Scene Duplication
+In your config.scene array, SpaceInvadersScene is listed multiple times. Ensure that this is intentional and that it doesn't cause any conflicts.
+
+6. Phaser Version Compatibility
+Ensure that the version of Phaser you're using is compatible with your code. If you recently updated Phaser, there might be breaking changes.
+
+7. Basic Debugging Steps
+Add some console.log statements in your BootScene and PreLoader scenes to ensure they are being loaded correctly.
+
+For example, in BootScene.js:
+
+javascript
+Copy
+console.log('BootScene loaded');
+This will help you verify if the scenes are being initialized properly.
+
+8. Check for Typos
+Ensure there are no typos in your scene names or file paths. For example, Map2GameScene and Map2GameScene2 are used, but make sure they are correctly named and imported.
+
+9. Run a Simple Example
+To isolate the issue, try running a very simple Phaser game to ensure that your setup is correct. For example:
+
+javascript
+Copy
+import Phaser from 'phaser';
+
+const config = {
+  type: Phaser.AUTO,
+  width: 800,
+  height: 600,
+  scene: {
+    preload: function () {
+      this.load.image('logo', 'assets/logo.png');
+    },
+    create: function () {
+      this.add.image(400, 300, 'logo');
+    }
+  }
+};
+
+const game = new Phaser.Game(config);
+If this simple example works, the issue might be in your scene logic or setup.
+
+10. Check for CORS Issues
+If you're running the game from a local file system (e.g., file://), you might run into CORS issues when loading assets. Consider using a local server like http-server or live-server to serve your game.
+
+11. Use a Local Server
+Running your game on a local server can help avoid issues related to file paths and CORS. You can use tools like:
+
+http-server: Install it via npm (npm install -g http-server) and run it in your project directory.
+
+live-server: Another simple HTTP server with live reload capability.
+
+12. Check for Asset Loading Issues
+Ensure that all assets (images, sounds, etc.) are correctly loaded. If an asset fails to load, it might prevent the game from running properly.
+
+13. Review the PreLoader Scene
+The PreLoader scene is responsible for loading assets. Ensure that it correctly preloads all necessary assets before transitioning to other scenes.
+
+14. Check for Infinite Loops or Blocking Code
+Ensure that none of your scenes contain infinite loops or blocking code that might prevent the game from rendering.
+
+15. Update Phaser
+If you're using an older version of Phaser, consider updating to the latest version, as it might contain bug fixes and improvements.
+
+16. Check for Browser Compatibility
+Ensure that the browser you're using supports the features you're using in Phaser. Some older browsers might not support certain WebGL or audio features.
+
+17. Review the GameOver Scene
+Ensure that the GameOver scene is correctly implemented and doesn't contain any errors that might prevent the game from running.
+
+18. Check for Conflicting CSS or HTML
+Ensure that the HTML and CSS surrounding your game container (game-container) are not causing any layout or rendering issues.
+
+19. Check for JavaScript Errors
+If there are any JavaScript errors in your scene files, they might prevent the game from running. Review the code in each scene for potential issues.
+
+20. Test in Different Browsers
+Sometimes, issues are browser-specific. Test your game in different browsers (Chrome, Firefox, Edge) to see if the problem persists.

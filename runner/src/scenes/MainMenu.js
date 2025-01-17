@@ -1,5 +1,5 @@
 import { getAssetPath } from "/src/utils/assetLoader";
-import * as Phaser from 'phaser';
+import Phaser from 'phaser';
 
 
 export default class MainMenu extends Phaser.Scene {
@@ -42,7 +42,7 @@ export default class MainMenu extends Phaser.Scene {
                 description: 'Practice while defending against space invaders!'
             },
             {
-                text: 'Start AWS Trainer',
+                text: 'Skip to AWS Trainer',
                 scene: 'AWS Trainer',
                 data: { nextScene: 'map1scene1' },
                 description: 'Practice while defending against space invaders!'
@@ -108,7 +108,7 @@ export default class MainMenu extends Phaser.Scene {
         });
 
         // Version number
-        this.add.text(16, this.game.config.height - 30, 'v1.0.0', {
+        this.add.text(16, this.game.config.height - 30, 'v0.0.1', {
             fontFamily: 'Arial',
             fontSize: 16,
             color: '#ffffff'
@@ -116,5 +116,6 @@ export default class MainMenu extends Phaser.Scene {
 
         // Fade in effect
         this.cameras.main.fadeIn(1000);
+        // SceneTransition.to(this, 'SortSelectionScene', { level: 1 });
     }
 }

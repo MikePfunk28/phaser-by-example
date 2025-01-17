@@ -1,4 +1,4 @@
-import * as Phaser from 'phaser';
+import Phaser from 'phaser';
 
 // TODO: Add a transition animation
 // Allows me to easily switch using, 
