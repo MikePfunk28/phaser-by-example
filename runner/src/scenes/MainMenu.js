@@ -116,6 +116,6 @@ export default class MainMenu extends Phaser.Scene {
 
         // Fade in effect
         this.cameras.main.fadeIn(1000);
-        // SceneTransition.to(this, 'SortSelectionScene', { level: 1 });
     }
+
 }

@@ -1,4 +1,4 @@
-import { getAssetPath } from "/src/utils/assetLoader";
+import { getAssetPath } from "../utils/assetLoader";
 import Phaser from 'phaser';
 
 

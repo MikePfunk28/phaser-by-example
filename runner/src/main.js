@@ -22,7 +22,7 @@ import Map4GameScene3 from "./scenes/map4/Map4GameScene3";
 import Map4GameScene4 from "./scenes/map4/Map4GameScene4";
 import SpaceInvadersScene from "./scenes/SpaceInvadersScene";
 import SortSelectionScene from './scenes/SortSelectionScene';
-import PreLoader from './scenes/PreLoader';
+
 import MainMenu from './scenes/MainMenu';
 import ProgressManager from "./utils/ProgressManager";
 import assetLoader from "./utils/assetLoader";
@@ -60,48 +60,33 @@ const config = {
   },
   scene: [
     BootScene,
-    PreLoader,
     MainMenu,
     SortSelectionScene,
     SpaceInvadersScene,
     GameScene,
-    SpaceInvadersScene,
     GameScene2,
-    SpaceInvadersScene,
     GameScene3,
-    SpaceInvadersScene,
     GameScene4,
-    SpaceInvadersScene,
     Map2GameScene,
-    SpaceInvadersScene,
     Map2GameScene2,
-    SpaceInvadersScene,
     Map2GameScene3,
-    SpaceInvadersScene,
     Map2GameScene4,
-    SpaceInvadersScene,
     Map3GameScene,
-    SpaceInvadersScene,
     Map3GameScene2,
-    SpaceInvadersScene,
     Map3GameScene3,
-    SpaceInvadersScene,
     Map3GameScene4,
-    SpaceInvadersScene,
     Map4GameScene,
-    SpaceInvadersScene,
     Map4GameScene2,
-    SpaceInvadersScene,
     Map4GameScene3,
-    SpaceInvadersScene,
     Map4GameScene4,
-    SpaceInvadersScene,
     GameOver
   ]
 };
-const getAsset = new assetLoader(getAssetPath);
-const progressManager = new ProgressManager();
-const sceneTransition = new SceneTransition();
+//const getAsset = new assetLoader(getAssetPath);
+let progressManager = new ProgressManager();
+
+// Why and what the hell would this do?
+//const sceneTransition = new SceneTransition();
 
 
 

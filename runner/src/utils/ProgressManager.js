@@ -1,7 +1,7 @@
 import { getAssetPath } from "/src/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 
 
 export default class ProgressManager {
@@ -12,9 +12,6 @@ export default class ProgressManager {
             multiShot: 1,
             score: 0
         };
-
-        this.scene = new SpaceInvadersScene();
-        this.nextScene = 'SceneSelectionScene';
         this.loadProgress();
     }
 

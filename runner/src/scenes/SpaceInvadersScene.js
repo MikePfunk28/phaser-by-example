@@ -1,18 +1,10 @@
-import { getAssetPath } from "/src/utils/assetLoader";
+import { getAssetPath } from "../utils/assetLoader";
+import ProgressManager from "../utils/ProgressManager";
 import Phaser from 'phaser';
-import loadProgress, { updateStats } from './utils/ProgressManager';
-
 
 export default class SpaceInvadersScene extends Phaser.Scene {
-    constructor() {
-        super({ key: 'space_invaders' });
-        this.scene = new Phaser.Scene("space_invaders");
-        ProgressManager(loadProgress);
-        ProgressManager(updateStats)
-        assetLoader(getAssetPath);
-
-        // TODO: remove this, but SceneTransistion allows for a smooth transition.
-        //this.nextScene = 'SceneSelectionScene';
+    constructor(sceneKey = 'space_invaders') {
+        super({ key: 'sceneKey' });
 
         // Progression system
         this.upgrades = {
@@ -35,6 +27,9 @@ export default class SpaceInvadersScene extends Phaser.Scene {
     }
 
     init(data) {
+        if (data.stats) {
+            this.stats = data.stats;
+        }
         this.nextScene = data.nextScene;
         this.isIntro = data.isIntro || false;
         this.previousScore = data.score || 0;
@@ -72,6 +67,9 @@ export default class SpaceInvadersScene extends Phaser.Scene {
     }
 
     create() {
+        console.log(`Starting SpaceInvadersScene with key: ${this.sys.settings.key}`);
+        console.log('Stats:', this.stats);
+
         // Create stars within bounds
         for (let i = 0; i < 100; i++) {
             this.stars.push({
@@ -585,6 +583,14 @@ export default class SpaceInvadersScene extends Phaser.Scene {
                 difficulty: this.difficulty
             });
         });
+        
+    }
+    endMiniGame() {
+        console.log(`Ending Space Invaders. Going to: ${this.nextScene}`);
+
+        this.scene.stop(this.sys.settings.key); // Remove Space Invaders instance
+        this.scene.start(this.nextScene, { score: this.stats.score }); // Go to next scene
         SceneTransition.to(this, 'SortSelectionScene', { level: 1 });
     }
+
 } 

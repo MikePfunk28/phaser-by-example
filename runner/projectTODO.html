@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project TODO</title>
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            padding: 10px;
+            text-align: middle;
+            font-weight: bold;
+            font-size: 18px;
+            color: #333
+        }
+
+        td {
+            padding: 10px;
+            text-align: left;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <th>SceneName</th>
+            <th>SceneKey</th>
+            <th>Main.js import</th>
+            <th>Main.js scenelist</th>
+            <th>Scene Config.json</th>
+            <th>Scene Map Name</th>
+            <th>Scene Imports</th>
+            <th>SceneFileName</th>
+            <th>Scene Order</th>
+
+        </tr>
+        <tr>
+            <td>BootScene</td>
+            <td>bootscene</td>
+            <td>'./scenes/bootscene' Yes</td>
+            <td>Yes</td>
+            <td>no config</td>
+            <td>no map</td>
+            <td>getAssetPath and Phaser</td>
+            <td>Scene 1</td>
+        </tr>
+        <tr>
+            <td>MainMenu</td>
+            <td>MainMenu</td>
+            <td>'./scenes/MainMenu' Yes</td>
+            <td>Yes</td>
+            <td>map1/map-config.json</td>
+            <td>map1scene1.png</td>
+            <td>getAssetPath and Phaser</td>
+            <td>Scene 1</td>
+        </tr>
+
+    </table>
+    <ul>
+        <li>Scene Structure:</li>
+        <li>3 Parts to a scene:</li>
+        <li>Preload</li>
+        <li>Create</li>
+        <li>Update</li>
+        <li>-Preload the assets, icons(images), maps(images), configs?(json), player(sprite - spritesheet)</li>
+    </ul>
+
+    <ul>
+        <li>Actions the user can take:</li>
+        <li>Click on the icon</li>
+        <li>Select the answer</li>
+        <li>User can play space-invaders and have all the actions needed for that.</li>
+        <li>User are rewarded for answering trivia correctly. - NEEDS TO BE IMPLEMENTED.</li>
+        <li>New Pixel Art for the fighter.</li>
+        <li>Faster Fighter movement.</li>
+        <li>More powerful attacks.</li>
+        <li>More health.</li>
+        <li>User can spend points to buy items.</li>
+        <li>Each group of maps (so every 4 maps) will unlock a new fighter feature if you pass the trivia.</li>
+    </ul>
+</body>
+
+</html>

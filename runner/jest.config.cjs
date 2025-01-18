@@ -8,14 +8,12 @@ module.exports = {
     testEnvironment: 'jsdom',
     setupFiles: ['<rootDir>/jest.setup.js'],
     moduleFileExtensions: ['js', 'json'],
-    testMatch: [
-        "**/__tests__/**/*.js",
-        "**/*.test.js",
-        "**/*_test.js"
-    ],
     transform: {
         '^.+\\.js$': 'babel-jest'
     },
+    transformIgnorePatterns: [
+        'node_modules/(?!(phaser|@babel)/)'
+    ],
     verbose: true,
     testPathIgnorePatterns: [
         '/node_modules/',

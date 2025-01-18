@@ -2,7 +2,11 @@ import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import Phaser from 'phaser';
 
+export default class AssetLoader {
+    constructor() {
 
+    }
+}
 // Helper function to handle asset paths in both dev and production
 export function getAssetPath(path) {
     // Remove leading slash if present

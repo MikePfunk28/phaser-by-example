@@ -19,9 +19,28 @@ Game Project Assets:
 
 
 Scene Structure:
-* SceneTransition helps scenes transition?  So does that count as a scene"?
-* BootScene, PreLoader, are just loading scenes basically.
-* However once I added a boot and preloader it broke, but I also added sortselectionscene.
+* 3 Parts to a scene:
+    * Preload
+    * Create
+    * Update
+-Preload the assets, icons(images), maps(images), configs?(json), player(sprite - spritesheet)
+
+Actions the user can take:
+* Click on the icon
+* Select the answer
+* User can play space-invaders and have all the actions needed for that.
+* User are rewarded for answering trivia correctly. - NEEDS TO BE IMPLEMENTED.
+    * New Pixel Art for the fighter.
+    * Faster Fighter movement.
+    * More powerful attacks.
+    * More health.
+* User can spend points to buy items.
+* Each group of maps (so every 4 maps) will unlock a new fighter feature if you pass the trivia.
+
+Future Features: (Actions):
+* Sprite interacts for the player
+* User can spend points to upgrade the fighter.
+
 
 Battle System:
 * Currently just handling trivia plus space-invaders.
@@ -38,51 +57,53 @@ Features Needed to be added:
 * Player Character Upgrades
 * Player Character Inventory
 
-Checks:
-1. Check for Errors in the Browser Console
-Open your browser's developer tools (usually by pressing F12 or Ctrl+Shift+I).
+Game Structure:
+* SceneTransition helps scenes transition?  So does that count as a scene"?
+* BootScene, PreLoader, are just loading scenes basically.
+* However once I added a boot and preloader it broke, but I also added sortselectionscene.
 
-Go to the "Console" tab and look for any error messages. These messages can provide clues about what might be going wrong.
+
+Checks Test Cases:
+1. Check for Errors in the Browser Console
+* Open your browser's developer tools (usually by pressing F12 or Ctrl+Shift+I).
+* Go to the "Console" tab and look for any error messages. These messages can provide clues about what might be going wrong.
 
 2. Verify File Paths
-Ensure that all the imported scene files (e.g., BootScene, GameScene, etc.) are correctly located in the specified directories.
-
-For example, if BootScene is supposed to be in ./scenes/bootscene.js, make sure that file exists in the correct location.
+* Ensure that all the imported scene files (e.g., BootScene, GameScene, etc.) are correctly located in the specified directories.
+* For example, if BootScene is supposed to be in ./scenes/bootscene.js, make sure that file exists in the correct location.
 
 3. Check for Missing Dependencies
-Ensure that Phaser is correctly installed. If you're using a package manager like npm, make sure Phaser is listed in your package.json and installed.
+* Ensure that Phaser is correctly installed. If you're using a package manager like npm, make sure Phaser is listed in your package.json and installed.
 
-Run npm install or yarn install to ensure all dependencies are installed.
+* Run npm install or yarn install to ensure all dependencies are installed.
 
 4. Audio Context Initialization
-Modern browsers require user interaction to initialize audio. Your code already handles this with the initAudio function, but ensure that the audio context is correctly initialized.
+* Modern browsers require user interaction to initialize audio. Your code already handles this with the initAudio function, but ensure that the audio context is correctly initialized.
 
-If you're still having issues with audio, try commenting out the audio-related code temporarily to see if the game runs without it.
+* If you're still having issues with audio, try commenting out the audio-related code temporarily to see if the game runs without it.
 
 5. Check for Scene Duplication
-In your config.scene array, SpaceInvadersScene is listed multiple times. Ensure that this is intentional and that it doesn't cause any conflicts.
+* In your config.scene array, SpaceInvadersScene is listed multiple times. Ensure that this is intentional and that it doesn't cause any conflicts.
 
 6. Phaser Version Compatibility
-Ensure that the version of Phaser you're using is compatible with your code. If you recently updated Phaser, there might be breaking changes.
+* Ensure that the version of Phaser you're using is compatible with your code. If you recently updated Phaser, there might be breaking changes.
 
 7. Basic Debugging Steps
-Add some console.log statements in your BootScene and PreLoader scenes to ensure they are being loaded correctly.
+* Add some console.log statements in your BootScene and PreLoader scenes to ensure they are being loaded correctly.
 
-For example, in BootScene.js:
-
-javascript
-Copy
+//For example, in BootScene.js:
+//javascript:
 console.log('BootScene loaded');
-This will help you verify if the scenes are being initialized properly.
+
+* This will help you verify if the scenes are being initialized properly.
 
 8. Check for Typos
-Ensure there are no typos in your scene names or file paths. For example, Map2GameScene and Map2GameScene2 are used, but make sure they are correctly named and imported.
+* Ensure there are no typos in your scene names or file paths. For example, Map2GameScene and Map2GameScene2 are used, but make sure they are correctly named and imported.
 
 9. Run a Simple Example
 To isolate the issue, try running a very simple Phaser game to ensure that your setup is correct. For example:
 
-javascript
-Copy
+//javascript:
 import Phaser from 'phaser';
 
 const config = {
@@ -100,41 +121,50 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
-If this simple example works, the issue might be in your scene logic or setup.
+
+* If this simple example works, the issue might be in your scene logic or setup.
 
 10. Check for CORS Issues
-If you're running the game from a local file system (e.g., file://), you might run into CORS issues when loading assets. Consider using a local server like http-server or live-server to serve your game.
+* If you're running the game from a local file system (e.g., file://), you might run into CORS issues when loading assets. Consider using a local server like http-server or live-server to serve your game.
 
 11. Use a Local Server
-Running your game on a local server can help avoid issues related to file paths and CORS. You can use tools like:
+* Running your game on a local server can help avoid issues related to file paths and CORS. You can use tools like:
 
-http-server: Install it via npm (npm install -g http-server) and run it in your project directory.
+* http-server: Install it via npm (npm install -g http-server) and run it in your project directory.
 
-live-server: Another simple HTTP server with live reload capability.
+* live-server: Another simple HTTP server with live reload capability.
 
 12. Check for Asset Loading Issues
-Ensure that all assets (images, sounds, etc.) are correctly loaded. If an asset fails to load, it might prevent the game from running properly.
+* Ensure that all assets (images, sounds, etc.) are correctly loaded. If an asset fails to load, it might prevent the game from running properly.
 
 13. Review the PreLoader Scene
-The PreLoader scene is responsible for loading assets. Ensure that it correctly preloads all necessary assets before transitioning to other scenes.
+* The PreLoader scene is responsible for loading assets. Ensure that it correctly preloads all necessary assets before transitioning to other scenes.
 
 14. Check for Infinite Loops or Blocking Code
-Ensure that none of your scenes contain infinite loops or blocking code that might prevent the game from rendering.
+* Ensure that none of your scenes contain infinite loops or blocking code that might prevent the game from rendering.
 
 15. Update Phaser
-If you're using an older version of Phaser, consider updating to the latest version, as it might contain bug fixes and improvements.
+* If you're using an older version of Phaser, consider updating to the latest version, as it might contain bug fixes and improvements.
 
 16. Check for Browser Compatibility
-Ensure that the browser you're using supports the features you're using in Phaser. Some older browsers might not support certain WebGL or audio features.
+* Ensure that the browser you're using supports the features you're using in Phaser. Some older browsers might not support certain WebGL or audio features.
 
 17. Review the GameOver Scene
-Ensure that the GameOver scene is correctly implemented and doesn't contain any errors that might prevent the game from running.
+* Ensure that the GameOver scene is correctly implemented and doesn't contain any errors that might prevent the game from running.
 
 18. Check for Conflicting CSS or HTML
-Ensure that the HTML and CSS surrounding your game container (game-container) are not causing any layout or rendering issues.
+* Ensure that the HTML and CSS surrounding your game container (game-container) are not causing any layout or rendering issues.
 
 19. Check for JavaScript Errors
-If there are any JavaScript errors in your scene files, they might prevent the game from running. Review the code in each scene for potential issues.
+* If there are any JavaScript errors in your scene files, they might prevent the game from running. Review the code in each scene for potential issues.
 
 20. Test in Different Browsers
-Sometimes, issues are browser-specific. Test your game in different browsers (Chrome, Firefox, Edge) to see if the problem persists.
+* Sometimes, issues are browser-specific. Test your game in different browsers (Chrome, Firefox, Edge) to see if the problem persists.
+
+
+
+HTML Table: 2 tables, one for the scene structure, and one for the actions the user can take.
+scene name - main.j - config.json - map name - imports
+
+Table 2:
+GameScene - preload() - create() - update() - assets - dependencies
