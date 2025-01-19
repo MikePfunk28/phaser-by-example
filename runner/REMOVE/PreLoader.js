@@ -1,4 +1,4 @@
-import { getAssetPath } from "/src/utils/assetLoader";
+import { getAssetPath } from "@/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import Phaser from 'phaser';

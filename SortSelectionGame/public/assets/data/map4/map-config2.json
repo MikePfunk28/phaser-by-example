@@ -1,0 +1,37 @@
+{
+    "zones": [{
+        "name": "downtown2",
+        "x": 400,
+        "y": 300,
+        "scale": 1,
+        "icons": [{
+                "name": "Res_Amazon-VPC_NAT-Gateway_48.png",
+                "category": "Arch_Networking-Content-Delivery",
+                "x": 300,
+                "y": 200,
+                "questionTypes": ["Subnet", "NAT"]
+            },
+            {
+                "name": "Res_Amazon-VPC_NAT-Gateway_48.png",
+                "category": "Arch_Networking-Content-Delivery",
+                "x": 500,
+                "y": 200,
+                "questionTypes": ["Subnet", "NAT"]
+            },
+            {
+                "name": "Res_Amazon-VPC_Internet-Gateway_48.png",
+                "category": "Res_Networking-Content-Delivery",
+                "x": 150,
+                "y": 250,
+                "questionTypes": ["Networking", "VPC"]
+            }
+        ]
+    }],
+    "defaultZoom": 1,
+    "boundaries": {
+        "minX": 0,
+        "maxX": 800,
+        "minY": 0,
+        "maxY": 600
+    }
+}

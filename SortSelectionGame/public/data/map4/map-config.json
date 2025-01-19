@@ -1,0 +1,51 @@
+{
+    "zones": [{
+        "name": "downtown",
+        "x": 400,
+        "y": 300,
+        "scale": 1,
+        "icons": [{
+                "name": "Arch_Amazon-Route-53_48.png",
+                "category": "Arch_Networking-Content-Delivery",
+                "x": 300,
+                "y": 200,
+                "questionTypes": ["Networking", "DNS"]
+            },
+            {
+                "name": "Arch_Amazon-Athena_48.png",
+                "category": "Arch_Networking-Content-Delivery",
+                "x": 500,
+                "y": 200,
+                "questionTypes": ["Networking", "CDN"]
+            },
+            {
+                "name": "Arch_AWS-WAF_48.png",
+                "category": "Arch_Security-Identity-Compliance",
+                "x": 350,
+                "y": 300,
+                "questionTypes": ["Security", "WAF"]
+            },
+            {
+                "name": "Arch_AWS-WAF_48.png",
+                "category": "Arch_Security-Identity-Compliance",
+                "x": 450,
+                "y": 300,
+                "questionTypes": ["Security", "WAF"]
+            },
+            {
+                "name": "Res_Amazon-VPC_Internet-Gateway_48.png",
+                "category": "Res_Networking-Content-Delivery",
+                "x": 150,
+                "y": 250,
+                "questionTypes": ["Networking", "VPC"]
+            }
+        ]
+    }],
+    "defaultZoom": 1,
+    "boundaries": {
+        "minX": 0,
+        "maxX": 800,
+        "minY": 0,
+        "maxY": 600
+    }
+}

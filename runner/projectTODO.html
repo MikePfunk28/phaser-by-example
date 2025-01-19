@@ -10,11 +10,11 @@
         th,
         td {
             border: 1px solid black;
-            border-collapse: collapse;
+            border-collapse: collapse
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #24ecba;
             padding: 10px;
             text-align: middle;
             font-weight: bold;
@@ -27,6 +27,14 @@
             text-align: left;
             font-size: 16px;
             color: #333;
+        }
+
+        tr {
+            background-color: #6bd812;
+            color: antiquewhite;
+        }
+        tr:nth-child(even) {
+            background-color: #73aaca;
         }
     </style>
 </head>
@@ -53,42 +61,82 @@
             <td>no config</td>
             <td>no map</td>
             <td>getAssetPath and Phaser</td>
-            <td>Scene 1</td>
+            <td>Scene 0</td>
         </tr>
         <tr>
             <td>MainMenu</td>
             <td>MainMenu</td>
             <td>'./scenes/MainMenu' Yes</td>
             <td>Yes</td>
-            <td>map1/map-config.json</td>
-            <td>map1scene1.png</td>
-            <td>getAssetPath and Phaser</td>
+            <td>no config</td>
+            <td>background.png/logo.png</td>
+            <td>Phaser</td>
             <td>Scene 1</td>
         </tr>
-
+        <tr>
+            <td>SpaceInvadersScene</td>
+            <td>SpaceInvadersScene</td>
+            <td>'./scenes/SpaceInvadersScene' Yes</td>
+            <td>Yes</td>
+            <td>no config</td>
+            <td>no map</td>
+            <td>getAssetPath and Phaser</td>
+            <td>Scene 2</td>
+        </tr>
+        <tr>
+            <td>SortSelectionScene</td>
+            <td>SortSelectionScene</td>
+            <td>'./scenes/SortSelectionScene' Yes</td>
+            <td>Yes</td>
+            <td>no config</td>
+            <td>no map</td>
+            <td>getAssetPath and Phaser</td>
+            <td>Scene 3</td>
+        </tr>
+        <tr>
+            <td>GameScene</td>
+            <td>GameScene</td>
+            <td>'./scenes/map1game1' Yes</td>
+            <td>Yes</td>
+            <td>no config</td>
+            <td>no map</td>
+            <td>getAssetPath and Phaser</td>
+            <td>Scene 3</td>
+        </tr>
     </table>
-    <ul>
-        <li>Scene Structure:</li>
-        <li>3 Parts to a scene:</li>
-        <li>Preload</li>
-        <li>Create</li>
-        <li>Update</li>
-        <li>-Preload the assets, icons(images), maps(images), configs?(json), player(sprite - spritesheet)</li>
-    </ul>
-
-    <ul>
-        <li>Actions the user can take:</li>
-        <li>Click on the icon</li>
-        <li>Select the answer</li>
-        <li>User can play space-invaders and have all the actions needed for that.</li>
-        <li>User are rewarded for answering trivia correctly. - NEEDS TO BE IMPLEMENTED.</li>
-        <li>New Pixel Art for the fighter.</li>
-        <li>Faster Fighter movement.</li>
-        <li>More powerful attacks.</li>
-        <li>More health.</li>
-        <li>User can spend points to buy items.</li>
-        <li>Each group of maps (so every 4 maps) will unlock a new fighter feature if you pass the trivia.</li>
-    </ul>
+    <br>
+    <br>
+    <table>
+        <tr>
+            <th>Scene Structure:</th>
+            <th>Preload</th>
+            <th>Create</th>
+            <th>Update</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th>assets icons(images), maps(images), configs?(json), player(sprite - spritesheet)</th>
+            <th>Scene logic, reasoning, UI, everything that will happen in the scene.</th>
+            <th>what will happen every frame, and where you specify the transition after the scene ends..</th>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <table>
+        <tr>
+            <th>Actions the user can take:</th>
+            <th>Click on the icon</th>
+            <th>Select the answer</th>
+            <th>User can play space-invaders and have all the actions needed for that.</th>
+            <th>User are rewarded for answering trivia correctly. - NEEDS TO BE IMPLEMENTED.</th>
+            <th>New Pixel Art for the fighter.</th>
+            <th>Faster Fighter movement.</th>
+            <th>More powerful attacks.</th>
+            <th>More health.</th>
+            <th>User can spend points to buy items.</th>
+            <th>Each group of maps (so every 4 maps) will unlock a new fighter feature if you pass the trivia.</th>
+        </tr>
+    </table>
 </body>
 
 </html>

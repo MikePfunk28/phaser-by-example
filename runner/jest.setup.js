@@ -3,55 +3,60 @@ require('jest-canvas-mock');
 // Mock Phaser
 global.Phaser = {
     Scene: class Scene {
-        constructor() { }
-        add = {
-            text: jest.fn(),
-            image: jest.fn().mockReturnValue({
-                setInteractive: jest.fn().mockReturnThis(),
-                setScale: jest.fn().mockReturnThis(),
-                setOrigin: jest.fn().mockReturnThis(),
-                setDepth: jest.fn().mockReturnThis(),
+        constructor(config) {
+            this.key = config?.key;
+            this.scene = {
+                start: jest.fn()
+            };
+            this.cameras = {
+                main: {
+                    fadeOut: jest.fn(),
+                    fadeIn: jest.fn(),
+                    once: jest.fn((event, callback) => callback())
+                }
+            };
+            this.add = {
+                text: jest.fn().mockReturnValue({
+                    setOrigin: jest.fn().mockReturnThis()
+                }),
+                graphics: jest.fn().mockReturnValue({
+                    fillStyle: jest.fn().mockReturnThis(),
+                    fillRect: jest.fn().mockReturnThis(),
+                    clear: jest.fn().mockReturnThis(),
+                    destroy: jest.fn()
+                })
+            };
+            this.load = {
                 on: jest.fn(),
-                setTint: jest.fn(),
-                clearTint: jest.fn()
-            })
-        };
-        cache = {
-            json: {
-                get: jest.fn()
-            }
-        };
-        load = {
-            json: jest.fn(),
-            image: jest.fn(),
-            bitmapFont: jest.fn(),
-            once: jest.fn(),
-            start: jest.fn()
-        };
-        cameras = {
-            main: {
-                fadeOut: jest.fn(),
-                once: jest.fn()
-            }
-        };
-        scene = {
-            start: jest.fn()
-        };
-        tweens = {
-            add: jest.fn()
+                off: jest.fn()
+            };
         }
     },
-    Utils: {
-        Array: {
-            GetRandom: jest.fn()
+    Game: class Game {
+        constructor(config) {
+            this.config = config;
         }
+    },
+    AUTO: 'AUTO',
+    Scale: {
+        FIT: 'FIT',
+        CENTER_BOTH: 'CENTER_BOTH'
     }
 };
 
-// Mock DOM elements
+// Mock window
+global.window = {
+    addEventListener: jest.fn(),
+    AudioContext: jest.fn(),
+    webkitAudioContext: jest.fn()
+};
+
+// Mock document
 global.document = {
     createElement: jest.fn(() => ({
         className: '',
+        style: {},
+        textContent: '',
         appendChild: jest.fn(),
         addEventListener: jest.fn()
     })),
@@ -59,9 +64,4 @@ global.document = {
         appendChild: jest.fn(),
         removeChild: jest.fn()
     }
-};
-
-// Mock window
-global.window = {
-    addEventListener: jest.fn()
 };

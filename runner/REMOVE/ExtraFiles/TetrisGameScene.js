@@ -1,6 +1,6 @@
 // TetrisScene.js
 import { Scene } from 'phaser';
-import * as Phaser from 'phaser';
+import Phaser from 'phaser';
 
 
 export default class TetrisScene extends Phaser.Scene {

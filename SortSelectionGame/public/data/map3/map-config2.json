@@ -1,0 +1,51 @@
+{
+    "zones": [{
+        "name": "downtown2",
+        "x": 400,
+        "y": 300,
+        "scale": 1,
+        "icons": [{
+                "name": "Arch_AWS-Shield_48.png",
+                "category": "Arch_Security-Identity-Compliance",
+                "x": 300,
+                "y": 200,
+                "questionTypes": ["Security", "DDoS"]
+            },
+            {
+                "name": "Arch_Amazon-SageMaker_48.png",
+                "category": "Arch_Artificial-Intelligence",
+                "x": 500,
+                "y": 200,
+                "questionTypes": ["ML", "AI"]
+            },
+            {
+                "name": "Arch_Amazon-Kinesis_48.png",
+                "category": "Arch_Analytics",
+                "x": 350,
+                "y": 300,
+                "questionTypes": ["Analytics", "Streaming"]
+            },
+            {
+                "name": "Arch_AWS-Key-Management-Service_48.png",
+                "category": "Arch_Security-Identity-Compliance",
+                "x": 450,
+                "y": 300,
+                "questionTypes": ["Security", "Encryption"]
+            },
+            {
+                "name": "Arch_Amazon-CloudWatch_48.png",
+                "category": "Arch_Management-Governance",
+                "x": 150,
+                "y": 250,
+                "questionTypes": ["Monitoring", "Governance"]
+            }
+        ]
+    }],
+    "defaultZoom": 1,
+    "boundaries": {
+        "minX": 0,
+        "maxX": 800,
+        "minY": 0,
+        "maxY": 600
+    }
+}
