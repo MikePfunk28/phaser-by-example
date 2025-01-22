@@ -303,6 +303,9 @@ export default class GameScene extends Phaser.Scene {
                     document.body.removeChild(explanationContainer);
                 }, 5000);
             }
+
+            // Mark the icon as answered in the grid system
+            this.scene.get('gridScene').markIconAsAnswered(iconConfig.name);
         } else {
             const xMark = this.add.image(iconSprite.x, iconSprite.y, 'xMark')
                 .setScale(0.5)
@@ -326,15 +329,10 @@ export default class GameScene extends Phaser.Scene {
 
     transitionToNextScene() {
         if (this.isTransitioning) return;
-
         this.isTransitioning = true;
-        this.cameras.main.fadeOut(500);
-        this.cameras.main.once('camerafadeoutcomplete', () => {
-            SceneTransition.to(this, 'map1scene2', { score: this.score });
-            this.scene.start('space_invaders', {
-                nextScene: 'map1scene2',
-                score: this.score
-            });
+        SceneTransition.transition(this, 'space_invaders', {
+            nextScene: 'map1scene2',
+            score: this.score
         });
     }
 }

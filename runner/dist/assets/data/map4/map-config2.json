@@ -1,8 +1,8 @@
 {
     "zones": [{
         "name": "downtown2",
-        "x": 400,
-        "y": 300,
+        "x": 800,
+        "y": 600,
         "scale": 1,
         "icons": [{
                 "name": "Res_Amazon-VPC_NAT-Gateway_48.png",

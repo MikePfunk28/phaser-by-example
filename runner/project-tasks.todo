@@ -168,3 +168,8 @@ scene name - main.j - config.json - map name - imports
 
 Table 2:
 GameScene - preload() - create() - update() - assets - dependencies
+
+
+
+latest
+-need to check scene transitions for each scene.

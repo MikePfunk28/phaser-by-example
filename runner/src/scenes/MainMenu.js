@@ -31,17 +31,19 @@ export default class MainMenu extends Phaser.Scene {
             {
                 text: 'Start AWS Training',
                 scene: 'sort_selection',
+                data: { nextScene: 'sort_selection' },
                 description: 'Begin your AWS certification journey'
             },
             {
                 text: 'Space Invaders Practice',
                 scene: 'space_invaders',
-                data: { nextScene: 'sort_selection' },
+                data: { nextScene: 'space_invaders' },
                 description: 'Practice while defending against space invaders!'
             },
             {
                 text: 'Skip to AWS Trainer',
                 scene: 'map1scene1',
+                data: { nextScene: 'map1scene1' },
                 description: 'Jump straight into AWS training'
             }
         ];

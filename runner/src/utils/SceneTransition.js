@@ -1,16 +1,68 @@
-class SceneTransition {
-    static to(currentScene, targetScene, data = {}) {
-        // Check if we're in a test environment or if cameras are available
-        if (!currentScene.cameras || !currentScene.cameras.main) {
-            // In test environment or when cameras aren't available, just start the scene directly
-            currentScene.scene.start(targetScene, data);
+import { SCENE_TRANSITIONS } from '@/constants/sceneTransitions';
+import getSortedScenes from '@/scenes/SortSelectionScene';
+import SceneOrderManager from '@/utils/SceneOrderManager';
+
+
+// src/constants/sceneTransitions.js
+export const SCENE_TRANSITIONS = {
+    bootscene: 'mainmenu',
+    mainmenu: 'sortselection',
+    sortselection: 'space_invaders',
+    space_invaders: 'map1scene1',
+    map1scene1: 'space_invaders',
+    space_invaders: 'map1scene2',
+    map1scene2: 'space_invaders',
+    space_invaders: 'map1scene3',
+    map1scene3: 'space_invaders',
+    space_invaders: 'map1scene4',
+    map1scene4: 'space_invaders',
+    space_invaders: 'map2scene1',
+    map2scene1: 'space_invaders',
+    space_invaders: 'map2scene2',
+    map2scene2: 'space_invaders',
+    space_invaders: 'map2scene3',
+    map2scene3: 'space_invaders',
+    space_invaders: 'map2scene4',
+    map2scene4: 'space_invaders',
+    space_invaders: 'map3scene1',
+    map3scene1: 'space_invaders',
+    space_invaders: 'map3scene2',
+    map3scene2: 'space_invaders',
+    space_invaders: 'map3scene3',
+    map3scene3: 'space_invaders',
+    space_invaders: 'map3scene4',
+    map3scene4: 'space_invaders',
+    space_invaders: 'map4scene1',
+    map4scene1: 'space_invaders',
+    space_invaders: 'map4scene2',
+    map4scene2: 'space_invaders',
+    space_invaders: 'map4scene3',
+    map4scene3: 'space_invaders',
+    space_invaders: 'map4scene4',
+    map4scene4: 'space_invaders',
+    space_invaders: 'gameover',
+    gameover: 'mainmenu',
+    // ... continue for all scenes
+};
+
+export default class SceneTransition {
+    static sceneManager = new SceneOrderManager();
+
+    static getNextScene(currentScene) {
+        return this.sceneManager.getNextScene(currentScene);
+    }
+
+    static transition(scene, targetScene, data = {}) {
+        const nextScene = this.getNextScene(scene.scene.key) || targetScene;
+
+        if (!scene.cameras || !scene.cameras.main) {
+            scene.scene.start(targetScene, { ...data, nextScene });
             return;
         }
 
-        // In game environment, use fade transition
-        currentScene.cameras.main.fadeOut(500);
-        currentScene.cameras.main.once('camerafadeoutcomplete', () => {
-            currentScene.scene.start(targetScene, data);
+        scene.cameras.main.fadeOut(500);
+        scene.cameras.main.once('camerafadeoutcomplete', () => {
+            scene.scene.start(targetScene, { ...data, nextScene });
         });
     }
 
@@ -38,6 +90,5 @@ class SceneTransition {
             });
         });
     }
-}
 
-export default SceneTransition; 
+} 

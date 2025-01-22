@@ -45,5 +45,7 @@ export default class BootScene extends Phaser.Scene {
     create() {
         console.log('BootScene: create called');
         SceneTransition.to(this, this.nextScene, this.nextSceneData);
+        this.load.image('background', getAssetPath('images/background.png'));
+        this.load.image('logo', getAssetPath('images/logo.png'));
     }
 }

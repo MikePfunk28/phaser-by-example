@@ -307,4 +307,16 @@ export default class Map2GameScene2 extends Phaser.Scene {
             padding: { x: 10, y: 5 }
         }).setScrollFactor(0).setDepth(200);
     }
+    transitionToNextScene() {
+        if (this.isTransitioning) return;
+
+        this.isTransitioning = true;
+        this.cameras.main.fadeOut(500);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start('space_invaders', {
+                nextScene: 'map2scene3',
+                score: this.score
+            });
+        });
+    }
 }

@@ -1,7 +1,6 @@
 import { getAssetPath } from "../utils/assetLoader";
 import Phaser from 'phaser';
 
-
 export default class SortSelectionScene extends Phaser.Scene {
     constructor() {
         super({ key: 'sort_selection' });
@@ -12,6 +11,10 @@ export default class SortSelectionScene extends Phaser.Scene {
         this.connections = [];
 
     }
+    static getSortedScene() {
+        return 'space_invaders';
+    }
+    
     init(data) {
         this.score = data.score || 0;
         this.currentMap = data.currentMap || 1;
@@ -46,25 +49,7 @@ export default class SortSelectionScene extends Phaser.Scene {
             getAssetPath('fonts/arcade.png'),
             getAssetPath('fonts/arcade.xml')
         );
-        this.load.json('map-config', getAssetPath('data/map1/map-config.json'));
-        this.load.json('map-config2', getAssetPath('data/map1/map-config2.json'));
-        this.load.json('map-config3', getAssetPath('data/map1/map-config3.json'));
-        this.load.json('map-config4', getAssetPath('data/map1/map-config4.json'));
-
-        this.load.json('map-config', getAssetPath('data/map2/map-config.json'));
-        this.load.json('map-config2', getAssetPath('data/map2/map-config2.json'));
-        this.load.json('map-config3', getAssetPath('data/map2/map-config3.json'));
-        this.load.json('map-config4', getAssetPath('data/map2/map-config4.json'));
-
-        this.load.json('map-config', getAssetPath('data/map3/map-config.json'));
-        this.load.json('map-config2', getAssetPath('data/map3/map-config2.json'));
-        this.load.json('map-config3', getAssetPath('data/map3/map-config3.json'));
-        this.load.json('map-config4', getAssetPath('data/map3/map-config4.json'));
-
-        this.load.json('map-config', getAssetPath('data/map4/map-config.json'));
-        this.load.json('map-config2', getAssetPath('data/map4/map-config2.json'));
-        this.load.json('map-config3', getAssetPath('data/map4/map-config3.json'));
-        this.load.json('map-config4', getAssetPath('data/map4/map-config4.json'));
+        this.load.json('map-config4', getAssetPath('data/map1/map-config64.json'));
     }
 
     create() {
@@ -573,6 +558,18 @@ export default class SortSelectionScene extends Phaser.Scene {
                 sortType: this.selected,
                 structure: this.thumbnails,
                 sortedScenes: this.sceneManager.getSortedScenes()
+            });
+        });
+    }
+    transitionToNextScene() {
+        if (this.isTransitioning) return;
+
+        this.isTransitioning = true;
+        this.cameras.main.fadeOut(500);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start('space_invaders', {
+                nextScene: 'map1scene1',
+                score: this.score
             });
         });
     }

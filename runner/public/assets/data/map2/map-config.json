@@ -1,8 +1,8 @@
 {
     "zones": [{
         "name": "downtown",
-        "x": 400,
-        "y": 300,
+        "x": 800,
+        "y": 600,
         "scale": 1,
         "icons": [{
                 "name": "Arch_Amazon-Data-Firehose_48.png",

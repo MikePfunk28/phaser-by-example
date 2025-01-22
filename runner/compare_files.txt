@@ -129,3 +129,22 @@ class SpaceInvadersScene extends Phaser.Scene {
 
         export default ProgressManager; // or export { ProgressManager };
 
+        this.load.json('map-config', getAssetPath('data/map1/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map1/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map1/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map1/map-config4.json'));
+
+        this.load.json('map-config', getAssetPath('data/map2/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map2/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map2/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map2/map-config4.json'));
+
+        this.load.json('map-config', getAssetPath('data/map3/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map3/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map3/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map3/map-config4.json'));
+
+        this.load.json('map-config', getAssetPath('data/map4/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map4/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map4/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map4/map-config4.json'));
