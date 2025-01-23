@@ -4,7 +4,7 @@ import * as Phaser from 'phaser'; // Default import
 
 class Node {
     constructor(imageName, score = 0) {
-        this.imageName = imageName;
+        this.imageNamerunn = imageName;
         this.score = score;
         this.next = null;
         this.left = null;
