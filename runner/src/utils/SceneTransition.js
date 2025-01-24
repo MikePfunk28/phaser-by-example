@@ -1,7 +1,4 @@
-import { SCENE_TRANSITIONS } from '@/constants/sceneTransitions';
-import getSortedScenes from '@/scenes/SortSelectionScene';
 import SceneOrderManager from '@/utils/SceneOrderManager';
-
 
 // src/constants/sceneTransitions.js
 export const SCENE_TRANSITIONS = {
@@ -52,17 +49,15 @@ export default class SceneTransition {
         return this.sceneManager.getNextScene(currentScene);
     }
 
-    static transition(scene, targetScene, data = {}) {
-        const nextScene = this.getNextScene(scene.scene.key) || targetScene;
-
-        if (!scene.cameras || !scene.cameras.main) {
-            scene.scene.start(targetScene, { ...data, nextScene });
+    static to(currentScene, targetScene, data = {}) {
+        if (!currentScene.cameras || !currentScene.cameras.main) {
+            currentScene.scene.start(targetScene, data);
             return;
         }
 
-        scene.cameras.main.fadeOut(500);
-        scene.cameras.main.once('camerafadeoutcomplete', () => {
-            scene.scene.start(targetScene, { ...data, nextScene });
+        currentScene.cameras.main.fadeOut(500);
+        currentScene.cameras.main.once('camerafadeoutcomplete', () => {
+            currentScene.scene.start(targetScene, data);
         });
     }
 

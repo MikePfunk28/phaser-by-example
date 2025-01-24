@@ -333,9 +333,9 @@ export default class TetrisScene extends Phaser.Scene {
 
     gameOver() {
         this.playSound('gameOver');
-        alert(`Game Over!\nYour Score: ${this.score}`);
         this.resetGame();
     }
+
 
     resetGame() {
         this.board = this.createBoard();

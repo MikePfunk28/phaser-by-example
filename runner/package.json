@@ -21,10 +21,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test": "jest",
     "test:verbose": "NODE_OPTIONS=--experimental-vm-modules jest --verbose",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:scene3": "jest src/scenes/map1/__tests__/GameScene3.test.js",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
   },
   "devDependencies": {

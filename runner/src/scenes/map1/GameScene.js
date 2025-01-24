@@ -1,11 +1,11 @@
+import BaseGameScene from '../BaseGameScene';
 import { getAssetPath } from "@/utils/assetLoader";
 import Player from '@/gameobjects/player';
 import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser';
 import SceneTransition from '@/utils/SceneTransition';
 
-
-export default class GameScene extends Phaser.Scene {
+export default class GameScene extends BaseGameScene {
     constructor() {
         super({ key: 'map1scene1' });
         this.player = null;
@@ -19,43 +19,14 @@ export default class GameScene extends Phaser.Scene {
         this.clickCooldown = false;
     }
 
-    init(data) {
-        if (data && typeof data.score === 'number') {
-            this.score = data.score;
-        }
-    }
-
     preload() {
+        super.preload();
         this.load.image('map1scene1', getAssetPath('images/map1scene1.png'));
         this.load.json('map-config', getAssetPath('data/map1/map-config.json'));
-        this.load.json('questions', getAssetPath('data/questions.json'));
-        this.load.image('checkMark', getAssetPath('images/checkmark.png'));
-        this.load.image('xMark', getAssetPath('images/xmark.png'));
-        this.load.bitmapFont('arcade', getAssetPath('fonts/arcade.png'), getAssetPath('fonts/arcade.xml'));
+    }
 
-        // Add error handler for asset loading
-        this.load.on('loaderror', (fileObj) => {
-            console.error('Error loading file:', fileObj.key);
-            // Use fallback assets if available
-            if (fileObj.key === 'checkMark') {
-                // Create a simple green circle as fallback
-                const graphics = this.add.graphics();
-                graphics.fillStyle(0x00ff00);
-                graphics.fillCircle(0, 0, 20);
-                graphics.generateTexture('checkMark', 40, 40);
-                graphics.destroy();
-            } else if (fileObj.key === 'xMark') {
-                // Create a simple red X as fallback
-                const graphics = this.add.graphics();
-                graphics.lineStyle(4, 0xff0000);
-                graphics.moveTo(-10, -10);
-                graphics.lineTo(10, 10);
-                graphics.moveTo(10, -10);
-                graphics.lineTo(-10, 10);
-                graphics.generateTexture('xMark', 40, 40);
-                graphics.destroy();
-            }
-        });
+    getNextSceneKey() {
+        return 'map1scene2';
     }
 
     create() {
@@ -318,21 +289,5 @@ export default class GameScene extends Phaser.Scene {
                 this.transitionToNextScene();
             }, 1000);
         }
-    }
-
-    setupScore() {
-        this.scoreText = this.add.text(16, 16, 'Score: ' + this.score, {
-            fontSize: '32px',
-            fill: '#fff'
-        });
-    }
-
-    transitionToNextScene() {
-        if (this.isTransitioning) return;
-        this.isTransitioning = true;
-        SceneTransition.transition(this, 'space_invaders', {
-            nextScene: 'map1scene2',
-            score: this.score
-        });
     }
 }

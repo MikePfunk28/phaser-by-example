@@ -35,10 +35,11 @@ def find_duplicates(json_file_path):
     for idx, item in enumerate(questions):
         # Create hash of the question text
         question_text = item['question']
-        question_hash = hashlib.md5(question_text.encode()).hexdigest()
+        question_hash = hashlib.sha256(question_text.encode()).hexdigest()
 
         # If we've seen this hash before, it's a duplicate
         if question_hash in question_hashes:
+
             original_idx = question_hashes[question_hash]
             if question_hash not in duplicate_map:
                 duplicate_map[question_hash] = {
@@ -69,7 +70,8 @@ def remove_duplicates(json_file_path, output_file_path):
     unique_questions = []
 
     for question in questions:
-        question_hash = hashlib.md5(question['question'].encode()).hexdigest()
+        question_hash = hashlib.sha256(
+            question['question'].encode()).hexdigest()
         if question_hash not in seen_hashes:
             seen_hashes.add(question_hash)
             unique_questions.append(question)

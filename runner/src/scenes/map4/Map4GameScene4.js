@@ -2,6 +2,7 @@ import { getAssetPath } from "@/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import Phaser from 'phaser';
+import SceneTransition from '@/utils/SceneTransition';
 
 
 
@@ -308,16 +309,13 @@ export default class Map4GameScene4 extends Phaser.Scene {
             padding: { x: 10, y: 5 }
         }).setScrollFactor(0).setDepth(200);
     }
+
     transitionToNextScene() {
         if (this.isTransitioning) return;
-
         this.isTransitioning = true;
-        this.cameras.main.fadeOut(500);
-        this.cameras.main.once('camerafadeoutcomplete', () => {
-            this.scene.start('space_invaders', {
-                nextScene: 'game_over',
-                score: this.score
-            });
+        SceneTransition.to(this, 'space_invaders', {
+            nextScene: 'gameover',
+            score: this.score
         });
     }
 }

@@ -1,6 +1,8 @@
 {
     "zones": [{
         "name": "sort_selection",
+        "scene": "sort_selection",
+        "image": "background.png",
         "x": 800,
         "y": 600,
         "scale": 1,

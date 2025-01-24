@@ -1,3 +1,4 @@
+import BaseGameScene from '../BaseGameScene';
 import { getAssetPath } from "@/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
@@ -5,37 +6,27 @@ import Phaser from 'phaser'; // Default import
 import SceneTransition from '@/utils/SceneTransition';
 
 
-export default class GameScene2 extends Phaser.Scene {
+export default class GameScene2 extends BaseGameScene {
     constructor() {
         super({ key: 'map1scene2' });
-        this.player = null;
-        this.score = 0;
-        this.scoreText = null;
         this.currentMap = 1;
-        this.questions = null;
-        this.icons = [];
-        this.answeredQuestions = 0;
-        this.isTransitioning = false;
-        this.clickCooldown = false;
     }
-
+    // In the receiving scene's init method:
     init(data) {
-        this.score = data.score || 0;
+        this.score = data?.score || 0;
+        this.isTransitioning = false;
+
+        // Optional: Add fade in effect
+        this.cameras.main.fadeIn(500);
+    }
+    preload() {
+        super.preload();
+        this.load.image('map1scene2', getAssetPath('images/map1scene2.png'));
+        this.load.json('map-config', getAssetPath('data/map1/map-config2.json'));
     }
 
-    preload() {
-        // Only load the assets needed for this scene
-        this.load.image('map1scene2', getAssetPath('images/map1scene2.png'));
-        this.load.json('map-config2', getAssetPath('data/map1/map-config2.json'));
-        this.load.json('questions', getAssetPath('data/questions.json'));
-        this.load.bitmapFont('arcade',
-            getAssetPath('fonts/arcade.png'),
-            getAssetPath('fonts/arcade.xml')
-        );
-
-        // Fix paths for feedback marks
-        this.load.image('checkMark', getAssetPath('images/checkmark.png'));
-        this.load.image('xMark', getAssetPath('images/xmark.png'));
+    getNextSceneKey() {
+        return 'map1scene3';
     }
 
     create() {
@@ -46,7 +37,7 @@ export default class GameScene2 extends Phaser.Scene {
 
         this.questions = this.cache.json.get('questions');
 
-        const mapConfig = this.cache.json.get('map-config2');  // Remove the '2'
+        const mapConfig = this.cache.json.get('map-config');  // Remove the '2'
 
         // Set up the map based on config
         const activeZone = mapConfig.zones[0];
@@ -287,10 +278,12 @@ export default class GameScene2 extends Phaser.Scene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
+        // Pause any ongoing animations/updates
+        this.scene.pause();
+
         this.camera.main.fadeOut(500);
         this.cameras.main.once('camerafadeoutcomplete', () => {
-            SceneTransition.transition(this, 'space-invaders', {nextScene: 'map1scene3', score: this.score})
-            
+            SceneTransition.toWithLoading(this, 'space-invaders', { nextScene: this.getNextSceneKey(), score: this.score })
         });
     }
 }

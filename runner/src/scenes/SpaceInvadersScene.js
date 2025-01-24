@@ -5,7 +5,7 @@ import SceneTransition from "../utils/SceneTransition";
 
 export default class SpaceInvadersScene extends Phaser.Scene {
     constructor(config = {}) {
-        super({ key: 'SpaceInvadersScene' });
+        super({ key: 'space_invaders' });
         this.progressManager = new ProgressManager();
         this.nextScene = config.nextScene || 'SortSelectionScene';  // Default to SortSelectionScene if not specified
         this.previousScore = 0;

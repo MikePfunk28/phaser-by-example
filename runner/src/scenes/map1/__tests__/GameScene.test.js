@@ -46,15 +46,16 @@ jest.mock('../../../utils/assetLoader', () => ({
 // Mock SceneOrderManager
 jest.mock('../../../utils/SceneTransition.js', () => ({
     __esModule: true,
-    default: class SceneTransition {
-        constructor() { }
-        getNextScene() { return 'next_scene'; }
+    default: {
+        to: jest.fn((scene, targetScene, data) => {
+            scene.scene.start(targetScene, data);
+        })
     }
 }));
 
 import GameScene from '../GameScene';
 
-describe('GameScene', () => {
+describe('GameScene (Map1Scene1)', () => {
     let scene;
     let mockMapConfig;
     let mockQuestions;
@@ -246,20 +247,41 @@ describe('GameScene', () => {
     // Test scene transitions
     describe('Scene Transitions', () => {
         test('should transition to space invaders with score', () => {
+            // Set up the scene
             scene.score = 100;
+            scene.isTransitioning = false;
+
+            // Call the transition method
             scene.transitionToNextScene();
-            expect(scene.cameras.main.fadeOut).toHaveBeenCalledWith(500);
-            expect(scene.scene.start).toHaveBeenCalledWith('space_invaders', {
-                nextScene: 'map1scene2',
-                score: 100
-            });
+
+            // Verify SceneTransition.to was called with correct parameters
+            const SceneTransition = require('../../../utils/SceneTransition').default;
+            expect(SceneTransition.to).toHaveBeenCalledWith(
+                scene,
+                'space_invaders',
+                {
+                    nextScene: 'map1scene2',
+                    score: 100
+                }
+            );
+
+            // Verify the scene is marked as transitioning
+            expect(scene.isTransitioning).toBe(true);
         });
 
         test('should prevent multiple transitions', () => {
+            scene.isTransitioning = true;
             scene.transitionToNextScene();
-            scene.cameras.main.fadeOut.mockClear();
-            scene.transitionToNextScene();
-            expect(scene.cameras.main.fadeOut).not.toHaveBeenCalled();
+
+            // Verify SceneTransition.to was not called
+            const SceneTransition = require('../../../utils/SceneTransition').default;
+            expect(SceneTransition.to).not.toHaveBeenCalled();
         });
     });
+
+    test('should return correct next scene key', () => {
+        expect(scene.getNextSceneKey()).toBe('map1scene2');
+    });
+
+    // Add specific tests for map1scene1...
 }); 

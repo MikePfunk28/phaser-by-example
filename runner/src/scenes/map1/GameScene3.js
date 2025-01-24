@@ -1,5 +1,5 @@
 import { getAssetPath } from "@/utils/assetLoader";
-import Player from '/src/gameobjects/player';
+import Player from '@/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import Phaser from 'phaser';
 
@@ -15,7 +15,14 @@ export default class GameScene3 extends Phaser.Scene {
         this.icons = [];
         this.answeredQuestions = 0;
     }
+    // In the receiving scene's init method:
+    init(data) {
+        this.score = data?.score || 0;
+        this.isTransitioning = false;
 
+        // Optional: Add fade in effect
+        this.cameras.main.fadeIn(500);
+    }
     preload() {
         this.load.image('map1scene3', getAssetPath('images/map1scene3.png'));
         this.load.json('map-config3', getAssetPath('data/map1/map-config3.json'));
@@ -308,13 +315,14 @@ export default class GameScene3 extends Phaser.Scene {
         }).setScrollFactor(0).setDepth(200);
     }
 
+
     transitionToNextScene() {
         if (this.isTransitioning) return;
 
         this.isTransitioning = true;
         this.cameras.main.fadeOut(500);
         this.cameras.main.once('camerafadeoutcomplete', () => {
-            this.scene.start('space_invaders', {
+            SceneTransition.transitionToNextScene(this, 'space-invaders', {
                 nextScene: 'map1scene4',
                 score: this.score
             });

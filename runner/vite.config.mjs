@@ -3,18 +3,18 @@ import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
-    plugins:[
+    plugins: [
         visualizer({
             open: true,
             filename: 'dependency-graph.html',
-        
+
         }),
     ],
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),
             'gameobjects': path.resolve(__dirname, './src/gameobjects'),
-            'scenes': path.resolve(__dirname, './src/utilsscenes'),
+            'scenes': path.resolve(__dirname, './src/scenes'),
             'utils': path.resolve(__dirname, './src/utils')
         }
     },
