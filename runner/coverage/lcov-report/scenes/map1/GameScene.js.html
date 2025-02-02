@@ -641,7 +641,7 @@ import Phaser from 'phaser';
 &nbsp;
 export default class GameScene extends Phaser.Scene {
 <span class="fstat-no" title="function not covered" >    co</span>nstructor() {
-<span class="cstat-no" title="statement not covered" >        super({ key: 'map1scene1' });</span>
+<span class="cstat-no" title="statement not covered" >        super({ key: 'map1gamescene1' });</span>
 <span class="cstat-no" title="statement not covered" >        this.player = null;</span>
 <span class="cstat-no" title="statement not covered" >        this.score = 0;</span>
 <span class="cstat-no" title="statement not covered" >        this.scoreText = null;</span>
@@ -659,7 +659,7 @@ export default class GameScene extends Phaser.Scene {
 &nbsp;
 <span class="fstat-no" title="function not covered" >    pr</span>eload() {
         // Only load the assets needed for this scene
-<span class="cstat-no" title="statement not covered" >        this.load.image('map1scene1', getAssetPath('images/map1scene1.png'));</span>
+<span class="cstat-no" title="statement not covered" >        this.load.scene('map1gamescene1', getAssetPath('images/map1gamescene1.png'));</span>
 <span class="cstat-no" title="statement not covered" >        this.load.json('map-config', getAssetPath('data/map1/map-config.json'));</span>
 <span class="cstat-no" title="statement not covered" >        this.load.json('questions', getAssetPath('data/questions.json'));</span>
 <span class="cstat-no" title="statement not covered" >        this.load.bitmapFont('arcade',</span>
@@ -684,7 +684,7 @@ export default class GameScene extends Phaser.Scene {
 &nbsp;
         // Set up the map based on config
         const activeZone = <span class="cstat-no" title="statement not covered" >mapConfig.zones[0];</span>
-        const map = <span class="cstat-no" title="statement not covered" >this.add.image(activeZone.x, activeZone.y, 'map1scene1');</span>
+        const map = <span class="cstat-no" title="statement not covered" >this.add.image(activeZone.x, activeZone.y, 'map1gamescene1');</span>
 <span class="cstat-no" title="statement not covered" >        map.setScale(activeZone.scale);</span>
 &nbsp;
         // Load AWS icons after we have the config
@@ -895,7 +895,7 @@ export default class GameScene extends Phaser.Scene {
 <span class="cstat-no" title="statement not covered" >                        console.log('All 5 questions answered, transitioning to Space Invaders...');</span>
 <span class="cstat-no" title="statement not covered" >                        this.cameras.main.fade(1000, 0, 0, 0, false, <span class="fstat-no" title="function not covered" >(c</span>amera, progress) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >                            if (progress === 1) {</span>
-<span class="cstat-no" title="statement not covered" >                                this.scene.start('space_invaders', { nextScene: 'map1scene1', score: this.score });</span>
+<span class="cstat-no" title="statement not covered" >                                this.scene.start('space_invaders', { nextScene: 'map1gamescene1', score: this.score });</span>
                             }
                         });
                     }

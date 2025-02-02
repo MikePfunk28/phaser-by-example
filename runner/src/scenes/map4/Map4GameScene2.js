@@ -2,12 +2,16 @@ import { getAssetPath } from "@/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import Phaser from 'phaser';
+<<<<<<< Updated upstream
 import SceneTransition from '@/utils/SceneTransition';
+=======
+import progressManager from '../../utils/ProgressManager';
+>>>>>>> Stashed changes
 
 
 export default class Map4GameScene2 extends Phaser.Scene {
     constructor() {
-        super({ key: 'map4_game2' });
+        super({ key: 'map4gamescene2' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -18,7 +22,7 @@ export default class Map4GameScene2 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('map4scene2', getAssetPath('images/map4scene2.png'));
+        this.load.scene('map4gamescene2', getAssetPath('images/map4gamescene2.png'));
         this.load.json('map-config2', getAssetPath('data/map4/map-config2.json'));
         this.load.json('questions', getAssetPath('data/questions.json'));
         this.load.image('checkMark', getAssetPath('images/checkmark.png'));
@@ -78,7 +82,7 @@ export default class Map4GameScene2 extends Phaser.Scene {
             const map = this.add.image(
                 activeZone.x || 400,
                 activeZone.y || 300,
-                'map4scene2'
+                'map4gamescene2'
             );
             map.setOrigin(0.5);
             map.setScale(activeZone.scale || 1);
@@ -86,6 +90,12 @@ export default class Map4GameScene2 extends Phaser.Scene {
             // Load AWS icons after we have the config
             this.loadAwsIcons(mapConfig);
             this.setupScore();
+
+            // Save progress
+            progressManager.saveProgress({
+                lastCompletedScene: 'map4gamescene2',
+                currentMap: 4
+            });
 
         } catch (error) {
             console.error('Error in create:', error);
@@ -99,7 +109,7 @@ export default class Map4GameScene2 extends Phaser.Scene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map4_game2');
+                this.scene.start('map4gamescene2');
             }, 2000);
         }
     }
@@ -285,7 +295,7 @@ export default class Map4GameScene2 extends Phaser.Scene {
                     if (this.answeredQuestions === 5) {
                         console.log('All 5 questions answered, transitioning to Space Invaders...');
                         setTimeout(() => {
-                            this.scene.start('space_invaders', { nextScene: 'map4_game3' });
+                            this.scene.start('space_invaders', { nextScene: 'map4gamescene3' });
                         }, 3000);
                     }
                 }, 2000);

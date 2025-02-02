@@ -1,51 +1,130 @@
-import Phaser from 'phaser';
 import { getAssetPath } from "../utils/assetLoader";
-import SceneTransition from "../utils/SceneTransition";
+import progressManager from "../utils/ProgressManager";
+import Phaser from 'phaser';
 
 export default class BootScene extends Phaser.Scene {
     constructor() {
         super({ key: 'bootscene' });
+        this.nextScene = null;
+        this.nextSceneData = null;
     }
 
     init(data) {
-        this.nextScene = data?.nextScene || 'MainMenu';
-        this.nextSceneData = data?.nextSceneData || {};
+        this.nextScene = data.nextScene || 'mainmenu';
+        this.nextSceneData = data.nextSceneData || {};
     }
 
     preload() {
-        console.log('BootScene preload started');
-        // Show loading text
-        const loadingText = this.add.text(400, 300, 'Loading...', {
-            fontFamily: 'Arial',
-            fontSize: 24,
-            color: '#ffffff'
-        }).setOrigin(0.5);
-
         // Create loading bar
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+
         const progressBar = this.add.graphics();
         const progressBox = this.add.graphics();
         progressBox.fillStyle(0x222222, 0.8);
-        progressBox.fillRect(240, 270, 320, 50);
+        progressBox.fillRect(width / 4, height / 2 - 30, width / 2, 50);
 
-        // Loading progress events
-        this.load.on('progress', function (value) {
+        // Loading text
+        const loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading...', {
+            font: '20px monospace',
+            fill: '#ffffff'
+        }).setOrigin(0.5, 0.5);
+
+        // Percentage text
+        const percentText = this.add.text(width / 2, height / 2 + 70, '0%', {
+            font: '18px monospace',
+            fill: '#ffffff'
+        }).setOrigin(0.5, 0.5);
+
+        // Loading event handlers
+        this.load.on('progress', (value) => {
             progressBar.clear();
             progressBar.fillStyle(0x00ff00, 1);
-            progressBar.fillRect(250, 280, 300 * value, 30);
+            progressBar.fillRect(width / 4 + 10, height / 2 - 20, (width / 2 - 20) * value, 30);
+            percentText.setText(parseInt(value * 100) + '%');
         });
 
         this.load.on('complete', () => {
             progressBar.destroy();
             progressBox.destroy();
             loadingText.destroy();
-            console.log('BootScene: preload complete');
+            percentText.destroy();
+        });
+
+        // Load essential assets
+        this.loadEssentialAssets();
+    }
+
+    loadEssentialAssets() {
+        // Load common assets needed across scenes
+        this.load.image('background', getAssetPath('images/background.png'));
+        this.load.image('logo', getAssetPath('images/logo.png'));
+
+        // Load font
+        try {
+            this.load.bitmapFont('arcade',
+                getAssetPath('fonts/arcade.png'),
+                getAssetPath('fonts/arcade.xml')
+            );
+        } catch (e) {
+            console.warn('Font loading failed, using system font');
+        }
+
+        // Load questions
+        try {
+            this.load.json('questions', getAssetPath('data/questions.json'));
+        } catch (e) {
+            console.warn('Questions loading failed');
+        }
+
+        // Load map thumbnails
+        this.load.image('map1scene164', getAssetPath('images/map1scene164.png'));
+        this.load.image('map1scene264', getAssetPath('images/map1scene264.png'));
+        this.load.image('map1scene364', getAssetPath('images/map1scene364.png'));
+        this.load.image('map1scene464', getAssetPath('images/map1scene464.png'));
+
+        // Add error handler for asset loading
+        this.load.on('loaderror', (fileObj) => {
+            console.error('Error loading file:', fileObj.key);
+            // Create fallback assets if needed
+            if (fileObj.key === 'background') {
+                const graphics = this.add.graphics();
+                graphics.fillStyle(0x000000);
+                graphics.fillRect(0, 0, 800, 600);
+                graphics.generateTexture('background', 800, 600);
+                graphics.destroy();
+            }
         });
     }
 
     create() {
-        console.log('BootScene: create called');
-        SceneTransition.to(this, this.nextScene, this.nextSceneData);
-        this.load.image('background', getAssetPath('images/background.png'));
-        this.load.image('logo', getAssetPath('images/logo.png'));
+        // Load saved progress
+        const progress = progressManager.loadProgress();
+
+        // Create background
+        this.add.rectangle(400, 300, 800, 600, 0x000000);
+
+        // Create loading complete text
+        const text = this.add.text(400, 300, 'Loading Complete!', {
+            font: '32px monospace',
+            fill: '#ffffff'
+        }).setOrigin(0.5, 0.5);
+
+        // Transition to next scene
+        this.time.delayedCall(1000, () => {
+            this.cameras.main.fadeOut(500);
+            this.time.delayedCall(500, () => {
+                // If we have saved progress and no specific next scene, go to last completed scene
+                if (progress && progress.lastCompletedScene && !this.nextScene) {
+                    this.scene.start(progress.lastCompletedScene, {
+                        score: progress.score,
+                        powerUpBitmask: progress.powerUpBitmask,
+                        currentMap: progress.currentMap
+                    });
+                } else {
+                    this.scene.start(this.nextScene, this.nextSceneData);
+                }
+            });
+        });
     }
 }

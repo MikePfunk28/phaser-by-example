@@ -747,7 +747,7 @@ import Phaser from 'phaser';
 &nbsp;
 export default class GameScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'map1scene1' });
+        super({ key: 'map1gamescene1' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -766,7 +766,7 @@ export default class GameScene extends Phaser.Scene {
     }
 &nbsp;
     preload() {
-        this.load.image('map1scene1', getAssetPath('images/map1scene1.png'));
+        this.load.scene('map1gamescene1', getAssetPath('images/map1gamescene1.png'));
         this.load.json('map-config', getAssetPath('data/map1/map-config.json'));
         this.load.json('questions', getAssetPath('data/questions.json'));
         this.load.image('checkMark', getAssetPath('images/checkmark.png'));
@@ -837,7 +837,7 @@ export default class GameScene extends Phaser.Scene {
             const map = this.add.image(
                 activeZone.x || <span class="branch-1 cbranch-no" title="branch not covered" >400,</span>
                 activeZone.y || <span class="branch-1 cbranch-no" title="branch not covered" >300,</span>
-                'map1scene1'
+                'map1gamescene1'
             );
             map.setOrigin(0.5);
             map.setScale(activeZone.scale || <span class="branch-1 cbranch-no" title="branch not covered" >1)</span>;
@@ -857,7 +857,7 @@ export default class GameScene extends Phaser.Scene {
 &nbsp;
             // Restart the scene after a delay
             setTimeout(<span class="fstat-no" title="function not covered" >()</span> =&gt; {
-<span class="cstat-no" title="statement not covered" >                this.scene.start('map1scene1');</span>
+<span class="cstat-no" title="statement not covered" >                this.scene.start('map1gamescene1');</span>
             }, 2000);
         }
     }
@@ -1071,7 +1071,7 @@ export default class GameScene extends Phaser.Scene {
         this.cameras.main.fadeOut(500);
         this.cameras.main.once('camerafadeoutcomplete', () =&gt; {
             this.scene.start('space_invaders', {
-                nextScene: 'map1scene2',
+                nextScene: 'map1gamescene2',
                 score: this.score
             });
         });

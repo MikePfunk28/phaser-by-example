@@ -1,24 +1,49 @@
 import { getAssetPath } from "@/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
+<<<<<<< Updated upstream
 import Phaser from 'phaser';// Default import
 import SceneTransition from '@/utils/SceneTransition';
 
+=======
+import Phaser from 'phaser';
+import SceneTransition from '@/utils/SceneTransition';
+import { ProgressManager } from '@/utils/ProgressManager';
+>>>>>>> Stashed changes
 
 export default class Map2GameScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'map2scene1' });
+        super({ key: 'map2gamescene1' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
-        this.currentMap = 1;
+        this.currentMap = 2;
         this.questions = null;
         this.icons = [];
         this.answeredQuestions = 0;
+        this.isTransitioning = false;
+        this.clickCooldown = false;
+        this.powerUpBitmask = 0;
+        this.progressManager = new ProgressManager();
+        this.sceneTransition = new SceneTransition();
+    }
+
+    init(data) {
+        this.score = data.score || 0;
+        this.powerUpBitmask = data.powerUpBitmask || 0;
+        this.currentMap = data.currentMap || 2;
+
+        // Save progress
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map2gamescene1',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
     }
 
     preload() {
-        this.load.image('map2scene1', getAssetPath('images/map2scene1.png'));
+        this.load.scene('map2gamescene1', getAssetPath('images/map2gamescene1.png'));
         this.load.json('map-config', getAssetPath('data/map2/map-config.json'));
         this.load.json('questions', getAssetPath('data/questions.json'));
         this.load.image('checkMark', getAssetPath('images/checkmark.png'));
@@ -50,24 +75,35 @@ export default class Map2GameScene extends Phaser.Scene {
     }
 
     create() {
+        // Add semi-transparent dark background
+        this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8);
+
         // Initialize sound settings
         if (this.sound && this.sound.context) {
             this.sound.pauseOnBlur = false;
         }
+
+        // Set up score display first
+        this.setupScore();
+
+        // Add power-up display
+        this.powerUpText = this.add.text(16, 56, this.getPowerUpText(), {
+            fontSize: '24px',
+            fill: '#00ff00',
+            fontFamily: 'Arial'
+        });
 
         // Get the loaded questions and map config with error handling
         try {
             this.questions = this.cache.json.get('questions');
             const mapConfig = this.cache.json.get('map-config');
 
-            console.log('MapConfig loaded:', mapConfig); // Debug log
-
             if (!mapConfig || !mapConfig.zones) {
                 throw new Error('Invalid map config structure');
             }
 
             // Set up the map based on config
-            const zoneIndex = 1; // Use second zone for scene 2
+            const zoneIndex = 0; // Use first zone for scene 1
             const activeZone = mapConfig.zones[zoneIndex] || mapConfig.zones[0];
 
             if (!activeZone) {
@@ -78,14 +114,16 @@ export default class Map2GameScene extends Phaser.Scene {
             const map = this.add.image(
                 activeZone.x || 400,
                 activeZone.y || 300,
-                'map2scene1'
+                'map2gamescene1'
             );
             map.setOrigin(0.5);
             map.setScale(activeZone.scale || 1);
 
             // Load AWS icons after we have the config
             this.loadAwsIcons(mapConfig);
-            this.setupScore();
+
+            // Add fade-in transition
+            this.sceneTransition.fadeIn();
 
         } catch (error) {
             console.error('Error in create:', error);
@@ -99,52 +137,44 @@ export default class Map2GameScene extends Phaser.Scene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map2scene1');
+                this.scene.start('map2gamescene1');
             }, 2000);
         }
+    }
+
+    getPowerUpText() {
+        const powerUps = [];
+        if (this.powerUpBitmask & 1) powerUps.push('Life+');
+        if (this.powerUpBitmask & 2) powerUps.push('Size+');
+        if (this.powerUpBitmask & 4) powerUps.push('Speed+');
+        if (this.powerUpBitmask & 8) powerUps.push('Fire+');
+        return `Power-ups: ${powerUps.join(' ')}`;
     }
 
     loadAwsIcons(mapConfig) {
         // Preload all icons
         mapConfig.zones.forEach(zone => {
-            zone.icons.forEach(icon => {
-                // Get the icon path from the question that matches this icon's type
-                const relevantQuestion = this.questions.find(q =>
-                    icon.questionTypes.some(type =>
-                        q.question.toLowerCase().includes(type.toLowerCase())
-                    )
-                );
-
-                if (relevantQuestion && relevantQuestion.image) {
-                    // Use the image path directly from the question
-                    console.log('Loading icon from question:', relevantQuestion.image);
-                    this.load.image(`icon_${icon.name}`, relevantQuestion.image);
-                } else {
-                    // Fallback to constructing the path based on the pattern
-                    // Example: public/assets/images/services16/Arch_Storage/16/Arch_Amazon-Simple-Storage-Service_16.png
-                    const iconPath = `assets/images/services16/${icon.category}/48/${icon.name}`;
-                    console.log('Loading icon with constructed path:', iconPath);
-                    this.load.image(`icon_${icon.name}`, iconPath);
-                }
-                const iconPath = `/assets/images/services16/${icon.category}/48/${icon.name}`;
-                this.load.image(`icon_${icon.name}`, iconPath);
+            zone.icons.forEach(iconConfig => {
+                const iconPath = getAssetPath(`images/services16/${iconConfig.category}/48/${iconConfig.name}`);
+                this.load.image(`icon_${iconConfig.name}`, iconPath);
             });
         });
 
         // Start the loader and create icons upon completion
         this.load.once('complete', () => {
             mapConfig.zones.forEach(zone => {
-                zone.icons.forEach(icon => {
-                    const iconSprite = this.add.image(
-                        icon.x,
-                        icon.y,
-                        `icon_${icon.name}`
-                    )
+                zone.icons.forEach(iconConfig => {
+                    const iconKey = `icon_${iconConfig.name}`;
+                    const iconSprite = this.add.image(iconConfig.x, iconConfig.y, iconKey)
                         .setInteractive()
                         .setScale(0.5);
 
-                    console.log('Creating icon sprite:', icon.name);
-                    this.setupIconInteraction(iconSprite, icon);
+                    // Add green box around icon
+                    const box = this.add.rectangle(iconConfig.x, iconConfig.y, 48, 48, 0x00ff00, 0);
+                    box.setStrokeStyle(2, 0x00ff00);
+                    iconSprite.box = box;
+
+                    this.setupIconInteraction(iconSprite, iconConfig);
                     this.icons.push(iconSprite);
                 });
             });
@@ -220,84 +250,136 @@ export default class Map2GameScene extends Phaser.Scene {
         }
     }
 
-    showQuestion(question, iconSprite) {
-        // Create DOM elements for question
-        const questionContainer = document.createElement('div');
-        questionContainer.className = 'question-container';
+    showQuestion(question, icon) {
+        if (!question || !question.options) {
+            console.error('Invalid question format:', question);
+            return;
+        }
 
-        const overlay = document.createElement('div');
-        overlay.className = 'overlay';
+        // Create semi-transparent background with padding for wrapped text
+        const padding = 20;
+        const bg = this.add.rectangle(400, 300, 750, 400, 0x000000, 0.9);
+        bg.setDepth(2);
 
-        const questionElement = document.createElement('div');
-        questionElement.className = 'question';
-        questionElement.textContent = question.question;
+        // Check if it's a True/False question
+        const isTrueFalse = question.question.toLowerCase().startsWith('true or false');
 
-        questionContainer.appendChild(questionElement);
+        // Add question text with proper wrapping
+        const questionText = this.add.text(400, 150, question.question, {
+            fontFamily: 'Arial',
+            fontSize: '18px',
+            color: '#ffffff',
+            align: 'center',
+            wordWrap: { width: 650, useAdvancedWrap: true },
+            padding: { x: padding, y: padding }
+        });
+        questionText.setOrigin(0.5);
+        questionText.setDepth(3);
 
-        Object.entries(question.options).forEach(([key, value]) => {
-            const option = document.createElement('div');
-            option.className = 'option';
+        // For True/False questions, create simple True/False options
+        const options = isTrueFalse ?
+            [['true', 'True'], ['false', 'False']] :
+            Object.entries(question.options);
 
-            const letter = document.createElement('span');
-            letter.className = 'option-letter';
-            letter.textContent = key;
+        const optionStartY = 220;
+        const optionSpacing = 45;  // Reduced spacing
 
-            const text = document.createElement('span');
-            text.className = 'option-text';
-            text.textContent = value;
+        const optionButtons = options.map(([key, value], index) => {
+            const y = optionStartY + index * optionSpacing;
+            const buttonText = isTrueFalse ? value : `${key}: ${value}`;
 
-            option.appendChild(letter);
-            option.appendChild(text);
+            const button = this.add.text(400, y, buttonText, {
+                fontFamily: 'Arial',
+                fontSize: '16px',
+                color: '#ffffff',
+                align: 'center',
+                wordWrap: { width: 500, useAdvancedWrap: true },
+                padding: { x: 15, y: 8 }
+            });
+            button.setOrigin(0.5);
+            button.setInteractive();
+            button.setDepth(3);
 
-            option.addEventListener('click', () => {
-                const isCorrect = key === question.answer;
-                if (isCorrect) {
-                    this.score += 100;
-                    this.scoreText.setText(`Score: ${this.score}`);
-                }
+            // Add hover background - make it narrower for True/False
+            const buttonWidth = isTrueFalse ? 150 : 550;
+            const buttonBg = this.add.rectangle(400, y, buttonWidth, button.height + 16, 0x333333, 0.5);
+            buttonBg.setDepth(2.5);
+            buttonBg.setVisible(false);
 
-                // Display feedback
-                const feedbackMark = isCorrect ? 'checkMark' : 'xMark';
-                const feedback = this.add.image(iconSprite.x, iconSprite.y, feedbackMark)
-                    .setScale(1.0)
-                    .setDepth(150);
-
-                // Disable the icon and stop its animation
-                iconSprite.isAnswered = true;
-                iconSprite.setAlpha(0.5);
-                this.tweens.killTweensOf(iconSprite);
-                iconSprite.setScale(1.0);
-                iconSprite.disableInteractive();
-                this.answeredQuestions++;
-
-                // Show explanation
-                if (question.explanation) {
-                    const explanation = document.createElement('div');
-                    explanation.className = 'explanation';
-                    explanation.textContent = question.explanation;
-                    questionContainer.appendChild(explanation);
-                }
-
-                // Remove after delay
-                setTimeout(() => {
-                    document.body.removeChild(overlay);
-                    document.body.removeChild(questionContainer);
-                    feedback.destroy();
-
-                    if (this.answeredQuestions === 5) {
-                        console.log('All 5 questions answered, transitioning to Space Invaders...');
-                        setTimeout(() => {
-                            this.scene.start('space_invaders', { nextScene: 'map2scene2' });
-                        }, 3000);
-                    }
-                }, 2000);
+            button.on('pointerover', () => {
+                button.setColor('#ffff00');
+                buttonBg.setVisible(true);
             });
 
-            questionContainer.appendChild(option);
-        });
+            button.on('pointerout', () => {
+                button.setColor('#ffffff');
+                buttonBg.setVisible(false);
+            });
 
-        document.body.appendChild(overlay);
-        document.body.appendChild(questionContainer);
+            button.on('pointerdown', () => {
+                // Handle answer selection
+                const isCorrect = key.toLowerCase() === question.answer.toLowerCase();
+
+                if (isCorrect) {
+                    this.score += 100;
+                    this.scoreText.setText('Score: ' + this.score);
+                }
+
+                // Show explanation with proper wrapping
+                const explanation = this.add.text(400, optionStartY + options.length * optionSpacing + 20,
+                    question.explanation, {
+                    fontFamily: 'Arial',
+                    fontSize: '16px',
+                    color: isCorrect ? '#00ff00' : '#ff0000',
+                    align: 'center',
+                    wordWrap: { width: 600, useAdvancedWrap: true },
+                    padding: { x: padding, y: padding }
+                });
+                explanation.setOrigin(0.5);
+                explanation.setDepth(3);
+
+                // Show check or x mark
+                const markImage = this.add.image(icon.x, icon.y, isCorrect ? 'checkMark' : 'xMark');
+                markImage.setDepth(2);
+                icon.isAnswered = true;
+
+                // Disable all option buttons
+                optionButtons.forEach(btn => {
+                    btn.disableInteractive();
+                    btn.buttonBg.setVisible(false);
+                });
+
+                // Update box color based on answer
+                if (icon.box) {
+                    icon.box.setStrokeStyle(3, isCorrect ? 0x00ff00 : 0xff0000);
+                }
+
+                // Remove question after delay
+                setTimeout(() => {
+                    [bg, questionText, ...optionButtons, explanation, ...optionButtons.map(b => b.buttonBg), markImage].forEach(obj => obj.destroy());
+                }, 3000);
+
+                // Check if all questions are answered
+                this.answeredQuestions++;
+                if (this.answeredQuestions >= this.icons.length) {
+                    setTimeout(() => {
+                        if (window.sceneManager) {
+                            window.sceneManager.updateProgress();
+                            window.sceneManager.startNextScene();
+                        } else {
+                            console.error('Scene manager not found');
+                            this.scene.start('space_invaders', {
+                                nextScene: 'map2gamescene2',
+                                score: this.score
+                            });
+                        }
+                    }, 3500);
+                }
+            });
+
+            button.buttonBg = buttonBg;
+            return button;
+        });
     }
 
     setupScore() {
@@ -312,9 +394,29 @@ export default class Map2GameScene extends Phaser.Scene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
+<<<<<<< Updated upstream
         SceneTransition.to(this, 'space_invaders', {
             nextScene: 'map2scene2',
             score: this.score
         });
+=======
+
+        // Save progress before transition
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map2gamescene1',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
+
+        // Transition to sorting scene
+        this.sceneTransition.fadeOut(() => {
+            this.scene.start('sort_selection', {
+                score: this.score,
+                powerUpBitmask: this.powerUpBitmask,
+                currentMap: this.currentMap
+            });
+        });
+>>>>>>> Stashed changes
     }
 }

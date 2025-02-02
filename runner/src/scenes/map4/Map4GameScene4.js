@@ -1,14 +1,18 @@
-import { getAssetPath } from "@/utils/assetLoader";
+import { getAssetPath } from '../../utils/assetLoader';
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import Phaser from 'phaser';
+<<<<<<< Updated upstream
 import SceneTransition from '@/utils/SceneTransition';
+=======
+import progressManager from '../../utils/ProgressManager';
+>>>>>>> Stashed changes
 
 
 
 export default class Map4GameScene4 extends Phaser.Scene {
     constructor() {
-        super({ key: 'map4_game4' });
+        super({ key: 'map4gamescene4' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -19,11 +23,11 @@ export default class Map4GameScene4 extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('map4scene4', '/assets/images/map4scene4.png');
-        this.load.json('map-config4', '/assets/data/map4/map-config4.json');
-        this.load.json('questions', '/assets/data/questions.json');
-        this.load.image('checkMark', '/assets/icons/checkmark.png');
-        this.load.image('xMark', '/assets/icons/xmark.png');
+        this.load.scene('map4gamescene4', getAssetPath('images/map4gamescene4.png'));
+        this.load.json('map-config4', getAssetPath('data/map4/map-config4.json'));
+        this.load.json('questions', getAssetPath('data/questions.json'));
+        this.load.image('checkMark', getAssetPath('images/checkmark.png'));
+        this.load.image('xMark', getAssetPath('images/xmark.png'));
 
         // Add error handler for asset loading
         this.load.on('loaderror', (fileObj) => {
@@ -68,7 +72,7 @@ export default class Map4GameScene4 extends Phaser.Scene {
             }
 
             // Set up the map based on config
-            const zoneIndex = 1; // Use second zone for scene 2
+            const zoneIndex = 3; // Use fourth zone for scene 4
             const activeZone = mapConfig.zones[zoneIndex] || mapConfig.zones[0];
 
             if (!activeZone) {
@@ -79,7 +83,7 @@ export default class Map4GameScene4 extends Phaser.Scene {
             const map = this.add.image(
                 activeZone.x || 400,
                 activeZone.y || 300,
-                'map4scene4'
+                'map4gamescene4'
             );
             map.setOrigin(0.5);
             map.setScale(activeZone.scale || 1);
@@ -87,6 +91,12 @@ export default class Map4GameScene4 extends Phaser.Scene {
             // Load AWS icons after we have the config
             this.loadAwsIcons(mapConfig);
             this.setupScore();
+
+            // Save progress
+            progressManager.saveProgress({
+                lastCompletedScene: 'map4gamescene4',
+                currentMap: 4
+            });
 
         } catch (error) {
             console.error('Error in create:', error);
@@ -100,7 +110,7 @@ export default class Map4GameScene4 extends Phaser.Scene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map4_game4');
+                this.scene.start('map4gamescene4');
             }, 2000);
         }
     }
@@ -313,9 +323,29 @@ export default class Map4GameScene4 extends Phaser.Scene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
+<<<<<<< Updated upstream
         SceneTransition.to(this, 'space_invaders', {
             nextScene: 'gameover',
             score: this.score
         });
+=======
+
+        // Save progress before transition
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map4gamescene4',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
+
+        // Transition to sorting scene
+        this.sceneTransition.fadeOut(() => {
+            this.scene.start('sort_selection', {
+                score: this.score,
+                powerUpBitmask: this.powerUpBitmask,
+                currentMap: this.currentMap
+            });
+        });
+>>>>>>> Stashed changes
     }
 }

@@ -9,7 +9,16 @@ export default class SortSelectionScene extends Phaser.Scene {
         this.selected = null;
         this.thumbnails = [];
         this.connections = [];
-
+        this.isAnimating = false;
+        this.sortSpeed = 500;
+        this.container = null;  // Will be initialized in create()
+        this.gridSize = {
+            x: 4,  // 4 columns
+            y: 4,  // 4 rows
+            spacing: 150,  // Space between elements
+            startX: 200,   // Starting X position
+            startY: 100    // Starting Y position
+        };
     }
     static getSortedScene() {
         return 'space_invaders';
@@ -25,12 +34,13 @@ export default class SortSelectionScene extends Phaser.Scene {
     }
 
     preload() {
-        // Map 1 thumbnails
+        // Only load assets we know exist
         this.load.image('map1scene164', getAssetPath('images/map1scene164.png'));
         this.load.image('map1scene264', getAssetPath('images/map1scene264.png'));
         this.load.image('map1scene364', getAssetPath('images/map1scene364.png'));
         this.load.image('map1scene464', getAssetPath('images/map1scene464.png'));
 
+<<<<<<< Updated upstream
         // Map 2 thumbnails
         this.load.image('map2scene164', getAssetPath('images/map2scene164.png'));
         this.load.image('map2scene264', getAssetPath('images/map2scene264.png'));
@@ -50,515 +60,449 @@ export default class SortSelectionScene extends Phaser.Scene {
             getAssetPath('fonts/arcade.xml')
         );
         this.load.json('map-config4', getAssetPath('data/map1/map-config64.json'));
+=======
+        // Load font if it exists
+        try {
+            this.load.bitmapFont('arcade',
+                getAssetPath('fonts/arcade.png'),
+                getAssetPath('fonts/arcade.xml')
+            );
+        } catch (e) {
+            console.warn('Font loading failed, using system font');
+        }
+>>>>>>> Stashed changes
     }
 
     create() {
+        // Set up the game area with a dark background
+        this.cameras.main.setBackgroundColor('#000000');
 
-        // Title
-        this.add.text(400, 50, 'Select Sorting Method', {
-            fontSize: '32px',
-            fill: '#fff'
-        }).setOrigin(0.5);
+        // Initialize the container
+        this.container = this.add.container(0, 0);
 
-        // Create graph container
-        this.container = this.add.container(400, 250);
+        // Create fixed grid positions for thumbnails
+        this.gridPositions = [];
+        const startX = 200;
+        const startY = 100;
+        const spacing = 150;
+        const itemsPerRow = 2;
 
-        // Create thumbnails in a tree structure
+        // Create a 2x2 grid for the 4 thumbnails
+        for (let i = 0; i < 4; i++) {
+            const row = Math.floor(i / itemsPerRow);
+            const col = i % itemsPerRow;
+            this.gridPositions.push({
+                x: startX + (col * spacing),
+                y: startY + (row * spacing)
+            });
+        }
+
+        // Create thumbnails in grid layout
         const thumbnailKeys = [
-            'map1scene164', 'map1scene264', 'map1scene364', 'map1scene464',
-            'map2scene164', 'map2scene264', 'map2scene364', 'map2scene464',
-            'map3scene164', 'map3scene264', 'map3scene364', 'map3scene464'
+            'map1scene164', 'map1scene264', 'map1scene364', 'map1scene464'
         ];
 
-        // Create thumbnails in a binary tree layout
+        this.thumbnails = [];
         thumbnailKeys.forEach((key, index) => {
-            const level = Math.floor(Math.log2(index + 1));
-            const position = index - Math.pow(2, level) + 1;
-            const maxInLevel = Math.pow(2, level);
-            const spacing = 100;
-
-            const x = position * (800 / maxInLevel) - 350;
-            const y = level * spacing - 100;
-
-            const thumb = this.add.image(x, y, key)
+            const pos = this.gridPositions[index];
+            const thumb = this.add.image(pos.x, pos.y, key)
                 .setScale(0.8)
                 .setInteractive();
 
-            // Add hover effects
-            thumb.on('pointerover', () => {
-                this.tweens.add({
-                    targets: thumb,
-                    scale: 1,
-                    duration: 200
-                });
-            });
+            // Add highlight box
+            const highlight = this.add.rectangle(pos.x, pos.y, 100, 80, 0x00ff00, 0)
+                .setStrokeStyle(2, 0x00ff00);
+            thumb.highlight = highlight;
 
-            thumb.on('pointerout', () => {
-                this.tweens.add({
-                    targets: thumb,
-                    scale: 0.8,
-                    duration: 200
-                });
-            });
+            // Store original position for sorting
+            thumb.originalX = pos.x;
+            thumb.originalY = pos.y;
+            thumb.currentIndex = index;
 
             this.thumbnails.push(thumb);
-            this.container.add(thumb);
-
-            // Draw connections
-            if (index > 0) {
-                const parentIndex = Math.floor((index - 1) / 2);
-                const parent = this.thumbnails[parentIndex];
-                const graphics = this.add.graphics();
-                graphics.lineStyle(2, 0x666666);
-                graphics.beginPath();
-                graphics.moveTo(parent.x, parent.y);
-                graphics.lineTo(thumb.x, thumb.y);
-                graphics.strokePath();
-                this.connections.push(graphics);
-                this.container.add(graphics);
-            }
+            this.container.add([highlight, thumb]);
         });
 
-        // Sort method buttons
+        // Create sort method buttons
         const sorts = [
-            { text: 'Bubble Sort', method: 'bubble', description: 'O(n²) - Simple but inefficient' },
-            { text: 'Quick Sort', method: 'quick', description: 'O(n log n) - Fast divide & conquer' },
-            { text: 'Merge Sort', method: 'merge', description: 'O(n log n) - Stable divide & conquer' },
-            { text: 'Insertion Sort', method: 'insertion', description: 'O(n²) - Good for small data' },
-            { text: 'Selection Sort', method: 'selection', description: 'O(n²) - Simple to understand' },
-            { text: 'Heap Sort', method: 'heap', description: 'O(n log n) - In-place sorting' }
+            { text: 'Bubble Sort', method: 'bubble', color: 0x4a90e2 },
+            { text: 'Quick Sort', method: 'quick', color: 0x50e3c2 }
         ];
 
-        // Create a container for sort buttons
-        const buttonContainer = this.add.container(400, 450);
-        const buttonSpacing = 50;
-        const buttonsPerColumn = 3;
-
+        // Position buttons at bottom
         sorts.forEach((sort, index) => {
-            const column = Math.floor(index / buttonsPerColumn);
-            const row = index % buttonsPerColumn;
-            const x = column * 250 - 200;
-            const y = row * buttonSpacing;
-
-            // Create button background
-            const buttonBg = this.add.rectangle(x, y, 200, 40, 0x333333)
+            const buttonBg = this.add.rectangle(
+                300 + (index * 200),
+                500,
+                150,
+                40,
+                sort.color,
+                0.8
+            )
+                .setStrokeStyle(2, 0xffffff)
                 .setInteractive();
 
-            // Create button text
-            const button = this.add.text(x, y, sort.text, {
-                fontSize: '20px',
-                fill: '#fff',
-                padding: { x: 10, y: 5 }
-            }).setOrigin(0.5);
-
-            // Create description text
-            const description = this.add.text(x, y + 15, sort.description, {
-                fontSize: '12px',
-                fill: '#aaa',
-            }).setOrigin(0.5);
-            description.setVisible(false);
-
-            // Add hover effects
-            buttonBg.on('pointerover', () => {
-                this.tweens.add({
-                    targets: [buttonBg, button],
-                    scaleX: 1.1,
-                    scaleY: 1.1,
-                    duration: 100
-                });
-                buttonBg.setFillStyle(0x666666);
-                description.setVisible(true);
-            });
-
-            buttonBg.on('pointerout', () => {
-                this.tweens.add({
-                    targets: [buttonBg, button],
-                    scaleX: 1,
-                    scaleY: 1,
-                    duration: 100
-                });
-                buttonBg.setFillStyle(0x333333);
-                description.setVisible(false);
-            });
+            const button = this.add.text(
+                300 + (index * 200),
+                500,
+                sort.text,
+                {
+                    fontSize: '18px',
+                    fill: '#ffffff',
+                    fontFamily: 'Arial'
+                }
+            ).setOrigin(0.5);
 
             buttonBg.on('pointerdown', () => {
-                this.selectSort(sort.method);
-                // Highlight selected button
-                sorts.forEach((_, i) => {
-                    const otherButton = buttonContainer.list[i * 3];
-                    otherButton.setFillStyle(0x333333);
-                });
-                buttonBg.setFillStyle(0x00aa00);
+                if (!this.isAnimating) {
+                    this.selectSort(sort.method);
+                }
             });
 
             // Add to container
-            buttonContainer.add([buttonBg, button, description]);
+            this.container.add([buttonBg, button]);
         });
 
-        // Add container to scene
-        this.add.existing(buttonContainer);
+        // Add speed control slider
+        this.sortSpeed = 500;
+        const slider = this.add.rectangle(700, 50, 200, 10, 0x666666)
+            .setInteractive();
+        const sliderKnob = this.add.circle(700, 50, 10, 0xffffff)
+            .setInteractive();
+
+        this.input.setDraggable(sliderKnob);
+        sliderKnob.on('drag', (pointer, dragX) => {
+            const boundedX = Phaser.Math.Clamp(dragX, 600, 800);
+            sliderKnob.x = boundedX;
+            this.sortSpeed = 1000 - ((boundedX - 600) / 200 * 900);
+        });
+
+        // Add slider to container
+        this.container.add([slider, sliderKnob]);
+    }
+
+    async animateSwap(element1, element2) {
+        if (!element1 || !element2) return;
+
+        // Get grid positions for both elements
+        const pos1 = this.gridPositions[element1.currentIndex];
+        const pos2 = this.gridPositions[element2.currentIndex];
+
+        // Swap current indices
+        const tempIndex = element1.currentIndex;
+        element1.currentIndex = element2.currentIndex;
+        element2.currentIndex = tempIndex;
+
+        // Create a promise that resolves when both animations complete
+        return new Promise(resolve => {
+            let completedAnimations = 0;
+            const onComplete = () => {
+                completedAnimations++;
+                if (completedAnimations === 2) {
+                    resolve();
+                }
+            };
+
+            // Animate both elements simultaneously
+            this.tweens.add({
+                targets: element1,
+                x: pos2.x,
+                y: pos2.y,
+                duration: this.sortSpeed,
+                ease: 'Power2',
+                onComplete: onComplete
+            });
+
+            this.tweens.add({
+                targets: element2,
+                x: pos1.x,
+                y: pos1.y,
+                duration: this.sortSpeed,
+                ease: 'Power2',
+                onComplete: onComplete
+            });
+        });
     }
 
     selectSort(method) {
+        if (this.isAnimating) return;
+        this.isAnimating = true;
         this.selected = method;
-        this.sceneManager.setSortMethod(method);
-        this.animateSort();
-    }
+        const elements = [...this.thumbnails];
 
-    animateSort() {
-        const elements = this.thumbnails;
-        switch (this.selected) {
+        // Store original positions for visualization
+        elements.forEach(el => {
+            el.originalX = el.x;
+            el.originalY = el.y;
+        });
+
+        switch (method) {
             case 'bubble':
-                this.animateBubbleSort([...elements]);
+                this.animateBubbleSort(elements);
                 break;
             case 'quick':
-                this.animateQuickSort([...elements], 0, elements.length - 1);
+                this.animateQuickSort(elements, 0, elements.length - 1);
                 break;
             case 'merge':
-                this.animateMergeSort([...elements]);
+                this.animateMergeSort(elements);
                 break;
             case 'insertion':
-                this.animateInsertionSort([...elements]);
+                this.animateInsertionSort(elements);
                 break;
             case 'selection':
-                this.animateSelectionSort([...elements]);
+                this.animateSelectionSort(elements);
                 break;
             case 'heap':
-                this.animateHeapSort([...elements]);
+                this.animateHeapSort(elements);
                 break;
         }
     }
 
     async animateBubbleSort(elements) {
-        const positions = elements.map(el => ({ x: el.x, y: el.y }));
-
-        for (let i = 0; i < elements.length; i++) {
+        for (let i = 0; i < elements.length - 1; i++) {
             for (let j = 0; j < elements.length - i - 1; j++) {
-                // Highlight current comparison
-                elements[j].setTint(0x00ff00);
-                elements[j + 1].setTint(0x00ff00);
+                // Highlight current pair being compared
+                this.highlightElements(
+                    [elements[j], elements[j + 1]],
+                    ['current', 'compare']
+                );
+                await new Promise(resolve => setTimeout(resolve, this.sortSpeed / 2));
 
-                await new Promise(resolve => {
-                    this.time.delayedCall(500, resolve);
-                });
-
-                if (elements[j].x > elements[j + 1].x) {
-                    // Swap positions
-                    const tempX = positions[j].x;
-                    positions[j].x = positions[j + 1].x;
-                    positions[j + 1].x = tempX;
-
-                    // Animate the swap
-                    this.tweens.add({
-                        targets: elements[j],
-                        x: positions[j].x,
-                        duration: 500
-                    });
-                    this.tweens.add({
-                        targets: elements[j + 1],
-                        x: positions[j + 1].x,
-                        duration: 500
-                    });
-
-                    // Swap elements in array
+                if (elements[j].originalY > elements[j + 1].originalY) {
+                    await this.animateSwap(elements[j], elements[j + 1]);
                     [elements[j], elements[j + 1]] = [elements[j + 1], elements[j]];
                 }
+            }
+        }
+        await this.finishSorting();
+    }
 
-                // Remove highlight
-                elements[j].clearTint();
-                elements[j + 1].clearTint();
+    async animateQuickSort(arr, start, end) {
+        if (start >= end) return;
+
+        // Highlight pivot
+        this.highlightElements([arr[end]], ['pivot']);
+        await new Promise(resolve => setTimeout(resolve, this.sortSpeed / 2));
+
+        const pivot = await this.partition(arr, start, end);
+        await this.animateQuickSort(arr, start, pivot - 1);
+        await this.animateQuickSort(arr, pivot + 1, end);
+    }
+
+    async partition(arr, start, end) {
+        const pivotValue = arr[end].y;
+        let pivotIndex = start;
+
+        // Highlight pivot
+        this.highlightElements([arr[end]], ['pivot']);
+
+        for (let i = start; i < end; i++) {
+            // Highlight current comparison
+            this.highlightElements([arr[i], arr[end]], ['current', 'pivot']);
+            await new Promise(resolve => setTimeout(resolve, this.sortSpeed / 2));
+
+            if (arr[i].y < pivotValue) {
+                if (i !== pivotIndex) {
+                    await this.animateSwap(arr[i], arr[pivotIndex], true);
+                    [arr[i], arr[pivotIndex]] = [arr[pivotIndex], arr[i]];
+                }
+                pivotIndex++;
             }
         }
 
-        this.startGame();
+        if (pivotIndex !== end) {
+            await this.animateSwap(arr[pivotIndex], arr[end], true);
+            [arr[pivotIndex], arr[end]] = [arr[end], arr[pivotIndex]];
+        }
+
+        return pivotIndex;
     }
 
-    async animateQuickSort(elements, start, end) {
-        if (start >= end) {
-            if (start === end) elements[start].setTint(0x00ff00);
-            return;
-        }
-
-        const pivot = elements[end];
-        pivot.setTint(0xff0000);
-        let i = start - 1;
-
-        for (let j = start; j < end; j++) {
-            elements[j].setTint(0x00ff00);
-            await new Promise(resolve => this.time.delayedCall(500, resolve));
-
-            if (elements[j].x < pivot.x) {
-                i++;
-                // Swap animation
-                const tempX = elements[i].x;
-                elements[i].x = elements[j].x;
-                elements[j].x = tempX;
-                [elements[i], elements[j]] = [elements[j], elements[i]];
-            }
-
-            elements[j].clearTint();
-        }
-
-        // Place pivot in correct position
-        const tempX = elements[i + 1].x;
-        elements[i + 1].x = pivot.x;
-        pivot.x = tempX;
-        [elements[i + 1], elements[end]] = [elements[end], elements[i + 1]];
-
-        pivot.clearTint();
-
-        // Recursively sort sub-arrays
-        await this.animateQuickSort(elements, start, i);
-        await this.animateQuickSort(elements, i + 2, end);
-
-        if (start === 0 && end === elements.length - 1) {
-            this.startGame();
-        }
+    async animateMergeSort(arr) {
+        this.isAnimating = true;
+        await this.mergeSortHelper(arr, 0, arr.length - 1);
+        this.isAnimating = false;
     }
 
-    async animateMergeSort(elements) {
-        if (elements.length <= 1) return elements;
+    async mergeSortHelper(arr, start, end) {
+        if (start >= end) return;
 
-        const mid = Math.floor(elements.length / 2);
-        const left = elements.slice(0, mid);
-        const right = elements.slice(mid);
+        const mid = Math.floor((start + end) / 2);
+        await this.mergeSortHelper(arr, start, mid);
+        await this.mergeSortHelper(arr, mid + 1, end);
+        await this.merge(arr, start, mid, end);
+    }
 
-        // Highlight split
-        left.forEach(el => el.setTint(0x0000ff));
-        right.forEach(el => el.setTint(0xff0000));
-        await new Promise(resolve => this.time.delayedCall(500, resolve));
-
-        // Recursively sort
-        await this.animateMergeSort(left);
-        await this.animateMergeSort(right);
-
-        // Merge animation
-        let i = 0, j = 0, k = 0;
-        const merged = [];
-        const positions = elements.map(el => el.x);
+    async merge(arr, start, mid, end) {
+        const left = arr.slice(start, mid + 1);
+        const right = arr.slice(mid + 1, end + 1);
+        let i = 0, j = 0, k = start;
 
         while (i < left.length && j < right.length) {
-            if (left[i].x < right[j].x) {
-                merged[k] = left[i];
-                elements[k].x = positions[k];
+            if (left[i].y <= right[j].y) {
+                if (arr[k] !== left[i]) {
+                    await this.animateSwap(arr[k], left[i]);
+                    arr[k] = left[i];
+                }
                 i++;
             } else {
-                merged[k] = right[j];
-                elements[k].x = positions[k];
+                if (arr[k] !== right[j]) {
+                    await this.animateSwap(arr[k], right[j]);
+                    arr[k] = right[j];
+                }
                 j++;
             }
             k++;
         }
 
-        // Add remaining elements
         while (i < left.length) {
-            merged[k] = left[i];
-            elements[k].x = positions[k];
+            if (arr[k] !== left[i]) {
+                await this.animateSwap(arr[k], left[i]);
+                arr[k] = left[i];
+            }
             i++;
             k++;
         }
 
         while (j < right.length) {
-            merged[k] = right[j];
-            elements[k].x = positions[k];
+            if (arr[k] !== right[j]) {
+                await this.animateSwap(arr[k], right[j]);
+                arr[k] = right[j];
+            }
             j++;
             k++;
         }
-
-        // Clear tints
-        elements.forEach(el => el.clearTint());
-
-        if (elements.length === this.thumbnails.length) {
-            this.startGame();
-        }
-
-        return merged;
     }
 
-    async animateInsertionSort(elements) {
-        const positions = elements.map(el => ({ x: el.x, y: el.y }));
+    async animateSelectionSort(arr) {
+        this.isAnimating = true;
+        const n = arr.length;
 
-        for (let i = 1; i < elements.length; i++) {
-            const key = elements[i];
-            key.setTint(0xff0000);
-            let j = i - 1;
-
-            await new Promise(resolve => this.time.delayedCall(500, resolve));
-
-            while (j >= 0 && elements[j].x > key.x) {
-                elements[j].setTint(0x00ff00);
-
-                // Move element right
-                elements[j + 1] = elements[j];
-                this.tweens.add({
-                    targets: elements[j],
-                    x: positions[j + 1].x,
-                    duration: 500
-                });
-
-                j--;
-                await new Promise(resolve => this.time.delayedCall(300, resolve));
-                elements[j + 2]?.clearTint();
-            }
-
-            elements[j + 1] = key;
-            this.tweens.add({
-                targets: key,
-                x: positions[j + 1].x,
-                duration: 500
-            });
-
-            await new Promise(resolve => this.time.delayedCall(500, resolve));
-            key.clearTint();
-        }
-
-        this.startGame();
-    }
-
-    async animateSelectionSort(elements) {
-        const positions = elements.map(el => ({ x: el.x, y: el.y }));
-
-        for (let i = 0; i < elements.length - 1; i++) {
+        for (let i = 0; i < n - 1; i++) {
             let minIdx = i;
-            elements[i].setTint(0xff0000);
 
-            for (let j = i + 1; j < elements.length; j++) {
-                elements[j].setTint(0x00ff00);
-                await new Promise(resolve => this.time.delayedCall(300, resolve));
+            // Highlight current element
+            this.highlightElements([arr[i]], ['current']);
 
-                if (elements[j].x < elements[minIdx].x) {
-                    elements[minIdx].clearTint();
+            for (let j = i + 1; j < n; j++) {
+                // Highlight element being compared
+                this.highlightElements(
+                    [arr[i], arr[j], arr[minIdx]],
+                    ['current', 'compare', 'pivot']
+                );
+                await new Promise(resolve => setTimeout(resolve, this.sortSpeed / 2));
+
+                if (arr[j].y < arr[minIdx].y) {
                     minIdx = j;
-                    elements[minIdx].setTint(0xff00ff);
-                } else {
-                    elements[j].clearTint();
                 }
             }
 
             if (minIdx !== i) {
-                // Swap animation
-                const tempX = positions[i].x;
-                positions[i].x = positions[minIdx].x;
-                positions[minIdx].x = tempX;
-
-                this.tweens.add({
-                    targets: elements[i],
-                    x: positions[i].x,
-                    duration: 500
-                });
-                this.tweens.add({
-                    targets: elements[minIdx],
-                    x: positions[minIdx].x,
-                    duration: 500
-                });
-
-                [elements[i], elements[minIdx]] = [elements[minIdx], elements[i]];
+                await this.animateSwap(arr[i], arr[minIdx]);
+                [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
             }
-
-            await new Promise(resolve => this.time.delayedCall(500, resolve));
-            elements[i].clearTint();
-            elements[minIdx].clearTint();
         }
-
-        this.startGame();
+        await this.finishSorting();
     }
 
-    async animateHeapSort(elements) {
-        const positions = elements.map(el => ({ x: el.x, y: el.y }));
+    async animateInsertionSort(arr) {
+        this.isAnimating = true;
+        const n = arr.length;
 
-        const heapify = async (n, i) => {
-            let largest = i;
-            const left = 2 * i + 1;
-            const right = 2 * i + 2;
+        for (let i = 1; i < n; i++) {
+            const key = arr[i];
+            let j = i - 1;
 
-            elements[i].setTint(0xff0000);
-            await new Promise(resolve => this.time.delayedCall(300, resolve));
-
-            if (left < n) {
-                elements[left].setTint(0x00ff00);
-                if (elements[left].x > elements[largest].x) {
-                    elements[largest].clearTint();
-                    largest = left;
-                    elements[largest].setTint(0xff0000);
-                }
+            while (j >= 0 && arr[j].y > key.y) {
+                await this.animateSwap(arr[j + 1], arr[j]);
+                arr[j + 1] = arr[j];
+                j--;
             }
-
-            if (right < n) {
-                elements[right].setTint(0x00ff00);
-                if (elements[right].x > elements[largest].x) {
-                    elements[largest].clearTint();
-                    largest = right;
-                    elements[largest].setTint(0xff0000);
-                }
-            }
-
-            if (largest !== i) {
-                // Swap animation
-                const tempX = positions[i].x;
-                positions[i].x = positions[largest].x;
-                positions[largest].x = tempX;
-
-                this.tweens.add({
-                    targets: elements[i],
-                    x: positions[i].x,
-                    duration: 500
-                });
-                this.tweens.add({
-                    targets: elements[largest],
-                    x: positions[largest].x,
-                    duration: 500
-                });
-
-                [elements[i], elements[largest]] = [elements[largest], elements[i]];
-
-                await heapify(n, largest);
-            }
-
-            elements[i].clearTint();
-            if (left < n) elements[left].clearTint();
-            if (right < n) elements[right].clearTint();
-        };
-
-        // Build max heap
-        for (let i = Math.floor(elements.length / 2) - 1; i >= 0; i--) {
-            await heapify(elements.length, i);
+            arr[j + 1] = key;
         }
-
-        // Extract elements from heap
-        for (let i = elements.length - 1; i > 0; i--) {
-            // Swap root with last element
-            const tempX = positions[0].x;
-            positions[0].x = positions[i].x;
-            positions[i].x = tempX;
-
-            this.tweens.add({
-                targets: elements[0],
-                x: positions[0].x,
-                duration: 500
-            });
-            this.tweens.add({
-                targets: elements[i],
-                x: positions[i].x,
-                duration: 500
-            });
-
-            [elements[0], elements[i]] = [elements[i], elements[0]];
-
-            await new Promise(resolve => this.time.delayedCall(500, resolve));
-            await heapify(i, 0);
-        }
-
-        this.startGame();
+        await this.finishSorting();
     }
 
-    startGame() {
-        this.time.delayedCall(1000, () => {
-            const firstScene = this.sceneManager.getFirstScene();
-            this.scene.start(firstScene, {
-                sortType: this.selected,
-                structure: this.thumbnails,
-                sortedScenes: this.sceneManager.getSortedScenes()
+    async animateHeapSort(arr) {
+        this.isAnimating = true;
+        const n = arr.length;
+
+        // Build heap
+        for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+            await this.heapify(arr, n, i);
+        }
+
+        // Extract elements from heap one by one
+        for (let i = n - 1; i > 0; i--) {
+            await this.animateSwap(arr[0], arr[i]);
+            [arr[0], arr[i]] = [arr[i], arr[0]];
+            await this.heapify(arr, i, 0);
+        }
+        await this.finishSorting();
+    }
+
+    async heapify(arr, n, i) {
+        let largest = i;
+        const left = 2 * i + 1;
+        const right = 2 * i + 2;
+
+        if (left < n && arr[left].y > arr[largest].y) {
+            largest = left;
+        }
+
+        if (right < n && arr[right].y > arr[largest].y) {
+            largest = right;
+        }
+
+        if (largest !== i) {
+            await this.animateSwap(arr[i], arr[largest]);
+            [arr[i], arr[largest]] = [arr[largest], arr[i]];
+            await this.heapify(arr, n, largest);
+        }
+    }
+
+    async finishSorting() {
+        this.isAnimating = false;
+
+        // Visual feedback - scale animation for all thumbnails
+        const promises = this.thumbnails.map(thumb => {
+            return new Promise(resolve => {
+                this.tweens.add({
+                    targets: thumb,
+                    scale: { from: 0.8, to: 1 },
+                    duration: 200,
+                    yoyo: true,
+                    ease: 'Power2',
+                    onComplete: resolve
+                });
             });
+        });
+
+        await Promise.all(promises);
+
+        // Store the sorted order and transition to the next scene
+        const sortedScenes = this.thumbnails.map(thumb => thumb.texture.key);
+        this.scene.start('game_scene', {
+            sortType: this.selected,
+            sortedScenes: sortedScenes,
+            score: this.score || 0,
+            currentMap: this.currentMap || 1
+        });
+    }
+
+    highlightElements(elements, types) {
+        // Clear all previous highlights
+        this.thumbnails.forEach(thumb => thumb.highlight.setAlpha(0));
+
+        // Apply new highlights with different colors for different types
+        elements.forEach((element, index) => {
+            if (element && types[index]) {
+                const color = types[index] === 'pivot' ? 0xff0000 :
+                    types[index] === 'current' ? 0x00ff00 : 0x0000ff;
+                element.highlight
+                    .setFillStyle(color)
+                    .setAlpha(0.3);
+            }
         });
     }
     transitionToNextScene() {

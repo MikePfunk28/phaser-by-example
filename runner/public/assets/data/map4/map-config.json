@@ -12,7 +12,7 @@
                 "questionTypes": ["Networking", "DNS"]
             },
             {
-                "name": "Arch_Amazon-Athena_48.png",
+                "name": "Arch_Amazon-CloudFront_48.png",
                 "category": "Arch_Networking-Content-Delivery",
                 "x": 500,
                 "y": 200,
@@ -26,15 +26,15 @@
                 "questionTypes": ["Security", "WAF"]
             },
             {
-                "name": "Arch_AWS-WAF_48.png",
+                "name": "Arch_AWS-Shield_48.png",
                 "category": "Arch_Security-Identity-Compliance",
                 "x": 450,
                 "y": 300,
-                "questionTypes": ["Security", "WAF"]
+                "questionTypes": ["Security", "DDoS"]
             },
             {
-                "name": "Res_Amazon-VPC_Internet-Gateway_48.png",
-                "category": "Res_Networking-Content-Delivery",
+                "name": "Arch_Amazon-VPC_Internet-Gateway_48.png",
+                "category": "Arch_Networking-Content-Delivery",
                 "x": 150,
                 "y": 250,
                 "questionTypes": ["Networking", "VPC"]

@@ -21,22 +21,22 @@ export default class Preloader extends Phaser.Scene {
 
     preload() {
         // Map 1 thumbnails
-        this.load.image('map1scene164', getAssetPath('images/map1scene164.png'));
-        this.load.image('map1scene264', getAssetPath('images/map1scene264.png'));
-        this.load.image('map1scene364', getAssetPath('images/map1scene364.png'));
-        this.load.image('map1scene464', getAssetPath('images/map1scene464.png'));
+        this.load.scene('map1gamescene164', getAssetPath('images/map1gamescene164.png'));
+        this.load.scene('map1gamescene264', getAssetPath('images/map1gamescene264.png'));
+        this.load.scene('map1gamescene364', getAssetPath('images/map1gamescene364.png'));
+        this.load.scene('map1gamescene464', getAssetPath('images/map1gamescene464.png'));
 
         // Map 2 thumbnails
-        this.load.image('map2scene164', getAssetPath('images/map2scene164.png'));
-        this.load.image('map2scene264', getAssetPath('images/map2scene264.png'));
-        this.load.image('map2scene364', getAssetPath('images/map2scene364.png'));
-        this.load.image('map2scene464', getAssetPath('images/map2scene464.png'));
+        this.load.scene('map2gamescene164', getAssetPath('images/map2gamescene164.png'));
+        this.load.scene('map2gamescene264', getAssetPath('images/map2gamescene264.png'));
+        this.load.scene('map2gamescene364', getAssetPath('images/map2gamescene364.png'));
+        this.load.scene('map2gamescene464', getAssetPath('images/map2gamescene464.png'));
 
         // Map 3 thumbnails
-        this.load.image('map3scene164', getAssetPath('images/map3scene164.png'));
-        this.load.image('map3scene264', getAssetPath('images/map3scene264.png'));
-        this.load.image('map3scene364', getAssetPath('images/map3scene364.png'));
-        this.load.image('map3scene464', getAssetPath('images/map3scene464.png'));
+        this.load.scene('map3gamescene164', getAssetPath('images/map3gamescene164.png'));
+        this.load.scene('map3gamescene264', getAssetPath('images/map3gamescene264.png'));
+        this.load.scene('map3gamescene364', getAssetPath('images/map3gamescene364.png'));
+        this.load.scene('map3gamescene464', getAssetPath('images/map3gamescene464.png'));
 
         this.load.json('map-config', getAssetPath('data/map1/map-config.json'));
         this.load.json('questions', getAssetPath('data/questions.json'));
@@ -64,28 +64,28 @@ export default class Preloader extends Phaser.Scene {
         this.load.mapConfig('map-config3', getAssetPath('data/map4/map-config3.json'));
         this.load.mapConfig('map-config4', getAssetPath('data/map4/map-config4.json'));
 
-        this.load.map('map1scene1', getAssetPath('images/map1scene1.png'));
-        this.load.map('map1scene2', getAssetPath('images/map1scene2.png'));
-        this.load.map('map1scene3', getAssetPath('images/map1scene3.png'));
-        this.load.map('map1scene4', getAssetPath('images/map1scene4.png'));
+        this.load.map('map1gamescene1', getAssetPath('images/map1gamescene1.png'));
+        this.load.map('map1gamescene2', getAssetPath('images/map1gamescene2.png'));
+        this.load.map('map1gamescene3', getAssetPath('images/map1gamescene3.png'));
+        this.load.map('map1gamescene4', getAssetPath('images/map1gamescene4.png'));
 
         // Map 2 thumbnails
-        this.load.map('map2scene1', getAssetPath('images/map2scene1.png'));
-        this.load.map('map2scene2', getAssetPath('images/map2scene2.png'));
-        this.load.map('map2scene3', getAssetPath('images/map2scene3.png'));
-        this.load.map('map2scene4', getAssetPath('images/map2scene4.png'));
+        this.load.map('map2gamescene1', getAssetPath('images/map2gamescene1.png'));
+        this.load.map('map2gamescene2', getAssetPath('images/map2gamescene2.png'));
+        this.load.map('map2gamescene3', getAssetPath('images/map2gamescene3.png'));
+        this.load.map('map2gamescene4', getAssetPath('images/map2gamescene4.png'));
 
         // Map 3 thumbnails
-        this.load.map('map3scene1', getAssetPath('images/map3scene1.png'));
-        this.load.map('map3scene2', getAssetPath('images/map3scene2.png'));
-        this.load.map('map3scene3', getAssetPath('images/map3scene3.png'));
-        this.load.map('map3scene4', getAssetPath('images/map3scene4.png'));
+        this.load.map('map3gamescene1', getAssetPath('images/map3gamescene1.png'));
+        this.load.map('map3gamescene2', getAssetPath('images/map3gamescene2.png'));
+        this.load.map('map3gamescene3', getAssetPath('images/map3gamescene3.png'));
+        this.load.map('map3gamescene4', getAssetPath('images/map3gamescene4.png'));
 
         // Map 4 thumbnails
-        this.load.map('map4scene1', getAssetPath('images/map4scene1.png'));
-        this.load.map('map4scene2', getAssetPath('images/map4scene2.png'));
-        this.load.map('map4scene3', getAssetPath('images/map4scene3.png'));
-        this.load.map('map4scene4', getAssetPath('images/map4scene4.png'));
+        this.load.map('map4gamescene1', getAssetPath('images/map4gamescene1.png'));
+        this.load.map('map4gamescene2', getAssetPath('images/map4gamescene2.png'));
+        this.load.map('map4gamescene3', getAssetPath('images/map4gamescene3.png'));
+        this.load.map('map4gamescene4', getAssetPath('images/map4gamescene4.png'));
 
         // Load feedback marks
         this.load.image('checkMark', getAssetPath('images/checkmark.png'));

@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import SceneOrderManager from '@/utils/SceneOrderManager';
 
 // src/constants/sceneTransitions.js
@@ -50,6 +51,22 @@ export default class SceneTransition {
     }
 
     static to(currentScene, targetScene, data = {}) {
+=======
+import { ProgressManager } from './ProgressManager';
+
+class SceneTransition {
+    static progressManager = new ProgressManager();
+
+    static to(currentScene, targetScene, data = {}) {
+        // Save current progress
+        this.progressManager.saveProgress({
+            score: data.score || 0,
+            powerUpBitmask: data.powerUpBitmask || 0,
+            currentMap: data.currentMap || 1
+        });
+
+        // Check if we're in a test environment or if cameras are available
+>>>>>>> Stashed changes
         if (!currentScene.cameras || !currentScene.cameras.main) {
             currentScene.scene.start(targetScene, data);
             return;
@@ -69,6 +86,13 @@ export default class SceneTransition {
 
     // Method for transitioning with a loading screen
     static toWithLoading(currentScene, targetScene, data = {}) {
+        // Save current progress
+        this.progressManager.saveProgress({
+            score: data.score || 0,
+            powerUpBitmask: data.powerUpBitmask || 0,
+            currentMap: data.currentMap || 1
+        });
+
         if (!currentScene.cameras || !currentScene.cameras.main) {
             currentScene.scene.start('bootscene', {
                 nextScene: targetScene,
@@ -85,5 +109,61 @@ export default class SceneTransition {
             });
         });
     }
+<<<<<<< Updated upstream
+=======
+
+    static toSpaceInvaders(currentScene, nextScene, data = {}) {
+        const progress = this.progressManager.loadProgress();
+        const spaceInvadersData = {
+            score: data.score || progress.score || 0,
+            powerUpBitmask: data.powerUpBitmask || progress.powerUpBitmask || 0,
+            triviaScore: data.triviaScore || 0,
+            nextScene: nextScene
+        };
+
+        this.to(currentScene, 'space_invaders', spaceInvadersData);
+    }
+
+    static toSortSelection(currentScene, data = {}) {
+        const progress = this.progressManager.loadProgress();
+        const sortSelectionData = {
+            score: data.score || progress.score || 0,
+            powerUpBitmask: data.powerUpBitmask || progress.powerUpBitmask || 0,
+            currentMap: data.currentMap || progress.currentMap || 1
+        };
+
+        this.to(currentScene, 'sort_selection', sortSelectionData);
+    }
+
+    static toGameScene(currentScene, mapNumber, sceneNumber, data = {}) {
+        const progress = this.progressManager.loadProgress();
+        const gameSceneData = {
+            score: data.score || progress.score || 0,
+            powerUpBitmask: data.powerUpBitmask || progress.powerUpBitmask || 0,
+            currentMap: mapNumber
+        };
+
+        const targetScene = `map${mapNumber}scene${sceneNumber}`;
+        this.to(currentScene, targetScene, gameSceneData);
+    }
+
+    static toMainMenu(currentScene, data = {}) {
+        // Reset progress when going back to main menu
+        this.progressManager.resetProgress();
+        this.to(currentScene, 'mainmenu', data);
+    }
+
+    static toGameOver(currentScene, data = {}) {
+        const progress = this.progressManager.loadProgress();
+        const gameOverData = {
+            score: data.score || progress.score || 0,
+            powerUpBitmask: data.powerUpBitmask || progress.powerUpBitmask || 0,
+            currentMap: data.currentMap || progress.currentMap || 1
+        };
+
+        this.to(currentScene, 'gameover', gameOverData);
+    }
+}
+>>>>>>> Stashed changes
 
 } 

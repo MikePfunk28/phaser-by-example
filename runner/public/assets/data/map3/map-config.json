@@ -13,10 +13,10 @@
             },
             {
                 "name": "Arch_Amazon-Athena_48.png",
-                "category": "Arch_Amazon-Athena",
+                "category": "Arch_Analytics",
                 "x": 500,
                 "y": 200,
-                "questionTypes": ["Analtyics", "AA"]
+                "questionTypes": ["Analytics", "AA"]
             },
             {
                 "name": "Arch_Amazon-Simple-Queue-Service_48.png",
@@ -26,11 +26,11 @@
                 "questionTypes": ["Integration", "Messaging"]
             },
             {
-                "name": "Arch_Amazon-Elastic-Container-Registry_48.png",
-                "category": "Arch_Containers",
+                "name": "Arch_AWS-Step-Functions_48.png",
+                "category": "Arch_App-Integration",
                 "x": 450,
                 "y": 300,
-                "questionTypes": ["Container", "ECR"]
+                "questionTypes": ["Integration", "Step Functions"]
             },
             {
                 "name": "Arch_Amazon-SageMaker_48.png",

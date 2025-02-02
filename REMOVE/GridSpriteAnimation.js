@@ -6,7 +6,7 @@ export default class GridSpriteAnimation extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('bg', '../assets/images/map1scene1.png');
+        this.load.image('bg', '../assets/images/map1gamescene1.png');
         this.load.spritesheet('spsh1', '../assets/images/spritesheet2.png', { frameWidth: 64, frameHeight: 112 });
     }
 

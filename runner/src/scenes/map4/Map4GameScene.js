@@ -2,12 +2,16 @@ import { getAssetPath } from "@/utils/assetLoader";
 import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import Phaser from 'phaser';
+<<<<<<< Updated upstream
 import SceneTransition from '@/utils/SceneTransition';
+=======
+import progressManager from '../../utils/ProgressManager';
+>>>>>>> Stashed changes
 
 
 export default class Map4GameScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'map4_game1' });
+        super({ key: 'map4gamescene1' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -18,7 +22,7 @@ export default class Map4GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('map4scene1', getAssetPath('images/map4scene1.png'));
+        this.load.scene('map4gamescene1', getAssetPath('images/map4gamescene1.png'));
         this.load.json('map-config', getAssetPath('data/map4/map-config.json'));
         this.load.json('questions', getAssetPath('data/questions.json'));
         this.load.image('checkMark', getAssetPath('images/checkmark.png'));
@@ -60,14 +64,12 @@ export default class Map4GameScene extends Phaser.Scene {
             this.questions = this.cache.json.get('questions');
             const mapConfig = this.cache.json.get('map-config');
 
-            console.log('MapConfig loaded:', mapConfig); // Debug log
-
             if (!mapConfig || !mapConfig.zones) {
                 throw new Error('Invalid map config structure');
             }
 
             // Set up the map based on config
-            const zoneIndex = 1; // Use second zone for scene 2
+            const zoneIndex = 0; // Use first zone for scene 1
             const activeZone = mapConfig.zones[zoneIndex] || mapConfig.zones[0];
 
             if (!activeZone) {
@@ -78,7 +80,7 @@ export default class Map4GameScene extends Phaser.Scene {
             const map = this.add.image(
                 activeZone.x || 400,
                 activeZone.y || 300,
-                'map4scene1'
+                'map4gamescene1'
             );
             map.setOrigin(0.5);
             map.setScale(activeZone.scale || 1);
@@ -86,6 +88,12 @@ export default class Map4GameScene extends Phaser.Scene {
             // Load AWS icons after we have the config
             this.loadAwsIcons(mapConfig);
             this.setupScore();
+
+            // Save progress
+            progressManager.saveProgress({
+                lastCompletedScene: 'map4gamescene1',
+                currentMap: 4
+            });
 
         } catch (error) {
             console.error('Error in create:', error);
@@ -99,7 +107,7 @@ export default class Map4GameScene extends Phaser.Scene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map4_game1');
+                this.scene.start('map4gamescene1');
             }, 2000);
         }
     }
@@ -118,16 +126,13 @@ export default class Map4GameScene extends Phaser.Scene {
                 if (relevantQuestion && relevantQuestion.image) {
                     // Use the image path directly from the question
                     console.log('Loading icon from question:', relevantQuestion.image);
-                    this.load.image(`icon_${icon.name}`, relevantQuestion.image);
+                    this.load.image(`icon_${icon.name}`, getAssetPath(relevantQuestion.image));
                 } else {
                     // Fallback to constructing the path based on the pattern
-                    // Example: public/assets/images/services16/Arch_Storage/16/Arch_Amazon-Simple-Storage-Service_16.png
-                    const iconPath = `assets/images/services16/${icon.category}/48/${icon.name}`;
+                    const iconPath = `images/services16/${icon.category}/48/${icon.name}`;
                     console.log('Loading icon with constructed path:', iconPath);
-                    this.load.image(`icon_${icon.name}`, iconPath);
+                    this.load.image(`icon_${icon.name}`, getAssetPath(iconPath));
                 }
-                const iconPath = `/assets/images/services16/${icon.category}/48/${icon.name}`;
-                this.load.image(`icon_${icon.name}`, iconPath);
             });
         });
 
@@ -287,7 +292,7 @@ export default class Map4GameScene extends Phaser.Scene {
                     if (this.answeredQuestions === 5) {
                         console.log('All 5 questions answered, transitioning to Space Invaders...');
                         setTimeout(() => {
-                            this.scene.start('space_invaders', { nextScene: 'map4_game2' });
+                            this.scene.start('space_invaders', { nextScene: 'map4gamescene2' });
                         }, 3000);
                     }
                 }, 2000);

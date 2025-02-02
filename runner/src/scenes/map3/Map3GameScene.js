@@ -3,22 +3,45 @@ import Player from '/src/gameobjects/player';
 import Generator from '/src/gameobjects/generator';
 import Phaser from 'phaser';
 import SceneTransition from '@/utils/SceneTransition';
+<<<<<<< Updated upstream
 
+=======
+import { ProgressManager } from '@/utils/ProgressManager';
+>>>>>>> Stashed changes
 
 export default class Map3GameScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'map3scene1' });
+        super({ key: 'map3gamescene1' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
-        this.currentMap = 1;
+        this.currentMap = 3;
         this.questions = null;
         this.icons = [];
         this.answeredQuestions = 0;
+        this.isTransitioning = false;
+        this.clickCooldown = false;
+        this.powerUpBitmask = 0;
+        this.progressManager = new ProgressManager();
+        this.sceneTransition = new SceneTransition();
+    }
+
+    init(data) {
+        this.score = data.score || 0;
+        this.powerUpBitmask = data.powerUpBitmask || 0;
+        this.currentMap = data.currentMap || 3;
+
+        // Save progress
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map3gamescene1',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
     }
 
     preload() {
-        this.load.image('map3scene1', getAssetPath('images/map3scene1.png'));
+        this.load.scene('map3gamescene1', getAssetPath('images/map3gamescene1.png'));
         this.load.json('map-config', getAssetPath('data/map3/map-config.json'));
         this.load.json('questions', getAssetPath('data/questions.json'));
         this.load.image('checkMark', getAssetPath('images/checkmark.png'));
@@ -50,24 +73,35 @@ export default class Map3GameScene extends Phaser.Scene {
     }
 
     create() {
+        // Add semi-transparent dark background
+        this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8);
+
         // Initialize sound settings
         if (this.sound && this.sound.context) {
             this.sound.pauseOnBlur = false;
         }
+
+        // Set up score display first
+        this.setupScore();
+
+        // Add power-up display
+        this.powerUpText = this.add.text(16, 56, this.getPowerUpText(), {
+            fontSize: '24px',
+            fill: '#00ff00',
+            fontFamily: 'Arial'
+        });
 
         // Get the loaded questions and map config with error handling
         try {
             this.questions = this.cache.json.get('questions');
             const mapConfig = this.cache.json.get('map-config');
 
-            console.log('MapConfig loaded:', mapConfig); // Debug log
-
             if (!mapConfig || !mapConfig.zones) {
                 throw new Error('Invalid map config structure');
             }
 
             // Set up the map based on config
-            const zoneIndex = 1; // Use second zone for scene 2
+            const zoneIndex = 0; // Use first zone for scene 1
             const activeZone = mapConfig.zones[zoneIndex] || mapConfig.zones[0];
 
             if (!activeZone) {
@@ -78,14 +112,16 @@ export default class Map3GameScene extends Phaser.Scene {
             const map = this.add.image(
                 activeZone.x || 400,
                 activeZone.y || 300,
-                'map3scene1'
+                'map3gamescene1'
             );
             map.setOrigin(0.5);
             map.setScale(activeZone.scale || 1);
 
             // Load AWS icons after we have the config
             this.loadAwsIcons(mapConfig);
-            this.setupScore();
+
+            // Add fade-in transition
+            this.sceneTransition.fadeIn();
 
         } catch (error) {
             console.error('Error in create:', error);
@@ -99,9 +135,18 @@ export default class Map3GameScene extends Phaser.Scene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map3scene1');
+                this.scene.start('map3gamescene1');
             }, 2000);
         }
+    }
+
+    getPowerUpText() {
+        const powerUps = [];
+        if (this.powerUpBitmask & 1) powerUps.push('Life+');
+        if (this.powerUpBitmask & 2) powerUps.push('Size+');
+        if (this.powerUpBitmask & 4) powerUps.push('Speed+');
+        if (this.powerUpBitmask & 8) powerUps.push('Fire+');
+        return `Power-ups: ${powerUps.join(' ')}`;
     }
 
     loadAwsIcons(mapConfig) {
@@ -117,17 +162,12 @@ export default class Map3GameScene extends Phaser.Scene {
 
                 if (relevantQuestion && relevantQuestion.image) {
                     // Use the image path directly from the question
-                    console.log('Loading icon from question:', relevantQuestion.image);
-                    this.load.image(`icon_${icon.name}`, relevantQuestion.image);
+                    this.load.image(`icon_${icon.name}`, getAssetPath(relevantQuestion.image));
                 } else {
                     // Fallback to constructing the path based on the pattern
-                    // Example: public/assets/images/services16/Arch_Storage/16/Arch_Amazon-Simple-Storage-Service_16.png
-                    const iconPath = `assets/images/services16/${icon.category}/48/${icon.name}`;
-                    console.log('Loading icon with constructed path:', iconPath);
-                    this.load.image(`icon_${icon.name}`, iconPath);
+                    const iconPath = `images/services16/${icon.category}/48/${icon.name}`;
+                    this.load.image(`icon_${icon.name}`, getAssetPath(iconPath));
                 }
-                const iconPath = `/assets/images/services16/${icon.category}/48/${icon.name}`;
-                this.load.image(`icon_${icon.name}`, iconPath);
             });
         });
 
@@ -143,7 +183,11 @@ export default class Map3GameScene extends Phaser.Scene {
                         .setInteractive()
                         .setScale(0.5);
 
-                    console.log('Creating icon sprite:', icon.name);
+                    // Add green box around icon
+                    const box = this.add.rectangle(icon.x, icon.y, 48, 48, 0x00ff00, 0);
+                    box.setStrokeStyle(2, 0x00ff00);
+                    iconSprite.box = box;
+
                     this.setupIconInteraction(iconSprite, icon);
                     this.icons.push(iconSprite);
                 });
@@ -287,7 +331,7 @@ export default class Map3GameScene extends Phaser.Scene {
                     if (this.answeredQuestions === 5) {
                         console.log('All 5 questions answered, transitioning to Space Invaders...');
                         setTimeout(() => {
-                            this.scene.start('space_invaders', { nextScene: 'map3scene2' });
+                            this.scene.start('space_invaders', { nextScene: 'map3gamescene2' });
                         }, 3000);
                     }
                 }, 2000);
@@ -312,9 +356,29 @@ export default class Map3GameScene extends Phaser.Scene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
+<<<<<<< Updated upstream
         SceneTransition.to(this, 'space_invaders', {
             nextScene: 'map3scene2',
             score: this.score
         });
+=======
+
+        // Save progress before transition
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map3gamescene1',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
+
+        // Transition to sorting scene
+        this.sceneTransition.fadeOut(() => {
+            this.scene.start('sort_selection', {
+                score: this.score,
+                powerUpBitmask: this.powerUpBitmask,
+                currentMap: this.currentMap
+            });
+        });
+>>>>>>> Stashed changes
     }
 }

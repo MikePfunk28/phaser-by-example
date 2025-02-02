@@ -24,7 +24,7 @@ import SpaceInvadersScene from "./scenes/SpaceInvadersScene";
 import SortSelectionScene from './scenes/SortSelectionScene';
 
 import MainMenu from './scenes/MainMenu';
-import { ProgressManager } from "./utils/ProgressManager";
+import progressManager from "./utils/ProgressManager";
 
 
 const config = {
@@ -83,7 +83,6 @@ const config = {
   ]
 };
 //const getAsset = new assetLoader(getAssetPath);
-let progressManager = new ProgressManager();
 
 // Why and what the hell would this do?
 //const sceneTransition = new SceneTransition();
@@ -99,5 +98,37 @@ window.addEventListener('load', () => {
       window.game.sound.context.resume();
     }
     document.removeEventListener('click', initAudio);
+  });
+
+  // Handle window focus/blur
+  window.addEventListener('blur', () => {
+    if (window.game.scene.scenes.length > 0) {
+      window.game.scene.scenes.forEach(scene => {
+        if (scene.scene.isActive()) {
+          scene.scene.pause();
+        }
+      });
+    }
+  });
+
+  window.addEventListener('focus', () => {
+    if (window.game.scene.scenes.length > 0) {
+      window.game.scene.scenes.forEach(scene => {
+        if (scene.scene.isPaused()) {
+          scene.scene.resume();
+        }
+      });
+    }
+  });
+
+  // Handle game shutdown
+  window.addEventListener('beforeunload', () => {
+    // Save current progress before closing
+    const currentScene = window.game.scene.scenes.find(scene => scene.scene.isActive());
+    if (currentScene) {
+      progressManager.saveProgress({
+        lastCompletedScene: currentScene.scene.key
+      });
+    }
   });
 });

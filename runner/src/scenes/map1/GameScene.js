@@ -4,10 +4,16 @@ import Player from '@/gameobjects/player';
 import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser';
 import SceneTransition from '@/utils/SceneTransition';
+<<<<<<< Updated upstream
 
 export default class GameScene extends BaseGameScene {
+=======
+import { ProgressManager } from '@/utils/ProgressManager';
+
+export default class GameScene extends Phaser.Scene {
+>>>>>>> Stashed changes
     constructor() {
-        super({ key: 'map1scene1' });
+        super({ key: 'map1gamescene1' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -17,11 +23,33 @@ export default class GameScene extends BaseGameScene {
         this.answeredQuestions = 0;
         this.isTransitioning = false;
         this.clickCooldown = false;
+        this.powerUpBitmask = 0;
+        this.progressManager = new ProgressManager();
+        this.sceneTransition = new SceneTransition();
     }
 
+<<<<<<< Updated upstream
     preload() {
         super.preload();
         this.load.image('map1scene1', getAssetPath('images/map1scene1.png'));
+=======
+    init(data) {
+        this.score = data.score || 0;
+        this.powerUpBitmask = data.powerUpBitmask || 0;
+        this.currentMap = data.currentMap || 1;
+
+        // Save progress
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map1gamescene1',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
+    }
+
+    preload() {
+        this.load.scene('map1gamescene1', getAssetPath('images/map1gamescene1.png'));
+>>>>>>> Stashed changes
         this.load.json('map-config', getAssetPath('data/map1/map-config.json'));
     }
 
@@ -30,6 +58,9 @@ export default class GameScene extends BaseGameScene {
     }
 
     create() {
+        // Add semi-transparent dark background
+        this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8);
+
         // Initialize sound settings
         if (this.sound && this.sound.context) {
             this.sound.pauseOnBlur = false;
@@ -38,12 +69,17 @@ export default class GameScene extends BaseGameScene {
         // Set up score display first
         this.setupScore();
 
+        // Add power-up display
+        this.powerUpText = this.add.text(16, 56, this.getPowerUpText(), {
+            fontSize: '24px',
+            fill: '#00ff00',
+            fontFamily: 'Arial'
+        });
+
         // Get the loaded questions and map config with error handling
         try {
             const mapConfig = this.cache.json.get('map-config');
             this.questions = this.cache.json.get('questions');
-
-            console.log('MapConfig loaded:', mapConfig); // Debug log
 
             if (!mapConfig) {
                 throw new Error('Error: Map configuration not found');
@@ -68,13 +104,16 @@ export default class GameScene extends BaseGameScene {
             const map = this.add.image(
                 activeZone.x || 400,
                 activeZone.y || 300,
-                'map1scene1'
+                'map1gamescene1'
             );
             map.setOrigin(0.5);
             map.setScale(activeZone.scale || 1);
 
             // Load AWS icons after we have the config
             this.loadAwsIcons(mapConfig);
+
+            // Add fade-in transition
+            this.sceneTransition.fadeIn();
 
         } catch (error) {
             console.error('Error in create:', error);
@@ -88,23 +127,65 @@ export default class GameScene extends BaseGameScene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map1scene1');
+                this.scene.start('map1gamescene1');
             }, 2000);
         }
     }
 
+    getPowerUpText() {
+        const powerUps = [];
+        if (this.powerUpBitmask & 1) powerUps.push('Life+');
+        if (this.powerUpBitmask & 2) powerUps.push('Size+');
+        if (this.powerUpBitmask & 4) powerUps.push('Speed+');
+        if (this.powerUpBitmask & 8) powerUps.push('Fire+');
+        return `Power-ups: ${powerUps.join(' ')}`;
+    }
+
     loadAwsIcons(mapConfig) {
-        // In test environment, we still want to set up the callback
-        // but we'll let the test trigger it manually
-        const createIconsCallback = () => this.createIcons(mapConfig);
+        // Preload all icons with proper error handling
+        mapConfig.zones.forEach(zone => {
+            zone.icons.forEach(iconConfig => {
+                const iconPath = `assets/images/services16/${iconConfig.category}/48/${iconConfig.name}`;
+                console.log('Loading icon:', iconConfig.name, 'from path:', iconPath);
+                this.load.image(`icon_${iconConfig.name}`, iconPath);
+            });
+        });
 
-        // Register the callback even in test environment
-        this.load.once('complete', createIconsCallback);
+        // Add error handling for failed loads
+        this.load.on('loaderror', (fileObj) => {
+            console.error('Error loading icon:', fileObj.key);
+            // Create a colored rectangle as fallback
+            const graphics = this.add.graphics();
+            graphics.fillStyle(0x00ff00);
+            graphics.fillRect(0, 0, 48, 48);
+            graphics.generateTexture(fileObj.key, 48, 48);
+            graphics.destroy();
+        });
 
-        // Only call start() if it exists (not in test environment)
-        if (this.load.start) {
-            this.load.start();
-        }
+        // Start the loader and create icons upon completion
+        this.load.once('complete', () => {
+            mapConfig.zones.forEach(zone => {
+                zone.icons.forEach(iconConfig => {
+                    const iconKey = `icon_${iconConfig.name}`;
+                    console.log('Creating icon:', iconKey);
+
+                    // Create icon sprite
+                    const iconSprite = this.add.image(iconConfig.x, iconConfig.y, iconKey)
+                        .setInteractive()
+                        .setScale(0.5);
+
+                    // Add green box around icon
+                    const box = this.add.rectangle(iconConfig.x, iconConfig.y, 48, 48, 0x00ff00, 0);
+                    box.setStrokeStyle(2, 0x00ff00);
+                    iconSprite.box = box;
+
+                    this.setupIconInteraction(iconSprite, iconConfig);
+                    this.icons.push(iconSprite);
+                });
+            });
+        });
+
+        this.load.start();
     }
 
     createIcons(mapConfig) {
@@ -177,7 +258,6 @@ export default class GameScene extends BaseGameScene {
             ) : this.questions;
 
         if (!relevantQuestions || relevantQuestions.length === 0) {
-            // If no specific questions found, pick a random one
             relevantQuestions = this.questions;
         }
 
@@ -186,13 +266,13 @@ export default class GameScene extends BaseGameScene {
             this.showQuestion(randomQuestion, iconSprite);
         }
 
-        // Reset cooldown after delay
+        // Reset cooldown after 500ms
         setTimeout(() => {
             this.clickCooldown = false;
             if (!iconSprite.isAnswered) {
-                iconSprite.clearTint();
+                iconSprite.setTint(0xffffff);
             }
-        }, 1000);
+        }, 500);
     }
 
     showTooltip(text, x, y) {
@@ -210,67 +290,102 @@ export default class GameScene extends BaseGameScene {
         }
     }
 
-    showQuestion(question, iconSprite) {
-        // Create DOM elements for question
-        const questionContainer = document.createElement('div');
-        questionContainer.className = 'question-container';
+    showQuestion(question, icon) {
+        if (!question || !question.options) {
+            console.error('Invalid question format:', question);
+            return;
+        }
 
-        const overlay = document.createElement('div');
-        overlay.className = 'overlay';
+        // Create semi-transparent black background
+        const bg = this.add.rectangle(400, 300, 750, 400, 0x000000, 0.85);
+        bg.setDepth(2);
 
-        const questionElement = document.createElement('div');
-        questionElement.className = 'question';
-        questionElement.textContent = question.question;
+        // Add question text with proper wrapping
+        const questionText = this.add.text(400, 150, question.question, {
+            fontFamily: 'Arial',
+            fontSize: '20px',
+            color: '#ffffff',
+            align: 'center',
+            wordWrap: { width: 700, useAdvancedWrap: true }
+        });
+        questionText.setOrigin(0.5);
+        questionText.setDepth(3);
 
-        questionContainer.appendChild(questionElement);
+        // Create option buttons
+        const options = Object.entries(question.options);
+        const optionStartY = 220;
+        const optionSpacing = 50;
 
-        Object.entries(question.options).forEach(([key, value]) => {
-            const option = document.createElement('div');
-            option.className = 'option';
+        const optionButtons = options.map(([key, value], index) => {
+            const y = optionStartY + index * optionSpacing;
 
-            const letter = document.createElement('span');
-            letter.className = 'option-letter';
-            letter.textContent = key;
+            // Create button background
+            const buttonBg = this.add.rectangle(400, y, 600, 40, 0x333333, 0.5);
+            buttonBg.setDepth(2.5);
+            buttonBg.setVisible(false);
 
-            const text = document.createElement('span');
-            text.className = 'option-text';
-            text.textContent = value;
+            // Create button text
+            const button = this.add.text(400, y, `${key}: ${value}`, {
+                fontFamily: 'Arial',
+                fontSize: '18px',
+                color: '#ffffff',
+                align: 'center'
+            });
+            button.setOrigin(0.5);
+            button.setInteractive();
+            button.setDepth(3);
 
-            option.appendChild(letter);
-            option.appendChild(text);
-
-            option.addEventListener('click', () => {
-                this.handleAnswer(key === question.answer, iconSprite, question);
-                document.body.removeChild(questionContainer);
-                document.body.removeChild(overlay);
+            // Hover effects
+            button.on('pointerover', () => {
+                button.setColor('#ffff00');
+                buttonBg.setVisible(true);
             });
 
-            questionContainer.appendChild(option);
-        });
+            button.on('pointerout', () => {
+                button.setColor('#ffffff');
+                buttonBg.setVisible(false);
+            });
 
-        document.body.appendChild(overlay);
-        document.body.appendChild(questionContainer);
-    }
+            // Click handler
+            button.on('pointerdown', () => {
+                const isCorrect = key.toLowerCase() === question.answer.toLowerCase();
 
-    handleAnswer(isCorrect, iconSprite, question) {
-        iconSprite.isAnswered = true;
-        this.answeredQuestions++;
+                if (isCorrect) {
+                    this.score += 100;
+                    this.scoreText.setText(`Score: ${this.score}`);
+                }
 
-        if (isCorrect) {
-            this.score += 100;
-            this.scoreText.setText('Score: ' + this.score);
-            const checkMark = this.add.image(iconSprite.x, iconSprite.y, 'checkMark')
-                .setScale(0.5)
-                .setDepth(100);
+                // Show explanation
+                const explanation = this.add.text(400, optionStartY + options.length * optionSpacing + 20,
+                    question.explanation, {
+                    fontFamily: 'Arial',
+                    fontSize: '16px',
+                    color: isCorrect ? '#00ff00' : '#ff0000',
+                    align: 'center',
+                    wordWrap: { width: 600 }
+                });
+                explanation.setOrigin(0.5);
+                explanation.setDepth(3);
 
-            // Show explanation if available
-            if (question.explanation) {
-                const explanationContainer = document.createElement('div');
-                explanationContainer.className = 'explanation-container';
-                explanationContainer.textContent = question.explanation;
-                document.body.appendChild(explanationContainer);
+                // Show feedback mark
+                const markImage = this.add.image(icon.x, icon.y, isCorrect ? 'checkMark' : 'xMark');
+                markImage.setDepth(2);
+                icon.isAnswered = true;
 
+                // Update box color
+                if (icon.box) {
+                    icon.box.setStrokeStyle(3, isCorrect ? 0x00ff00 : 0xff0000);
+                }
+
+                // Disable all buttons
+                optionButtons.forEach(btn => {
+                    btn.disableInteractive();
+                    btn.buttonBg.setVisible(false);
+                });
+
+                // Remove question after delay
                 setTimeout(() => {
+<<<<<<< Updated upstream
                     document.body.removeChild(explanationContainer);
                 }, 5000);
             }
@@ -282,12 +397,64 @@ export default class GameScene extends BaseGameScene {
                 .setScale(0.5)
                 .setDepth(100);
         }
+=======
+                    [bg, questionText, ...optionButtons.map(b => [b, b.buttonBg]).flat(), explanation, markImage]
+                        .forEach(obj => obj.destroy());
+                }, 3000);
+>>>>>>> Stashed changes
 
-        // Check if all questions are answered
-        if (this.answeredQuestions >= this.icons.length) {
-            setTimeout(() => {
-                this.transitionToNextScene();
-            }, 1000);
-        }
+                // Check if all questions are answered
+                this.answeredQuestions++;
+                if (this.answeredQuestions >= this.icons.length) {
+                    setTimeout(() => {
+                        if (window.sceneManager) {
+                            window.sceneManager.updateProgress();
+                            window.sceneManager.startNextScene();
+                        } else {
+                            this.scene.start('space_invaders', {
+                                nextScene: 'map1gamescene2',
+                                score: this.score
+                            });
+                        }
+                    }, 3500);
+                }
+            });
+
+            button.buttonBg = buttonBg;
+            return button;
+        });
+    }
+<<<<<<< Updated upstream
+}
+=======
+
+    setupScore() {
+        this.scoreText = this.add.text(16, 16, 'Score: ' + this.score, {
+            fontSize: '32px',
+            fill: '#fff'
+        });
+    }
+
+    transitionToNextScene() {
+        if (this.isTransitioning) return;
+        this.isTransitioning = true;
+
+        // Save progress before transition
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map1gamescene1',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
+
+        // Transition to sorting scene
+        this.sceneTransition.fadeOut(() => {
+            this.scene.start('sort_selection', {
+                score: this.score,
+                powerUpBitmask: this.powerUpBitmask,
+                currentMap: this.currentMap
+            });
+        });
     }
 }
+>>>>>>> Stashed changes

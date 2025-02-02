@@ -3,82 +3,150 @@
 import Phaser from 'phaser';
 import Icon from "./icons";
 import Player from "./player";
+import { getAssetPath } from '../utils/assetLoader';
 
-export default class Generator extends Phaser.GameObjects.GameObject {
+export default class Generator {
   constructor(scene) {
-    super(scene, 'Generator');
     this.scene = scene;
-    this.init();
+    this.icons = new Map();
+    this.categories = new Set();
   }
 
-  init() {
-    this.generateCloud();
-    this.generateObstacle();
-    this.generateCoin();
-    this.generateIcon();
-    this.generateButton();
-  }
+  /**
+   * Generate icons based on map configuration
+   * @param {Object} config - Map configuration object
+   * @returns {Array} Array of generated icons
+   */
+  generateIcons(config) {
+    const icons = [];
 
-  generateCloud() {
-    new Cloud(this.scene);
-    this.scene.time.delayedCall(
-      Phaser.Math.Between(2000, 3000),
-      () => this.generateCloud(),
-      null,
-      this
-    );
-  }
-
-  generateObstacle() {
-    this.scene.obstacles.add(
-      new Obstacle(
+    config.icons.forEach(iconConfig => {
+      // Create icon
+      const icon = new Icon(
         this.scene,
-        800,
-        this.scene.scale.height - Phaser.Math.Between(32, 128)
-      )
-    );
-    this.scene.time.delayedCall(
-      Phaser.Math.Between(1500, 2500),
-      () => this.generateObstacle(),
-      null,
-      this
-    );
+        iconConfig.x,
+        iconConfig.y,
+        getAssetPath(`images/${iconConfig.name}`),
+        {
+          id: iconConfig.name,
+          category: iconConfig.category,
+          questionType: iconConfig.questionType,
+          tooltip: iconConfig.tooltip || iconConfig.name
+        }
+      );
+
+      // Store icon reference
+      this.icons.set(iconConfig.name, icon);
+      this.categories.add(iconConfig.category);
+
+      // Add click handler
+      icon.on('iconclick', this.handleIconClick.bind(this));
+
+      icons.push(icon);
+    });
+
+    return icons;
   }
 
-  generateCoin() {
-    this.scene.coins.add(
-      new Coin(
-        this.scene,
-        800,
-        this.scene.scale.height - Phaser.Math.Between(32, 128)
-      )
-    );
-    this.scene.time.delayedCall(
-      Phaser.Math.Between(500, 1500),
-      () => this.generateCoin(),
-      null,
-      this
-    );
+  /**
+   * Handle icon click events
+   * @param {Object} iconData - Data about the clicked icon
+   */
+  handleIconClick(iconData) {
+    // Emit event for scene to handle
+    this.scene.events.emit('iconselectchange', iconData);
   }
 
-  generateIcon() {
-    new Icon(this.scene, Phaser.Math.Between(100, 700), Phaser.Math.Between(100, 500));
-    this.scene.time.delayedCall(
-      Phaser.Math.Between(3000, 5000),
-      () => this.generateIcon(),
-      null,
-      this
-    );
+  /**
+   * Get all icons of a specific category
+   * @param {string} category - Category to filter by
+   * @returns {Array} Array of icons in the category
+   */
+  getIconsByCategory(category) {
+    return Array.from(this.icons.values())
+      .filter(icon => icon.config.category === category);
   }
 
-  generateButton() {
-    new Button(this.scene, Phaser.Math.Between(100, 700), Phaser.Math.Between(100, 500));
-    this.scene.time.delayedCall(
-      Phaser.Math.Between(3000, 5000),
-      () => this.generateButton(),
-      null,
-      this
-    );
+  /**
+   * Get all unique categories
+   * @returns {Array} Array of unique categories
+   */
+  getCategories() {
+    return Array.from(this.categories);
+  }
+
+  /**
+   * Get an icon by its name
+   * @param {string} name - Name of the icon
+   * @returns {Icon} The icon object
+   */
+  getIcon(name) {
+    return this.icons.get(name);
+  }
+
+  /**
+   * Update icon positions based on zone
+   * @param {Object} zone - Zone configuration
+   */
+  updateIconPositions(zone) {
+    this.icons.forEach(icon => {
+      const originalX = icon.x;
+      const originalY = icon.y;
+
+      icon.x = originalX * zone.scale + zone.x;
+      icon.y = originalY * zone.scale + zone.y;
+    });
+  }
+
+  /**
+   * Reset all icons to their default state
+   */
+  resetIcons() {
+    this.icons.forEach(icon => {
+      icon.reset();
+    });
+  }
+
+  /**
+   * Mark an icon as answered
+   * @param {string} name - Name of the icon
+   * @param {boolean} isCorrect - Whether the answer was correct
+   */
+  setIconAnswered(name, isCorrect) {
+    const icon = this.icons.get(name);
+    if (icon) {
+      icon.setAnswered(isCorrect);
+    }
+  }
+
+  /**
+   * Check if all icons have been answered
+   * @returns {boolean} True if all icons are answered
+   */
+  areAllIconsAnswered() {
+    return Array.from(this.icons.values())
+      .every(icon => icon.isAnswered);
+  }
+
+  /**
+   * Get the number of correctly answered icons
+   * @returns {number} Number of correct answers
+   */
+  getCorrectAnswerCount() {
+    return Array.from(this.icons.values())
+      .filter(icon => icon.isAnswered && icon.isCorrect)
+      .length;
+  }
+
+  /**
+   * Destroy all icons and clean up
+   */
+  destroy() {
+    this.icons.forEach(icon => {
+      icon.destroy();
+    });
+    this.icons.clear();
+    this.categories.clear();
   }
 }
 

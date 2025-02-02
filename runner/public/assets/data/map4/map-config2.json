@@ -5,22 +5,36 @@
         "y": 300,
         "scale": 1,
         "icons": [{
-                "name": "Res_Amazon-VPC_NAT-Gateway_48.png",
+                "name": "Arch_Amazon-VPC_NAT-Gateway_48.png",
                 "category": "Arch_Networking-Content-Delivery",
                 "x": 300,
                 "y": 200,
                 "questionTypes": ["Subnet", "NAT"]
             },
             {
-                "name": "Res_Amazon-VPC_NAT-Gateway_48.png",
+                "name": "Arch_Amazon-VPC_Elastic-Network-Interface_48.png",
                 "category": "Arch_Networking-Content-Delivery",
                 "x": 500,
                 "y": 200,
-                "questionTypes": ["Subnet", "NAT"]
+                "questionTypes": ["Networking", "ENI"]
             },
             {
-                "name": "Res_Amazon-VPC_Internet-Gateway_48.png",
-                "category": "Res_Networking-Content-Delivery",
+                "name": "Arch_Amazon-VPC_Flow-Logs_48.png",
+                "category": "Arch_Networking-Content-Delivery",
+                "x": 350,
+                "y": 300,
+                "questionTypes": ["Networking", "Flow Logs"]
+            },
+            {
+                "name": "Arch_Amazon-VPC_Peering_48.png",
+                "category": "Arch_Networking-Content-Delivery",
+                "x": 450,
+                "y": 300,
+                "questionTypes": ["Networking", "VPC Peering"]
+            },
+            {
+                "name": "Arch_Amazon-VPC_Internet-Gateway_48.png",
+                "category": "Arch_Networking-Content-Delivery",
                 "x": 150,
                 "y": 250,
                 "questionTypes": ["Networking", "VPC"]
