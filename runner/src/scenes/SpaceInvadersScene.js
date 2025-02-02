@@ -4,7 +4,6 @@ import Phaser from 'phaser';
 import SceneTransition from "../utils/SceneTransition";
 
 export default class SpaceInvadersScene extends Phaser.Scene {
-<<<<<<< Updated upstream
     constructor(config = {}) {
         super({ key: 'space_invaders' });
         this.progressManager = new ProgressManager();
@@ -67,11 +66,6 @@ export default class SpaceInvadersScene extends Phaser.Scene {
             bulletSpeed: this.upgrades.bulletSpeed,
             multiShot: this.upgrades.multiShot
         };
-=======
-    constructor(sceneKey = 'space_invaders') {
-        super({ key: sceneKey });
-        this.player = null;
->>>>>>> Stashed changes
         this.bullets = [];
         this.asteroids = [];
         this.satellites = [];
@@ -95,46 +89,7 @@ export default class SpaceInvadersScene extends Phaser.Scene {
             bulletSpeed: 400,
             fireRate: 2
         };
-        this.progressManager = new ProgressManager();
         this.sceneTransition = new SceneTransition();
-    }
-
-    init(data) {
-        this.nextScene = data.nextScene;
-        this.score = data.score || 0;
-        this.triviaScore = data.triviaScore || 0;
-        this.powerUpBitmask = data.powerUpBitmask || 0;
-        this.currentMap = data.currentMap || 1;
-
-        // Reset power-ups based on trivia performance
-        const correctAnswers = Math.floor(this.triviaScore / 100);
-
-        // Award new power-ups based on performance
-        if (correctAnswers >= 5) {
-            // Perfect score - award all power-ups
-            this.powerUpBitmask |= 15; // 1111 in binary
-        } else {
-            // Award power-ups based on performance
-            for (let i = 0; i < correctAnswers; i++) {
-                // Randomly select a power-up type that hasn't been awarded yet
-                let availablePowerUps = [1, 2, 4, 8].filter(type => !(this.powerUpBitmask & type));
-                if (availablePowerUps.length > 0) {
-                    const powerUpType = availablePowerUps[Math.floor(Math.random() * availablePowerUps.length)];
-                    this.powerUpBitmask |= powerUpType;
-                }
-            }
-        }
-
-        // Apply power-ups
-        this.applyPowerUps();
-
-        // Save progress
-        this.progressManager.saveProgress({
-            lastCompletedScene: 'space_invaders',
-            currentMap: this.currentMap,
-            powerUpBitmask: this.powerUpBitmask,
-            score: this.score
-        });
     }
 
     preload() {
@@ -155,24 +110,9 @@ export default class SpaceInvadersScene extends Phaser.Scene {
         // Create semi-transparent dark background
         this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8);
 
-<<<<<<< Updated upstream
-        // Define ASCII art
-        this.asciiArt = {
-            ship: [
-                '   /^\\   ',
-                '  //--\\\\  ',
-                ' /_//_\\_\\ ',
-                '/// ||| \\\\\\'
-            ].join('\n'),
-            bullet: '^o^',
-            asteroid: '@#@',
-            satellite: '[==]'
-        };
-=======
         // Create player
         this.player = this.add.sprite(400, 500, 'player');
         this.player.setScale(this.powerUpStats.craftSize);
->>>>>>> Stashed changes
 
         // Setup input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -185,48 +125,6 @@ export default class SpaceInvadersScene extends Phaser.Scene {
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.lastShot = 0;
 
-<<<<<<< Updated upstream
-        // Create player ship
-        this.playerSprite = this.add.text(this.player.x, this.player.y, this.asciiArt.ship, {
-            fontSize: '16px',
-            fill: '#ffffff',
-            align: 'center',
-            fontFamily: 'monospace'
-        }).setOrigin(0.5);
-
-        // Create stars
-        for (let i = 0; i < 100; i++) {
-            this.stars.push({
-                x: Math.random() * this.width,
-                y: Math.random() * this.height,
-                size: Math.random() * 2 + 1
-            });
-        }
-        this.progressManager.loadProgress();
-        this.progressManager.updateStats(this.player.score);
-
-        // Create HUD
-        this.createHUD();
-
-        // Start the game
-        this.startGame();
-
-        // Set up shooting star effect
-        this.time.addEvent({
-            delay: 10000,
-            callback: this.createShootingStar,
-            callbackScope: this,
-            loop: true
-        });
-    }
-
-    createHUD() {
-        // Score and lives - top left
-        this.scoreText = this.add.text(10, 10, `Score: ${this.player.score}`, {
-            fontSize: '20px',
-            fill: '#fff'
-        });
-=======
         // Create HUD
         this.createHUD();
 
@@ -241,29 +139,17 @@ export default class SpaceInvadersScene extends Phaser.Scene {
         // Semi-transparent HUD background
         const hudBg = this.add.rectangle(400, 40, 780, 60, 0x000000, 0.5);
         hudBg.setDepth(100);
->>>>>>> Stashed changes
 
         this.scoreText = this.add.text(16, 16, `Score: ${this.score}`, {
             fontSize: '32px',
-            fill: '#fff',
-            fontFamily: 'Arial'
+            fill: '#fff'
         }).setDepth(101);
 
-<<<<<<< Updated upstream
-        // Power-ups - top right
-        this.powerUpText = this.add.text(this.width - 200, 10, '', {
-            fontSize: '16px',
-            fill: '#fff',
-            align: 'left'
-        });
-=======
         this.powerUpText = this.add.text(16, 56, '', {
             fontSize: '24px',
             fill: '#00ff00',
             fontFamily: 'Arial'
         }).setDepth(101);
->>>>>>> Stashed changes
-        this.updatePowerUpText();
 
         this.healthText = this.add.text(16, 96, `Health: ${this.powerUpStats.life}`, {
             fontSize: '24px',
@@ -287,7 +173,6 @@ export default class SpaceInvadersScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-<<<<<<< Updated upstream
 
         // Spawn power-ups periodically
         this.powerUpTimer = this.time.addEvent({
@@ -354,7 +239,7 @@ export default class SpaceInvadersScene extends Phaser.Scene {
                 break;
             case 'health':
                 this.player.lives++;
-                this.livesText.setText(`Lives: ${this.player.lives}`);
+                this.healthText.setText(`Health: ${this.player.lives}`);
                 break;
             case 'shield':
                 this.player.shield = Math.min(this.player.shield + 1, 3);
@@ -364,21 +249,16 @@ export default class SpaceInvadersScene extends Phaser.Scene {
 
         this.updatePowerUpText();
         powerUp.destroy();
-=======
->>>>>>> Stashed changes
     }
 
     update(time, delta) {
         if (this.gameOver) return;
-<<<<<<< Updated upstream
 
         // Draw stars
         this.stars.forEach(star => {
             const starSprite = this.add.rectangle(star.x, star.y, star.size, star.size, 0xffffff);
             this.time.delayedCall(16, () => starSprite.destroy());
         });
-=======
->>>>>>> Stashed changes
 
         // Handle movement
         const moveSpeed = (this.powerUpStats.speed * delta) / 1000;
@@ -408,15 +288,9 @@ export default class SpaceInvadersScene extends Phaser.Scene {
         this.updateSatellites(delta);
         this.checkCollisions();
 
-<<<<<<< Updated upstream
-        // Update player sprite position
-        this.playerSprite.x = this.player.x;
-        this.playerSprite.y = this.player.y;
-=======
         // Update HUD
         this.scoreText.setText(`Score: ${this.score}`);
         this.healthText.setText(`Health: ${this.powerUpStats.life}`);
->>>>>>> Stashed changes
     }
 
     applyPowerUps() {
@@ -482,11 +356,7 @@ export default class SpaceInvadersScene extends Phaser.Scene {
     updateBullets(delta) {
         for (let i = this.bullets.length - 1; i >= 0; i--) {
             const bullet = this.bullets[i];
-<<<<<<< Updated upstream
-            bullet.y += bullet.velocity.y * (delta / 1000);
-=======
             bullet.sprite.y -= (bullet.speed * delta) / 1000;
->>>>>>> Stashed changes
 
             if (bullet.sprite.y < -10) {
                 bullet.sprite.destroy();
@@ -586,64 +456,6 @@ export default class SpaceInvadersScene extends Phaser.Scene {
             }
         }
 
-<<<<<<< Updated upstream
-        // Enemy collisions
-        this.asteroids.forEach((asteroid, index) => {
-            if (this.checkOverlap(this.playerSprite, asteroid)) {
-                asteroid.destroy();
-                this.asteroids.splice(index, 1);
-                this.handlePlayerHit();
-            }
-        });
-
-        this.satellites.forEach((satellite, index) => {
-            if (this.checkOverlap(this.playerSprite, satellite)) {
-                satellite.destroy();
-                this.satellites.splice(index, 1);
-                this.handlePlayerHit();
-            }
-        });
-    }
-
-    handleAsteroidDestruction(asteroid, bulletIndex, asteroidIndex) {
-        // Create explosion effect
-        this.createExplosion(asteroid.x, asteroid.y, '#ffff00');
-
-        // Remove bullet and asteroid
-        this.bullets[bulletIndex].destroy();
-        this.bullets.splice(bulletIndex, 1);
-        asteroid.destroy();
-        this.asteroids.splice(asteroidIndex, 1);
-
-        // Update score
-        this.player.score += 10;
-        this.scoreText.setText(`Score: ${this.player.score}`);
-    }
-
-    handleSatelliteDestruction(satellite, bulletIndex, satelliteIndex) {
-        // Create explosion effect
-        this.createExplosion(satellite.x, satellite.y, '#ff0000');
-
-        // Remove bullet and satellite
-        this.bullets[bulletIndex].destroy();
-        this.bullets.splice(bulletIndex, 1);
-        satellite.destroy();
-        this.satellites.splice(satelliteIndex, 1);
-
-        // Update score
-        this.player.score += 20;
-        this.scoreText.setText(`Score: ${this.player.score}`);
-    }
-
-    handlePlayerHit() {
-        if (this.player.shield > 0) {
-            this.player.shield--;
-            this.powerUpText.setText(`Shield: ${this.player.shield}`);
-            this.showShieldEffect();
-        } else {
-            this.player.lives--;
-            this.livesText.setText(`Lives: ${this.player.lives}`);
-=======
         // Check player collisions
         if (!this.gameOver) {
             // Check asteroids
@@ -668,28 +480,6 @@ export default class SpaceInvadersScene extends Phaser.Scene {
         }
     }
 
-    handlePlayerHit() {
-        this.powerUpStats.life--;
-        this.healthText.setText(`Health: ${this.powerUpStats.life}`);
->>>>>>> Stashed changes
-
-        if (this.powerUpStats.life <= 0) {
-            this.gameOver = true;
-            this.showGameOver();
-            return;
-        }
-
-        // Flash player to show damage
-        this.showDamageEffect();
-    }
-
-    showDamageEffect() {
-        this.player.setTint(0xff0000);
-        this.time.delayedCall(100, () => {
-            this.player.clearTint();
-        });
-    }
-
     handleCollision(bullet, target, points) {
         bullet.sprite.destroy();
         target.sprite.destroy();
@@ -712,6 +502,33 @@ export default class SpaceInvadersScene extends Phaser.Scene {
 
         this.score += points;
         this.scoreText.setText(`Score: ${this.score}`);
+    }
+
+    handlePlayerHit() {
+        if (this.player.shield > 0) {
+            this.player.shield--;
+            this.powerUpText.setText(`Shield: ${this.player.shield}`);
+            this.showShieldEffect();
+        } else {
+            this.player.lives--;
+            this.healthText.setText(`Health: ${this.player.lives}`);
+
+            if (this.player.lives <= 0) {
+                this.gameOver = true;
+                this.showGameOver();
+                return;
+            }
+
+            // Flash player to show damage
+            this.showDamageEffect();
+        }
+    }
+
+    showDamageEffect() {
+        this.player.setTint(0xff0000);
+        this.time.delayedCall(100, () => {
+            this.player.clearTint();
+        });
     }
 
     checkOverlap(spriteA, spriteB) {
@@ -742,159 +559,25 @@ export default class SpaceInvadersScene extends Phaser.Scene {
             fill: '#ffffff'
         }).setOrigin(0.5);
 
-<<<<<<< Updated upstream
-        const continueButton = this.add.text(this.width / 2, this.height / 2 + 80, 'Continue to Sort Selection', {
-=======
         // Add continue button
         const continueButton = this.add.rectangle(400, 450, 200, 50, 0x00ff00);
         const continueText = this.add.text(400, 450, 'Continue', {
->>>>>>> Stashed changes
             fontSize: '24px',
             fill: '#000000'
         }).setOrigin(0.5);
 
-<<<<<<< Updated upstream
-        continueButton.on('pointerover', () => continueButton.setScale(1.1));
-        continueButton.on('pointerout', () => continueButton.setScale(1.0));
-        continueButton.on('pointerdown', () => this.endMiniGame());
-    }
-
-    endMiniGame() {
-        if (this.nextScene) {
-            console.log(`Ending Space Invaders. Going to: ${this.nextScene}`);
-            this.scene.start(this.nextScene, {
-                score: this.player.score,
-                upgrades: this.upgrades,
-                difficulty: this.difficulty
-            });
-        } else {
-            console.log('No next scene specified, returning to SortSelectionScene');
-            this.scene.start('SortSelectionScene', {
-                score: this.player.score,
-                upgrades: this.upgrades,
-                difficulty: this.difficulty
-            });
-        }
-    }
-
-    // Function to spawn satellites
-    spawnSatellite() {
-        const satellite = this.add.text(
-            Phaser.Math.Between(40, this.width - 40),
-            -20,
-            this.asciiArt.satellite,
-            {
-                fontSize: '20px',
-                fill: '#ff0000',
-                fontFamily: 'monospace'
-            }
-        ).setOrigin(0.5);
-
-        satellite.speed = this.difficulty.satelliteSpeed;
-        this.satellites.push(satellite);
-    }
-
-    // Function to spawn asteroids
-    spawnAsteroid() {
-        const asteroid = this.add.text(
-            Phaser.Math.Between(40, this.width - 40),
-            -20,
-            this.asciiArt.asteroid,
-            {
-                fontSize: '24px',
-                fill: '#888888',
-                fontFamily: 'monospace'
-            }
-        ).setOrigin(0.5);
-
-        asteroid.speed = this.difficulty.asteroidSpeed;
-        this.asteroids.push(asteroid);
-    }
-
-    // Function to fire bullet
-    fireBullet() {
-        if (time - this.lastShot > 1000 / this.player.fireRate) {
-            const bullet = this.add.text(
-                this.player.x,
-                this.player.y - 30,
-                this.asciiArt.bullet,
-                {
-                    fontSize: '14px',
-                    fill: '#ffff00',  // Yellow color for bullets
-                    fontFamily: 'monospace'
-                }
-            ).setOrigin(0.5);
-            this.bullets.push(bullet);
-            this.lastShot = time;
-        }
-    }
-
-    createShootingStar() {
-        const startX = Phaser.Math.Between(0, this.width / 2);
-        const startY = 0;
-        const endX = startX + 200;
-        const endY = 200;
-
-        const shootingStar = this.add.text(startX, startY, '*--->', {
-            fontSize: '20px',
-            fill: '#ffffff',
-            fontFamily: 'monospace'
-        }).setOrigin(0.5);
-
-        this.tweens.add({
-            targets: shootingStar,
-            x: endX,
-            y: endY,
-            duration: 1000,
-            ease: 'Linear',
-            onComplete: () => {
-                shootingStar.destroy();
-            }
-        });
-    }
-
-    getPowerUpText() {
-        return [
-            'POWER-UPS:',
-            `Fire Rate: ${this.upgrades.fireRate}`,
-            `Bullet Speed: ${this.upgrades.bulletSpeed}`,
-            `Multi-Shot: ${this.upgrades.multiShot}`,
-            `Health: ${this.upgrades.health}`,
-            `Shield: ${this.upgrades.shield}`
-        ].join('\n');
-    }
-
-    // Update power-ups based on trivia progress
-    updatePowerUps(answeredQuestions) {
-        if (answeredQuestions % 5 === 0) {
-            switch (Math.floor(answeredQuestions / 5)) {
-                case 1:
-                    this.upgrades.health++;
-                    break;
-                case 2:
-                    this.upgrades.fireRate++;
-                    break;
-                case 3:
-                    this.upgrades.bulletSpeed += 100;
-                    break;
-                case 4:
-                    this.upgrades.multiShot++;
-                    break;
-            }
-            this.powerUpText.setText(this.getPowerUpText());
-        }
-    }
-} 
-=======
         continueButton.setInteractive();
         continueButton.on('pointerdown', () => {
             this.cameras.main.fadeOut(500);
-            this.time.delayedCall(500, () => {
-                this.scene.start(this.nextScene, {
-                    score: this.score,
-                    powerUpBitmask: this.powerUpBitmask,
-                    currentMap: this.currentMap
-                });
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+                if (this.nextScene) {
+                    this.scene.start(this.nextScene, {
+                        score: this.score,
+                        powerUpBitmask: this.powerUpBitmask
+                    });
+                } else {
+                    this.scene.start('mainmenu');
+                }
             });
         });
     }
@@ -914,4 +597,3 @@ export default class SpaceInvadersScene extends Phaser.Scene {
         });
     }
 }
->>>>>>> Stashed changes
