@@ -13,7 +13,7 @@
             },
             {
                 "name": "Arch_Amazon-Athena_48.png",
-                "category": "Arch_Amazon-Athena",
+                "category": "Arch_Analytics",
                 "x": 500,
                 "y": 200,
                 "questionTypes": ["Analytics", "AA"]

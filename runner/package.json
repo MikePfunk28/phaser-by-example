@@ -22,7 +22,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "jest",
-    "test:verbose": "NODE_OPTIONS=--experimental-vm-modules jest --verbose",
+    "test:verbose": "jest --verbose",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:scene3": "jest src/scenes/map1/__tests__/GameScene3.test.js",

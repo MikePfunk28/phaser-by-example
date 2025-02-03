@@ -1,25 +1,26 @@
-import { getAssetPath } from '../../utils/assetLoader';
-import Player from '/src/gameobjects/player';
-import Generator from '/src/gameobjects/generator';
+import BaseGameScene from '../BaseGameScene';
+import { getAssetPath } from '@/utils/assetLoader';
+import Player from '@/gameobjects/player';
+import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser';
-<<<<<<< Updated upstream
-import SceneTransition from '@/utils/SceneTransition';
-=======
-import progressManager from '../../utils/ProgressManager';
->>>>>>> Stashed changes
+import { SceneTransition } from '@/utils/SceneTransition';
+import { ProgressManager } from '@/utils/ProgressManager';
 
-
-
-export default class Map4GameScene4 extends Phaser.Scene {
+export default class Map4GameScene4 extends BaseGameScene {
     constructor() {
         super({ key: 'map4gamescene4' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
-        this.currentMap = 1;
+        this.currentMap = 4;
         this.questions = null;
         this.icons = [];
         this.answeredQuestions = 0;
+        this.isTransitioning = false;
+        this.clickCooldown = false;
+        this.powerUpBitmask = 0;
+        this.progressManager = new ProgressManager();
+        this.sceneTransition = new SceneTransition();
     }
 
     preload() {
@@ -93,7 +94,7 @@ export default class Map4GameScene4 extends Phaser.Scene {
             this.setupScore();
 
             // Save progress
-            progressManager.saveProgress({
+            this.progressManager.saveProgress({
                 lastCompletedScene: 'map4gamescene4',
                 currentMap: 4
             });
@@ -323,29 +324,9 @@ export default class Map4GameScene4 extends Phaser.Scene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
-<<<<<<< Updated upstream
         SceneTransition.to(this, 'space_invaders', {
             nextScene: 'gameover',
             score: this.score
         });
-=======
-
-        // Save progress before transition
-        this.progressManager.saveProgress({
-            lastCompletedScene: 'map4gamescene4',
-            currentMap: this.currentMap,
-            powerUpBitmask: this.powerUpBitmask,
-            score: this.score
-        });
-
-        // Transition to sorting scene
-        this.sceneTransition.fadeOut(() => {
-            this.scene.start('sort_selection', {
-                score: this.score,
-                powerUpBitmask: this.powerUpBitmask,
-                currentMap: this.currentMap
-            });
-        });
->>>>>>> Stashed changes
     }
 }

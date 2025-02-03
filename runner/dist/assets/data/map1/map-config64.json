@@ -1,108 +1,95 @@
 {
     "zones": [{
         "name": "sort_selection",
+        "scene": "sort_selection",
+        "image": "background.png",
         "x": 800,
         "y": 600,
         "scale": 1,
         "icons": [{
                 "name": "map1gamescene164.png",
                 "category": "Arch_Security-Identity-Compliance",
-                "x": 600,
-                "y": 100,
+                "x": 100,
+                "y": 650,
                 "questionTypes": ["Security", "GD"]
             },
             {
                 "name": "map1gamescene264.png",
                 "category": "Arch_Amazon-Athena",
-                "x": 520,
-                "y": 150,
+                "x": 150,
+                "y": 600,
                 "questionTypes": ["Analytics", "AA"]
             },
             {
                 "name": "map1gamescene364.png",
                 "category": "Arch_Storage",
-                "x": 450,
-                "y": 300,
+                "x": 200,
+                "y": 550,
                 "questionTypes": ["Storage", "SB"]
             },
             {
                 "name": "map1gamescene464.png",
                 "category": "Arch_Containers",
-                "x": 350,
-                "y": 200,
+                "x": 250,
+                "y": 500,
                 "questionTypes": ["Container", "ECR"]
             },
             {
                 "name": "map2gamescene164.png",
                 "category": "Arch_Artificial-Intelligence",
-                "x": 150,
-                "y": 250,
+                "x": 300,
+                "y": 450,
                 "questionTypes": ["SageMaker", "SM"]
             },
             {
                 "name": "map2gamescene264.png",
                 "category": "Arch_Security-Identity-Compliance",
-                "x": 275,
-                "y": 385,
+                "x": 350,
+                "y": 400,
                 "questionTypes": ["Security", "GD"]
             },
             {
                 "name": "map2gamescene364.png",
                 "category": "Arch_Amazon-Athena",
-                "x": 200,
-                "y": 560,
+                "x": 400,
+                "y": 350,
                 "questionTypes": ["Analytics", "AA"]
             },
             {
                 "name": "map2gamescene464.png",
                 "category": "Arch_Storage",
                 "x": 450,
-                "y": 400,
+                "y": 300,
                 "questionTypes": ["Storage", "SB"]
             },
             {
                 "name": "map3gamescene164.png",
                 "category": "Arch_Containers",
-                "x": 450,
-                "y": 500,
+                "x": 500,
+                "y": 250,
                 "questionTypes": ["Container", "ECR"]
             },
             {
                 "name": "map3gamescene264.png",
                 "category": "Arch_Artificial-Intelligence",
-                "x": 650,
-                "y": 350,
+                "x": 550,
+                "y": 200,
                 "questionTypes": ["SageMaker", "SM"]
             },
             {
                 "name": "map3gamescene364.png",
                 "category": "Arch_Security-Identity-Compliance",
-                "x": 300,
-                "y": 410,
+                "x": 600,
+                "y": 150,
                 "questionTypes": ["Security", "GD"]
             },
             {
                 "name": "map3gamescene464.png",
                 "category": "Arch_Amazon-Athena",
-                "x": 500,
-                "y": 600,
-                "questionTypes": ["Analytics", "AA"]
-            },
-            {
-                "name": "map4gamescene364.png",
-                "category": "Arch_Amazon-Athena",
-                "x": 100,
-                "y": 200,
-                "questionTypes": ["Analytics", "AA"]
-            },
-            {
-                "name": "map4gamescene464.png",
-                "category": "Arch_Amazon-Athena",
-                "x": 150,
-                "y": 200,
+                "x": 650,
+                "y": 100,
                 "questionTypes": ["Analytics", "AA"]
             }
-
         ]
     }],
     "defaultZoom": 1,

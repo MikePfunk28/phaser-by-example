@@ -52,6 +52,12 @@ export default class SceneOrderManager {
                 return this.quickSort([...this.images]);
             case 'merge':
                 return this.mergeSort([...this.images]);
+            case 'selection':
+                return this.selectionSort([...this.images]);
+            case 'insertion':
+                return this.insertionSort([...this.images]);
+            case 'heap':
+                return this.heapSort([...this.images]);
             default:
                 return this.images;
         }

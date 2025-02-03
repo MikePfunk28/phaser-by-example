@@ -29,7 +29,7 @@
                 "name": "Arch_Elastic-IP-Address_48.png",
                 "category": "Arch_Compute",
                 "x": 450,
-                "y": 400,
+                "y": 300,
                 "questionTypes": ["Compute", "EIP"]
             },
             {

@@ -1,13 +1,14 @@
 import { getAssetPath } from "@/utils/assetLoader";
-import Player from '@/src/gameobjects/player';
-import Generator from '/src/gameobjects/generator';
+import Player from '@/gameobjects/player';
+import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser';
-import SceneTransition from '@/utils/SceneTransition';
+import { SceneTransition } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
+import BaseGameScene from '../BaseGameScene';
 
-export default class GameScene3 extends Phaser.Scene {
+export default class GameScene3 extends BaseGameScene {
     constructor() {
-        super({ key: 'map1gamescene3' });
+        super({ key: 'map1scene3' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -357,18 +358,6 @@ export default class GameScene3 extends Phaser.Scene {
         }).setScrollFactor(0).setDepth(200);
     }
 
-<<<<<<< Updated upstream
-
-    transitionToNextScene() {
-        if (this.isTransitioning) return;
-
-        this.isTransitioning = true;
-        this.cameras.main.fadeOut(500);
-        this.cameras.main.once('camerafadeoutcomplete', () => {
-            SceneTransition.transitionToNextScene(this, 'space-invaders', {
-                nextScene: 'map1scene4',
-                score: this.score
-=======
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
@@ -387,7 +376,6 @@ export default class GameScene3 extends Phaser.Scene {
                 score: this.score,
                 powerUpBitmask: this.powerUpBitmask,
                 currentMap: this.currentMap
->>>>>>> Stashed changes
             });
         });
     }

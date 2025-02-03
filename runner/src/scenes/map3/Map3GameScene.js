@@ -1,17 +1,13 @@
-import { getAssetPath } from "@/utils/assetLoader";
-import Player from '/src/gameobjects/player';
-import Generator from '/src/gameobjects/generator';
+import { getAssetPath } from '@/utils/assetLoader';
+import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser';
-import SceneTransition from '@/utils/SceneTransition';
-<<<<<<< Updated upstream
-
-=======
+import { SceneTransition } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
->>>>>>> Stashed changes
+import BaseGameScene from '../BaseGameScene';
 
-export default class Map3GameScene extends Phaser.Scene {
+export default class Map3GameScene extends BaseGameScene {
     constructor() {
-        super({ key: 'map3gamescene1' });
+        super({ key: 'map3scene1' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -27,17 +23,21 @@ export default class Map3GameScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.score = data.score || 0;
-        this.powerUpBitmask = data.powerUpBitmask || 0;
-        this.currentMap = data.currentMap || 3;
+        this.score = data?.score || 0;
+        this.powerUpBitmask = data?.powerUpBitmask || 0;
+        this.currentMap = data?.currentMap || 3;
+        this.isTransitioning = false;
 
         // Save progress
         this.progressManager.saveProgress({
-            lastCompletedScene: 'map3gamescene1',
+            lastCompletedScene: 'map3scene1',
             currentMap: this.currentMap,
             powerUpBitmask: this.powerUpBitmask,
             score: this.score
         });
+
+        // Optional: Add fade in effect
+        this.cameras.main.fadeIn(500);
     }
 
     preload() {
@@ -356,16 +356,10 @@ export default class Map3GameScene extends Phaser.Scene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
-<<<<<<< Updated upstream
-        SceneTransition.to(this, 'space_invaders', {
-            nextScene: 'map3scene2',
-            score: this.score
-        });
-=======
 
         // Save progress before transition
         this.progressManager.saveProgress({
-            lastCompletedScene: 'map3gamescene1',
+            lastCompletedScene: 'map3scene1',
             currentMap: this.currentMap,
             powerUpBitmask: this.powerUpBitmask,
             score: this.score
@@ -379,6 +373,5 @@ export default class Map3GameScene extends Phaser.Scene {
                 currentMap: this.currentMap
             });
         });
->>>>>>> Stashed changes
     }
 }

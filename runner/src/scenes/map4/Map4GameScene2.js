@@ -1,24 +1,26 @@
+import BaseGameScene from '../BaseGameScene';
 import { getAssetPath } from "@/utils/assetLoader";
-import Player from '/src/gameobjects/player';
-import Generator from '/src/gameobjects/generator';
+import Player from '@/gameobjects/player';
+import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser';
-<<<<<<< Updated upstream
-import SceneTransition from '@/utils/SceneTransition';
-=======
-import progressManager from '../../utils/ProgressManager';
->>>>>>> Stashed changes
+import { SceneTransition } from '@/utils/SceneTransition';
+import { ProgressManager } from '@/utils/ProgressManager';
 
-
-export default class Map4GameScene2 extends Phaser.Scene {
+export default class Map4GameScene2 extends BaseGameScene {
     constructor() {
         super({ key: 'map4gamescene2' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
-        this.currentMap = 1;
+        this.currentMap = 4;
         this.questions = null;
         this.icons = [];
         this.answeredQuestions = 0;
+        this.isTransitioning = false;
+        this.clickCooldown = false;
+        this.powerUpBitmask = 0;
+        this.progressManager = new ProgressManager();
+        this.sceneTransition = new SceneTransition();
     }
 
     preload() {
@@ -92,7 +94,7 @@ export default class Map4GameScene2 extends Phaser.Scene {
             this.setupScore();
 
             // Save progress
-            progressManager.saveProgress({
+            this.progressManager.saveProgress({
                 lastCompletedScene: 'map4gamescene2',
                 currentMap: 4
             });

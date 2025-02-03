@@ -82,6 +82,7 @@ def remove_duplicates(json_file_path, output_file_path):
 
     print(f"Original count: {len(questions)}")
     print(f"After removing duplicates: {len(unique_questions)}")
+# import hashlib
 
 
 def main():

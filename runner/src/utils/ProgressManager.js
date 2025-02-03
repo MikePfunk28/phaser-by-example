@@ -1,6 +1,6 @@
 import { getAssetPath } from "@/utils/assetLoader";
-import Player from '/src/gameobjects/player';
-import Generator from '/src/gameobjects/generator';
+import Player from '../gameobjects/player';
+import Generator from '../gameobjects/generator';
 import Phaser from 'phaser';
 
 export class ProgressManager {

@@ -6,7 +6,7 @@
         "scale": 1,
         "icons": [{
                 "name": "Arch_AWS-Cost-Explorer_48.png",
-                "category": "Arch_Cloud-Finanacial-Management",
+                "category": "Arch_Cloud-Financial-Management",
                 "x": 300,
                 "y": 200,
                 "questionTypes": ["Cost Management", "CE"]
@@ -26,11 +26,11 @@
                 "questionTypes": ["Developer Tools", "AC"]
             },
             {
-                "name": "Arch_AWS=Database-Migration-Service_48.png",
-                "category": "Arch_Containers",
+                "name": "Arch_AWS-Database-Migration-Service_48.png",
+                "category": "Arch_Migration-Transfer",
                 "x": 450,
                 "y": 300,
-                "questionTypes": ["Elastic-Container-Registry", "ECR"]
+                "questionTypes": ["Migration", "DMS"]
             },
             {
                 "name": "Arch_Amazon-SageMaker_48.png",

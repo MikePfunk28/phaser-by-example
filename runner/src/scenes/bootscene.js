@@ -56,36 +56,9 @@ export default class BootScene extends Phaser.Scene {
     }
 
     loadEssentialAssets() {
-        // Load common assets needed across scenes
-        this.load.image('background', getAssetPath('images/background.png'));
-        this.load.image('logo', getAssetPath('images/logo.png'));
-
-        // Load font
-        try {
-            this.load.bitmapFont('arcade',
-                getAssetPath('fonts/arcade.png'),
-                getAssetPath('fonts/arcade.xml')
-            );
-        } catch (e) {
-            console.warn('Font loading failed, using system font');
-        }
-
-        // Load questions
-        try {
-            this.load.json('questions', getAssetPath('data/questions.json'));
-        } catch (e) {
-            console.warn('Questions loading failed');
-        }
-
-        // Load map thumbnails
-        this.load.image('map1scene164', getAssetPath('images/map1scene164.png'));
-        this.load.image('map1scene264', getAssetPath('images/map1scene264.png'));
-        this.load.image('map1scene364', getAssetPath('images/map1scene364.png'));
-        this.load.image('map1scene464', getAssetPath('images/map1scene464.png'));
-
-        // Add error handler for asset loading
+        // Add error handler for asset loading first
         this.load.on('loaderror', (fileObj) => {
-            console.error('Error loading file:', fileObj.key);
+            console.error('Error loading file:', fileObj.key, fileObj.src);
             // Create fallback assets if needed
             if (fileObj.key === 'background') {
                 const graphics = this.add.graphics();
@@ -95,6 +68,31 @@ export default class BootScene extends Phaser.Scene {
                 graphics.destroy();
             }
         });
+
+        // Load common assets needed across scenes with explicit error handling
+        try {
+            this.load.image('background', getAssetPath('images/background.png'));
+            this.load.image('logo', getAssetPath('images/logo.png'));
+            this.load.image('cloud', getAssetPath('images/cloud.png'));
+            this.load.image('coin', getAssetPath('images/coin.png'));
+
+            // Load map thumbnails
+            this.load.image('map1scene164', getAssetPath('images/map1scene164.png'));
+            this.load.image('map1scene264', getAssetPath('images/map1scene264.png'));
+            this.load.image('map1scene364', getAssetPath('images/map1scene364.png'));
+            this.load.image('map1scene464', getAssetPath('images/map1scene464.png'));
+
+            // Load font
+            this.load.bitmapFont('arcade',
+                getAssetPath('fonts/arcade.png'),
+                getAssetPath('fonts/arcade.xml')
+            );
+
+            // Load questions
+            this.load.json('questions', getAssetPath('data/questions.json'));
+        } catch (e) {
+            console.error('Error in loadEssentialAssets:', e);
+        }
     }
 
     create() {

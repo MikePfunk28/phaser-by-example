@@ -39,12 +39,12 @@ jest.mock('../../../gameobjects/player', () => ({
 }));
 
 // Mock assetLoader
-jest.mock('../../../utils/assetLoader', () => ({
+jest.mock('@/utils/assetLoader', () => ({
     getAssetPath: jest.fn(path => path)
 }));
 
-// Mock SceneOrderManager
-jest.mock('../../../utils/SceneTransition.js', () => ({
+// Mock SceneTransition
+jest.mock('@/utils/SceneTransition', () => ({
     __esModule: true,
     default: {
         to: jest.fn((scene, targetScene, data) => {

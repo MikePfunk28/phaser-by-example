@@ -1,19 +1,14 @@
+import BaseGameScene from '../BaseGameScene';
 import { getAssetPath } from "@/utils/assetLoader";
-import Player from '/src/gameobjects/player';
-import Generator from '/src/gameobjects/generator';
-<<<<<<< Updated upstream
-import Phaser from 'phaser'; // Default import
-import SceneTransition from '@/utils/SceneTransition';
-
-=======
+import Player from '@/gameobjects/player';
+import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser';
-import SceneTransition from '@/utils/SceneTransition';
+import { SceneTransition } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
->>>>>>> Stashed changes
 
-export default class GameScene4 extends Phaser.Scene {
+export default class GameScene4 extends BaseGameScene {
     constructor() {
-        super({ key: 'map1gamescene4' });
+        super({ key: 'map1scene4' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -359,12 +354,6 @@ export default class GameScene4 extends Phaser.Scene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
-<<<<<<< Updated upstream
-        SceneTransition.to(this, 'space_invaders', {
-            nextScene: 'map2scene1',
-            score: this.score
-        });
-=======
 
         // Save progress before transition
         this.progressManager.saveProgress({
@@ -382,6 +371,5 @@ export default class GameScene4 extends Phaser.Scene {
                 currentMap: this.currentMap
             });
         });
->>>>>>> Stashed changes
     }
 }

@@ -1,24 +1,43 @@
-import { getAssetPath } from "@/utils/assetLoader";
-import Player from '/src/gameobjects/player';
-import Generator from '/src/gameobjects/generator';
+import { getAssetPath } from '@/utils/assetLoader';
+import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser';
-<<<<<<< Updated upstream
-import SceneTransition from '@/utils/SceneTransition';
-=======
-import progressManager from '../../utils/ProgressManager';
->>>>>>> Stashed changes
+import { SceneTransition } from '@/utils/SceneTransition';
+import { ProgressManager } from '@/utils/ProgressManager';
+import BaseGameScene from '../BaseGameScene';
 
-
-export default class Map4GameScene extends Phaser.Scene {
+export default class Map4GameScene extends BaseGameScene {
     constructor() {
-        super({ key: 'map4gamescene1' });
+        super({ key: 'map4scene1' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
-        this.currentMap = 1;
+        this.currentMap = 4;
         this.questions = null;
         this.icons = [];
         this.answeredQuestions = 0;
+        this.isTransitioning = false;
+        this.clickCooldown = false;
+        this.powerUpBitmask = 0;
+        this.progressManager = new ProgressManager();
+        this.sceneTransition = new SceneTransition();
+    }
+
+    init(data) {
+        this.score = data?.score || 0;
+        this.powerUpBitmask = data?.powerUpBitmask || 0;
+        this.currentMap = data?.currentMap || 4;
+        this.isTransitioning = false;
+
+        // Save progress
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map4scene1',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
+
+        // Optional: Add fade in effect
+        this.cameras.main.fadeIn(500);
     }
 
     preload() {
@@ -90,9 +109,9 @@ export default class Map4GameScene extends Phaser.Scene {
             this.setupScore();
 
             // Save progress
-            progressManager.saveProgress({
-                lastCompletedScene: 'map4gamescene1',
-                currentMap: 4
+            this.progressManager.saveProgress({
+                lastCompletedScene: 'map4scene1',
+                currentMap: this.currentMap
             });
 
         } catch (error) {
@@ -107,7 +126,7 @@ export default class Map4GameScene extends Phaser.Scene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map4gamescene1');
+                this.scene.start('map4scene1');
             }, 2000);
         }
     }
@@ -292,7 +311,7 @@ export default class Map4GameScene extends Phaser.Scene {
                     if (this.answeredQuestions === 5) {
                         console.log('All 5 questions answered, transitioning to Space Invaders...');
                         setTimeout(() => {
-                            this.scene.start('space_invaders', { nextScene: 'map4gamescene2' });
+                            this.scene.start('space_invaders', { nextScene: 'map4scene2' });
                         }, 3000);
                     }
                 }, 2000);
@@ -317,7 +336,7 @@ export default class Map4GameScene extends Phaser.Scene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
-        SceneTransition.to(this, 'space_invaders', {
+        this.sceneTransition.to(this, 'space_invaders', {
             nextScene: 'map4scene2',
             score: this.score
         });

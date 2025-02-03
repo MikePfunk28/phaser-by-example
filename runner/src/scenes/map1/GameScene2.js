@@ -1,22 +1,15 @@
 import BaseGameScene from '../BaseGameScene';
 import { getAssetPath } from "@/utils/assetLoader";
-import Player from '/src/gameobjects/player';
-import Generator from '/src/gameobjects/generator';
+import Player from '@/gameobjects/player';
+import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser'; // Default import
-import SceneTransition from '@/utils/SceneTransition';
-<<<<<<< Updated upstream
-=======
+import { SceneTransition } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
->>>>>>> Stashed changes
 
 
 export default class GameScene2 extends BaseGameScene {
     constructor() {
-<<<<<<< Updated upstream
         super({ key: 'map1scene2' });
-        this.currentMap = 1;
-=======
-        super({ key: 'map1gamescene2' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -29,11 +22,9 @@ export default class GameScene2 extends BaseGameScene {
         this.powerUpBitmask = 0;
         this.progressManager = new ProgressManager();
         this.sceneTransition = new SceneTransition();
->>>>>>> Stashed changes
     }
     // In the receiving scene's init method:
     init(data) {
-<<<<<<< Updated upstream
         this.score = data?.score || 0;
         this.isTransitioning = false;
 
@@ -48,34 +39,6 @@ export default class GameScene2 extends BaseGameScene {
 
     getNextSceneKey() {
         return 'map1scene3';
-=======
-        this.score = data.score || 0;
-        this.powerUpBitmask = data.powerUpBitmask || 0;
-        this.currentMap = data.currentMap || 1;
-
-        // Save progress
-        this.progressManager.saveProgress({
-            lastCompletedScene: 'map1gamescene2',
-            currentMap: this.currentMap,
-            powerUpBitmask: this.powerUpBitmask,
-            score: this.score
-        });
-    }
-
-    preload() {
-        // Only load the assets needed for this scene
-        this.load.scene('map1gamescene2', getAssetPath('images/map1gamescene2.png'));
-        this.load.json('map-config2', getAssetPath('data/map1/map-config2.json'));
-        this.load.json('questions', getAssetPath('data/questions.json'));
-        this.load.bitmapFont('arcade',
-            getAssetPath('fonts/arcade.png'),
-            getAssetPath('fonts/arcade.xml')
-        );
-
-        // Fix paths for feedback marks
-        this.load.image('checkMark', getAssetPath('images/checkmark.png'));
-        this.load.image('xMark', getAssetPath('images/xmark.png'));
->>>>>>> Stashed changes
     }
 
     create() {
@@ -87,7 +50,6 @@ export default class GameScene2 extends BaseGameScene {
             this.sound.pauseOnBlur = false;
         }
 
-<<<<<<< Updated upstream
         this.questions = this.cache.json.get('questions');
 
         const mapConfig = this.cache.json.get('map-config');  // Remove the '2'
@@ -99,9 +61,8 @@ export default class GameScene2 extends BaseGameScene {
 
         // Load AWS icons after we have the config
         this.loadAwsIcons(mapConfig);
-=======
+
         // Set up score display first
->>>>>>> Stashed changes
         this.setupScore();
 
         // Add power-up display
@@ -398,31 +359,12 @@ export default class GameScene2 extends BaseGameScene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
-<<<<<<< Updated upstream
         // Pause any ongoing animations/updates
         this.scene.pause();
 
         this.camera.main.fadeOut(500);
         this.cameras.main.once('camerafadeoutcomplete', () => {
             SceneTransition.toWithLoading(this, 'space-invaders', { nextScene: this.getNextSceneKey(), score: this.score })
-=======
-
-        // Save progress before transition
-        this.progressManager.saveProgress({
-            lastCompletedScene: 'map1gamescene2',
-            currentMap: this.currentMap,
-            powerUpBitmask: this.powerUpBitmask,
-            score: this.score
-        });
-
-        // Transition to sorting scene
-        this.sceneTransition.fadeOut(() => {
-            this.scene.start('sort_selection', {
-                score: this.score,
-                powerUpBitmask: this.powerUpBitmask,
-                currentMap: this.currentMap
-            });
->>>>>>> Stashed changes
         });
     }
 }

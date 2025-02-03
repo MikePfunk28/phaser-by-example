@@ -1,19 +1,13 @@
-import { getAssetPath } from "@/utils/assetLoader";
-import Player from '/src/gameobjects/player';
-import Generator from '/src/gameobjects/generator';
-<<<<<<< Updated upstream
-import Phaser from 'phaser'; // Default import
-import SceneTransition from '@/utils/SceneTransition';
-
-=======
+import { getAssetPath } from '@/utils/assetLoader';
+import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser';
-import SceneTransition from '@/utils/SceneTransition';
+import { SceneTransition } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
->>>>>>> Stashed changes
+import BaseGameScene from '../BaseGameScene';
 
-export default class Map3GameScene4 extends Phaser.Scene {
+export default class Map3GameScene4 extends BaseGameScene {
     constructor() {
-        super({ key: 'map3gamescene4' });
+        super({ key: 'map3scene4' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -29,17 +23,21 @@ export default class Map3GameScene4 extends Phaser.Scene {
     }
 
     init(data) {
-        this.score = data.score || 0;
-        this.powerUpBitmask = data.powerUpBitmask || 0;
-        this.currentMap = data.currentMap || 3;
+        this.score = data?.score || 0;
+        this.powerUpBitmask = data?.powerUpBitmask || 0;
+        this.currentMap = data?.currentMap || 3;
+        this.isTransitioning = false;
 
         // Save progress
         this.progressManager.saveProgress({
-            lastCompletedScene: 'map3gamescene4',
+            lastCompletedScene: 'map3scene4',
             currentMap: this.currentMap,
             powerUpBitmask: this.powerUpBitmask,
             score: this.score
         });
+
+        // Optional: Add fade in effect
+        this.cameras.main.fadeIn(500);
     }
 
     preload() {
@@ -342,16 +340,10 @@ export default class Map3GameScene4 extends Phaser.Scene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
-<<<<<<< Updated upstream
-        SceneTransition.to(this, 'space_invaders', {
-            nextScene: 'map4scene1',
-            score: this.score
-        });
-=======
 
         // Save progress before transition
         this.progressManager.saveProgress({
-            lastCompletedScene: 'map3gamescene4',
+            lastCompletedScene: 'map3scene4',
             currentMap: this.currentMap,
             powerUpBitmask: this.powerUpBitmask,
             score: this.score
@@ -365,6 +357,5 @@ export default class Map3GameScene4 extends Phaser.Scene {
                 currentMap: this.currentMap
             });
         });
->>>>>>> Stashed changes
     }
 }

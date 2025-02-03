@@ -5,39 +5,39 @@
         "y": 600,
         "scale": 1,
         "icons": [{
-                "name": "Arch_Amazon-Data-Firehose_48.png",
-                "category": "Arch_Amazon-Data-Firehose",
+                "name": "Arch_AWS-Cost-Explorer_48.png",
+                "category": "Arch_Cloud-Financial-Management",
                 "x": 300,
                 "y": 200,
-                "questionTypes": ["Analytics", "DFH"]
+                "questionTypes": ["Cost Management", "CE"]
             },
             {
-                "name": "Arch_Amazon-QuickSight_48.png",
-                "category": "Arch_Amazon-QuickSight",
+                "name": "Arch_AWS-Cloud-Map_48.png",
+                "category": "Arch_Networking-Content-Delivery",
                 "x": 500,
                 "y": 200,
-                "questionTypes": ["Analtyics", "AA"]
+                "questionTypes": ["Networking", "CDN"]
             },
             {
-                "name": "Arch_Amazon-Simple-Notification-Service_48.png",
-                "category": "Arch_App-SNS",
+                "name": "Arch_AWS-Application-Composer_48.png",
+                "category": "Arch_Developer-Tools",
                 "x": 350,
                 "y": 300,
-                "questionTypes": ["Integration", "SNS"]
+                "questionTypes": ["Developer Tools", "AC"]
             },
             {
-                "name": "Arch_Amazon-Elastic-Container-Registry_48.png",
-                "category": "Arch_Elastic-Kubernetes-Service",
+                "name": "Arch_AWS-Database-Migration-Service_48.png",
+                "category": "Arch_Migration-Transfer",
                 "x": 450,
                 "y": 300,
-                "questionTypes": ["Container", "EKS"]
+                "questionTypes": ["Migration", "DMS"]
             },
             {
-                "name": "Arch_Amazon-Rekognition_48.png",
-                "category": "Arch_Amazon-Rekognition",
+                "name": "Arch_Amazon-SageMaker_48.png",
+                "category": "Arch_Artificial-Intelligence",
                 "x": 150,
                 "y": 250,
-                "questionTypes": ["Rekognition", "AI"]
+                "questionTypes": ["SageMaker", "SM"]
             }
         ]
     }],

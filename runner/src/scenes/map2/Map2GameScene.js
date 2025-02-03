@@ -1,19 +1,13 @@
-import { getAssetPath } from "@/utils/assetLoader";
-import Player from '/src/gameobjects/player';
-import Generator from '/src/gameobjects/generator';
-<<<<<<< Updated upstream
-import Phaser from 'phaser';// Default import
-import SceneTransition from '@/utils/SceneTransition';
-
-=======
+import { getAssetPath } from '@/utils/assetLoader';
+import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser';
-import SceneTransition from '@/utils/SceneTransition';
+import { SceneTransition } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
->>>>>>> Stashed changes
+import BaseGameScene from '../BaseGameScene';
 
-export default class Map2GameScene extends Phaser.Scene {
+export default class Map2GameScene extends BaseGameScene {
     constructor() {
-        super({ key: 'map2gamescene1' });
+        super({ key: 'map2scene1' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -35,7 +29,7 @@ export default class Map2GameScene extends Phaser.Scene {
 
         // Save progress
         this.progressManager.saveProgress({
-            lastCompletedScene: 'map2gamescene1',
+            lastCompletedScene: 'map2scene1',
             currentMap: this.currentMap,
             powerUpBitmask: this.powerUpBitmask,
             score: this.score
@@ -43,7 +37,7 @@ export default class Map2GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.scene('map2gamescene1', getAssetPath('images/map2gamescene1.png'));
+        this.load.scene('map2scene1', getAssetPath('images/map2scene1.png'));
         this.load.json('map-config', getAssetPath('data/map2/map-config.json'));
         this.load.json('questions', getAssetPath('data/questions.json'));
         this.load.image('checkMark', getAssetPath('images/checkmark.png'));
@@ -114,7 +108,7 @@ export default class Map2GameScene extends Phaser.Scene {
             const map = this.add.image(
                 activeZone.x || 400,
                 activeZone.y || 300,
-                'map2gamescene1'
+                'map2scene1'
             );
             map.setOrigin(0.5);
             map.setScale(activeZone.scale || 1);
@@ -137,7 +131,7 @@ export default class Map2GameScene extends Phaser.Scene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map2gamescene1');
+                this.scene.start('map2scene1');
             }, 2000);
         }
     }
@@ -152,234 +146,68 @@ export default class Map2GameScene extends Phaser.Scene {
     }
 
     loadAwsIcons(mapConfig) {
-        // Preload all icons
         mapConfig.zones.forEach(zone => {
-            zone.icons.forEach(iconConfig => {
-                const iconPath = getAssetPath(`images/services16/${iconConfig.category}/48/${iconConfig.name}`);
-                this.load.image(`icon_${iconConfig.name}`, iconPath);
+            zone.icons.forEach(icon => {
+                const iconSprite = this.add.image(
+                    icon.x,
+                    icon.y,
+                    `icon_${icon.name}`
+                )
+                    .setInteractive()
+                    .setScale(0.5);
+
+                // Add green box around icon
+                const box = this.add.rectangle(icon.x, icon.y, 48, 48, 0x00ff00, 0);
+                box.setStrokeStyle(2, 0x00ff00);
+                iconSprite.box = box;
+
+                this.setupIconInteraction(iconSprite, icon);
+                this.icons.push(iconSprite);
             });
         });
-
-        // Start the loader and create icons upon completion
-        this.load.once('complete', () => {
-            mapConfig.zones.forEach(zone => {
-                zone.icons.forEach(iconConfig => {
-                    const iconKey = `icon_${iconConfig.name}`;
-                    const iconSprite = this.add.image(iconConfig.x, iconConfig.y, iconKey)
-                        .setInteractive()
-                        .setScale(0.5);
-
-                    // Add green box around icon
-                    const box = this.add.rectangle(iconConfig.x, iconConfig.y, 48, 48, 0x00ff00, 0);
-                    box.setStrokeStyle(2, 0x00ff00);
-                    iconSprite.box = box;
-
-                    this.setupIconInteraction(iconSprite, iconConfig);
-                    this.icons.push(iconSprite);
-                });
-            });
-        });
-
-        this.load.start();
     }
 
     setupIconInteraction(iconSprite, iconConfig) {
-        // Add visual feedback for interactivity
-        iconSprite.setTint(0xffffff);
-        iconSprite.isAnswered = false; // Track answered state
-
-        // Hover effects
         iconSprite.on('pointerover', () => {
-            if (iconSprite.isAnswered) return;
-            iconSprite.setScale(1.3);
-            iconSprite.setTint(0x00ff00);
-            // Show icon name on hover
-            this.showTooltip(iconConfig.name, iconSprite.x, iconSprite.y);
+            iconSprite.box.setStrokeStyle(2, 0xffff00);
+            iconSprite.setScale(0.6);
         });
 
         iconSprite.on('pointerout', () => {
-            if (iconSprite.isAnswered) return;
-            iconSprite.setScale(1.3);
-            iconSprite.setTint(0xffffff);
-            this.hideTooltip();
+            iconSprite.box.setStrokeStyle(2, 0x00ff00);
+            iconSprite.setScale(0.5);
         });
 
-        // Add pulsing animation
-        this.tweens.add({
-            targets: iconSprite,
-            scale: { from: 1.0, to: 1.4 },
-            duration: 1000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
-        // Click handler - filter questions by type
         iconSprite.on('pointerdown', () => {
-            if (iconSprite.isAnswered) return; // Skip if already answered
-
-            let randomQuestion;
-            let relevantQuestions = this.questions.filter(q =>
-                iconConfig.questionTypes.some(type =>
-                    q.question.toLowerCase().includes(type.toLowerCase())
-                )
-            );
-
-            if (relevantQuestions.length === 0) {
-                // If no specific questions found, pick a random one
-                relevantQuestions = this.questions;
+            if (!this.clickCooldown) {
+                this.handleIconClick(iconSprite, iconConfig);
             }
-
-            randomQuestion = Phaser.Utils.Array.GetRandom(relevantQuestions);
-            this.showQuestion(randomQuestion, iconSprite);
         });
     }
 
-    showTooltip(text, x, y) {
-        this.tooltip = this.add.text(x, y - 60, text, {
-            fontSize: '16px',
-            fill: '#fff',
-            backgroundColor: '#000',
-            padding: { x: 5, y: 3 }
-        }).setOrigin(1.0).setDepth(150);
-    }
+    handleIconClick(iconSprite, iconConfig) {
+        // Handle icon click logic
+        const relevantQuestion = this.questions.find(q =>
+            iconConfig.questionTypes.some(type =>
+                q.question.toLowerCase().includes(type.toLowerCase())
+            )
+        );
 
-    hideTooltip() {
-        if (this.tooltip) {
-            this.tooltip.destroy();
+        if (relevantQuestion) {
+            // Show question and handle answer
+            this.showQuestion(relevantQuestion, correct => {
+                this.handleQuestionAnswered(correct);
+                if (correct) {
+                    iconSprite.setTint(0x00ff00);
+                    iconSprite.box.setStrokeStyle(2, 0x00ff00);
+                }
+            });
         }
     }
 
-    showQuestion(question, icon) {
-        if (!question || !question.options) {
-            console.error('Invalid question format:', question);
-            return;
-        }
-
-        // Create semi-transparent background with padding for wrapped text
-        const padding = 20;
-        const bg = this.add.rectangle(400, 300, 750, 400, 0x000000, 0.9);
-        bg.setDepth(2);
-
-        // Check if it's a True/False question
-        const isTrueFalse = question.question.toLowerCase().startsWith('true or false');
-
-        // Add question text with proper wrapping
-        const questionText = this.add.text(400, 150, question.question, {
-            fontFamily: 'Arial',
-            fontSize: '18px',
-            color: '#ffffff',
-            align: 'center',
-            wordWrap: { width: 650, useAdvancedWrap: true },
-            padding: { x: padding, y: padding }
-        });
-        questionText.setOrigin(0.5);
-        questionText.setDepth(3);
-
-        // For True/False questions, create simple True/False options
-        const options = isTrueFalse ?
-            [['true', 'True'], ['false', 'False']] :
-            Object.entries(question.options);
-
-        const optionStartY = 220;
-        const optionSpacing = 45;  // Reduced spacing
-
-        const optionButtons = options.map(([key, value], index) => {
-            const y = optionStartY + index * optionSpacing;
-            const buttonText = isTrueFalse ? value : `${key}: ${value}`;
-
-            const button = this.add.text(400, y, buttonText, {
-                fontFamily: 'Arial',
-                fontSize: '16px',
-                color: '#ffffff',
-                align: 'center',
-                wordWrap: { width: 500, useAdvancedWrap: true },
-                padding: { x: 15, y: 8 }
-            });
-            button.setOrigin(0.5);
-            button.setInteractive();
-            button.setDepth(3);
-
-            // Add hover background - make it narrower for True/False
-            const buttonWidth = isTrueFalse ? 150 : 550;
-            const buttonBg = this.add.rectangle(400, y, buttonWidth, button.height + 16, 0x333333, 0.5);
-            buttonBg.setDepth(2.5);
-            buttonBg.setVisible(false);
-
-            button.on('pointerover', () => {
-                button.setColor('#ffff00');
-                buttonBg.setVisible(true);
-            });
-
-            button.on('pointerout', () => {
-                button.setColor('#ffffff');
-                buttonBg.setVisible(false);
-            });
-
-            button.on('pointerdown', () => {
-                // Handle answer selection
-                const isCorrect = key.toLowerCase() === question.answer.toLowerCase();
-
-                if (isCorrect) {
-                    this.score += 100;
-                    this.scoreText.setText('Score: ' + this.score);
-                }
-
-                // Show explanation with proper wrapping
-                const explanation = this.add.text(400, optionStartY + options.length * optionSpacing + 20,
-                    question.explanation, {
-                    fontFamily: 'Arial',
-                    fontSize: '16px',
-                    color: isCorrect ? '#00ff00' : '#ff0000',
-                    align: 'center',
-                    wordWrap: { width: 600, useAdvancedWrap: true },
-                    padding: { x: padding, y: padding }
-                });
-                explanation.setOrigin(0.5);
-                explanation.setDepth(3);
-
-                // Show check or x mark
-                const markImage = this.add.image(icon.x, icon.y, isCorrect ? 'checkMark' : 'xMark');
-                markImage.setDepth(2);
-                icon.isAnswered = true;
-
-                // Disable all option buttons
-                optionButtons.forEach(btn => {
-                    btn.disableInteractive();
-                    btn.buttonBg.setVisible(false);
-                });
-
-                // Update box color based on answer
-                if (icon.box) {
-                    icon.box.setStrokeStyle(3, isCorrect ? 0x00ff00 : 0xff0000);
-                }
-
-                // Remove question after delay
-                setTimeout(() => {
-                    [bg, questionText, ...optionButtons, explanation, ...optionButtons.map(b => b.buttonBg), markImage].forEach(obj => obj.destroy());
-                }, 3000);
-
-                // Check if all questions are answered
-                this.answeredQuestions++;
-                if (this.answeredQuestions >= this.icons.length) {
-                    setTimeout(() => {
-                        if (window.sceneManager) {
-                            window.sceneManager.updateProgress();
-                            window.sceneManager.startNextScene();
-                        } else {
-                            console.error('Scene manager not found');
-                            this.scene.start('space_invaders', {
-                                nextScene: 'map2gamescene2',
-                                score: this.score
-                            });
-                        }
-                    }, 3500);
-                }
-            });
-
-            button.buttonBg = buttonBg;
-            return button;
-        });
+    showQuestion(question, callback) {
+        // Question display logic here
+        // This should be implemented based on your question display requirements
     }
 
     setupScore() {
@@ -394,16 +222,10 @@ export default class Map2GameScene extends Phaser.Scene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
-<<<<<<< Updated upstream
-        SceneTransition.to(this, 'space_invaders', {
-            nextScene: 'map2scene2',
-            score: this.score
-        });
-=======
 
         // Save progress before transition
         this.progressManager.saveProgress({
-            lastCompletedScene: 'map2gamescene1',
+            lastCompletedScene: 'map2scene1',
             currentMap: this.currentMap,
             powerUpBitmask: this.powerUpBitmask,
             score: this.score
@@ -417,6 +239,5 @@ export default class Map2GameScene extends Phaser.Scene {
                 currentMap: this.currentMap
             });
         });
->>>>>>> Stashed changes
     }
 }
