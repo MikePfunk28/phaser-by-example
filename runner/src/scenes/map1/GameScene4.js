@@ -6,7 +6,7 @@ import Phaser from 'phaser';
 import { SceneTransition } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
 
-export default class GameScene4 extends BaseGameScene {
+export default class map1scene4 extends BaseGameScene {
     constructor() {
         super({ key: 'map1scene4' });
         this.player = null;
@@ -30,7 +30,7 @@ export default class GameScene4 extends BaseGameScene {
 
         // Save progress
         this.progressManager.saveProgress({
-            lastCompletedScene: 'map1gamescene4',
+            lastCompletedScene: 'map1scene4',
             currentMap: this.currentMap,
             powerUpBitmask: this.powerUpBitmask,
             score: this.score
@@ -38,7 +38,7 @@ export default class GameScene4 extends BaseGameScene {
     }
 
     preload() {
-        this.load.scene('map1gamescene4', getAssetPath('images/map1gamescene4.png'));
+        this.load.scene('map1scene4', getAssetPath('images/map1scene4.png'));
         this.load.json('map-config4', getAssetPath('data/map1/map-config4.json'));
         this.load.json('questions', getAssetPath('data/questions.json'));
         this.load.image('checkMark', getAssetPath('images/checkmark.png'));
@@ -357,19 +357,18 @@ export default class GameScene4 extends BaseGameScene {
 
         // Save progress before transition
         this.progressManager.saveProgress({
-            lastCompletedScene: 'map1gamescene4',
+            lastCompletedScene: 'map1scene4',
             currentMap: this.currentMap,
             powerUpBitmask: this.powerUpBitmask,
             score: this.score
         });
 
-        // Transition to sorting scene
-        this.sceneTransition.fadeOut(() => {
-            this.scene.start('sort_selection', {
-                score: this.score,
-                powerUpBitmask: this.powerUpBitmask,
-                currentMap: this.currentMap
-            });
+        // Transition to space invaders
+        this.sceneTransition.to(this, 'space_invaders', {
+            nextScene: 'map2scene1',
+            score: this.score,
+            powerUpBitmask: this.powerUpBitmask,
+            currentMap: this.currentMap
         });
     }
 }

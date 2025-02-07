@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 import { SceneTransition } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
 import BaseGameScene from '../BaseGameScene';
+import Player from '@/gameobjects/player';
 
 export default class Map4GameScene extends BaseGameScene {
     constructor() {
@@ -23,10 +24,9 @@ export default class Map4GameScene extends BaseGameScene {
     }
 
     init(data) {
-        this.score = data?.score || 0;
-        this.powerUpBitmask = data?.powerUpBitmask || 0;
-        this.currentMap = data?.currentMap || 4;
-        this.isTransitioning = false;
+        this.score = data.score || 0;
+        this.powerUpBitmask = data.powerUpBitmask || 0;
+        this.currentMap = data.currentMap || 4;
 
         // Save progress
         this.progressManager.saveProgress({
@@ -336,9 +336,21 @@ export default class Map4GameScene extends BaseGameScene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
+
+        // Save progress before transition
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map4scene1',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
+
+        // Transition to space invaders
         this.sceneTransition.to(this, 'space_invaders', {
             nextScene: 'map4scene2',
-            score: this.score
+            score: this.score,
+            powerUpBitmask: this.powerUpBitmask,
+            currentMap: this.currentMap
         });
     }
 }

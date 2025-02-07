@@ -1,0 +1,51 @@
+{
+    "zones": [{
+        "name": "downtown",
+        "x": 800,
+        "y": 600,
+        "scale": 1,
+        "icons": [{
+                "name": "Arch_AWS-Glue_48.png",
+                "category": "Arch_Analytics",
+                "x": 300,
+                "y": 200,
+                "questionTypes": ["Analytics", "ETL"]
+            },
+            {
+                "name": "Arch_Amazon-Athena_48.png",
+                "category": "Arch_Analytics",
+                "x": 500,
+                "y": 200,
+                "questionTypes": ["Analytics", "AA"]
+            },
+            {
+                "name": "Arch_Amazon-Simple-Queue-Service_48.png",
+                "category": "Arch_App-Integration",
+                "x": 350,
+                "y": 300,
+                "questionTypes": ["Integration", "Messaging"]
+            },
+            {
+                "name": "Arch_AWS-Step-Functions_48.png",
+                "category": "Arch_App-Integration",
+                "x": 450,
+                "y": 300,
+                "questionTypes": ["Integration", "Step Functions"]
+            },
+            {
+                "name": "Arch_Amazon-SageMaker_48.png",
+                "category": "Arch_Artificial-Intelligence",
+                "x": 150,
+                "y": 250,
+                "questionTypes": ["SageMaker", "SM"]
+            }
+        ]
+    }],
+    "defaultZoom": 1,
+    "boundaries": {
+        "minX": 0,
+        "maxX": 800,
+        "minY": 0,
+        "maxY": 600
+    }
+}

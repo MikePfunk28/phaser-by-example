@@ -6,7 +6,7 @@ import { SceneTransition } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
 import BaseGameScene from '../BaseGameScene';
 
-export default class GameScene3 extends BaseGameScene {
+export default class map1scene3 extends BaseGameScene {
     constructor() {
         super({ key: 'map1scene3' });
         this.player = null;
@@ -30,22 +30,15 @@ export default class GameScene3 extends BaseGameScene {
 
         // Save progress
         this.progressManager.saveProgress({
-            lastCompletedScene: 'map1gamescene3',
+            lastCompletedScene: 'map1scene3',
             currentMap: this.currentMap,
             powerUpBitmask: this.powerUpBitmask,
             score: this.score
         });
     }
-    // In the receiving scene's init method:
-    init(data) {
-        this.score = data?.score || 0;
-        this.isTransitioning = false;
 
-        // Optional: Add fade in effect
-        this.cameras.main.fadeIn(500);
-    }
     preload() {
-        this.load.scene('map1gamescene3', getAssetPath('images/map1gamescene3.png'));
+        this.load.scene('map1scene3', getAssetPath('images/map1scene3.png'));
         this.load.json('map-config3', getAssetPath('data/map1/map-config3.json'));
         this.load.json('questions', getAssetPath('data/questions.json'));
         this.load.image('checkMark', getAssetPath('images/checkmark.png'));
@@ -364,19 +357,18 @@ export default class GameScene3 extends BaseGameScene {
 
         // Save progress before transition
         this.progressManager.saveProgress({
-            lastCompletedScene: 'map1gamescene3',
+            lastCompletedScene: 'map1scene3',
             currentMap: this.currentMap,
             powerUpBitmask: this.powerUpBitmask,
             score: this.score
         });
 
-        // Transition to sorting scene
-        this.sceneTransition.fadeOut(() => {
-            this.scene.start('sort_selection', {
-                score: this.score,
-                powerUpBitmask: this.powerUpBitmask,
-                currentMap: this.currentMap
-            });
+        // Transition to space invaders
+        this.sceneTransition.to(this, 'space_invaders', {
+            nextScene: 'map1scene4',
+            score: this.score,
+            powerUpBitmask: this.powerUpBitmask,
+            currentMap: this.currentMap
         });
     }
 }

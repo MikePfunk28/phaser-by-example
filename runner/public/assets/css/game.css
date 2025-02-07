@@ -3,54 +3,80 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 600px;
-    background: transparent;
+    width: 80%;
+    max-width: 600px;
+    background-color: rgba(0, 0, 0, 0.95);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #00ff00;
+    color: white;
     z-index: 1000;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
 }
 
 .question {
-    background: #ffffff;
+    background: rgba(51, 51, 51, 0.95);
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     font-size: 20px;
-    text-align: center;
+    text-align: left;
+    line-height: 1.5;
+    word-wrap: break-word;
+    color: #ffffff;
+    border: 1px solid #444;
 }
 
 .option {
-    background: #ffffff;
-    padding: 12px 20px;
-    margin: 8px 0;
-    border: 1px solid #000000;
+    background: rgba(51, 51, 51, 0.95);
+    padding: 15px 20px;
+    margin: 10px 0;
+    border: 1px solid #444;
     border-radius: 4px;
     cursor: pointer;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    transition: background-color 0.2s;
+    color: #ffffff;
 }
 
 .option:hover {
-    background: #f0f0f0;
+    background: rgba(85, 85, 85, 0.95);
+    border-color: #00ff00;
+    transform: translateX(5px);
 }
 
 .option-letter {
     font-weight: bold;
     margin-right: 15px;
-    min-width: 20px;
+    min-width: 25px;
+    background-color: #00ff00;
+    color: #000000;
+    padding: 5px 10px;
+    border-radius: 3px;
+    text-align: center;
 }
 
 .option-text {
     flex: 1;
+    word-wrap: break-word;
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 1.4;
 }
 
 .explanation {
-    background: #ffffee;
+    background: rgba(51, 51, 51, 0.95);
     padding: 15px;
     margin-top: 20px;
     border-radius: 4px;
     font-size: 16px;
-    text-align: center;
+    text-align: left;
+    border-left: 3px solid #00ff00;
+    font-style: italic;
+    word-wrap: break-word;
+    color: #ffffff;
 }
 
 .overlay {
@@ -59,7 +85,22 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     z-index: 999;
-    padding: 5px 5px 5px 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .question-container {
+        width: 90%;
+        padding: 15px;
+    }
+    
+    .question {
+        font-size: 16px;
+    }
+    
+    .option {
+        padding: 12px;
+    }
 } 

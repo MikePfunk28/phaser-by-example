@@ -1,9 +1,10 @@
-import { getAssetPath } from '@/utils/assetLoader';
+import BaseGameScene from '../BaseGameScene';
+import { getAssetPath } from "@/utils/assetLoader";
+import Player from '@/gameobjects/player';
 import Generator from '@/gameobjects/generator';
 import Phaser from 'phaser';
 import { SceneTransition } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
-import BaseGameScene from '../BaseGameScene';
 
 export default class Map2GameScene extends BaseGameScene {
     constructor() {
@@ -104,14 +105,19 @@ export default class Map2GameScene extends BaseGameScene {
                 throw new Error('No valid zone found in config');
             }
 
-            // Set up the map with default values if needed
-            const map = this.add.image(
-                activeZone.x || 400,
-                activeZone.y || 300,
-                'map2scene1'
-            );
+            // Set up the map to fit 800x600 while maintaining aspect ratio
+            const map = this.add.image(400, 300, 'map2scene1');
             map.setOrigin(0.5);
-            map.setScale(activeZone.scale || 1);
+
+            // Calculate scale to fit 800x600
+            const scaleX = 800 / map.width;
+            const scaleY = 600 / map.height;
+            const scale = Math.min(scaleX, scaleY);
+            map.setScale(scale);
+
+            // Center the map
+            map.x = 400;
+            map.y = 300;
 
             // Load AWS icons after we have the config
             this.loadAwsIcons(mapConfig);
@@ -147,40 +153,72 @@ export default class Map2GameScene extends BaseGameScene {
 
     loadAwsIcons(mapConfig) {
         mapConfig.zones.forEach(zone => {
-            zone.icons.forEach(icon => {
-                const iconSprite = this.add.image(
-                    icon.x,
-                    icon.y,
-                    `icon_${icon.name}`
-                )
-                    .setInteractive()
-                    .setScale(0.5);
-
-                // Add green box around icon
-                const box = this.add.rectangle(icon.x, icon.y, 48, 48, 0x00ff00, 0);
-                box.setStrokeStyle(2, 0x00ff00);
-                iconSprite.box = box;
-
-                this.setupIconInteraction(iconSprite, icon);
-                this.icons.push(iconSprite);
+            zone.icons.forEach(iconConfig => {
+                const iconPath = `assets/images/services16/${iconConfig.category}/48/${iconConfig.name}`;
+                console.log('Loading icon:', iconConfig.name, 'from path:', iconPath);
+                this.load.image(`icon_${iconConfig.name}`, iconPath);
             });
         });
+
+        // Start the loader and create icons upon completion
+        this.load.once('complete', () => {
+            mapConfig.zones.forEach(zone => {
+                zone.icons.forEach(iconConfig => {
+                    const iconKey = `icon_${iconConfig.name}`;
+                    console.log('Creating icon:', iconKey);
+
+                    // Create icon sprite with natural size (scale 1.0)
+                    const iconSprite = this.add.image(iconConfig.x, iconConfig.y, iconKey)
+                        .setInteractive()
+                        .setScale(1.0); // Natural size
+
+                    // Add highlight box that matches icon size
+                    const box = this.add.rectangle(
+                        iconConfig.x,
+                        iconConfig.y,
+                        48, // Fixed size for AWS icons
+                        48,
+                        0x00ff00,
+                        0
+                    );
+                    box.setStrokeStyle(2, 0x00ff00);
+                    iconSprite.box = box;
+
+                    this.setupIconInteraction(iconSprite, iconConfig);
+                    this.icons.push(iconSprite);
+                });
+            });
+        });
+
+        this.load.start();
     }
 
     setupIconInteraction(iconSprite, iconConfig) {
+        // No tint by default
+        iconSprite.setTint(0xffffff);
+        iconSprite.isAnswered = false;
+
+        // Hover effects only if not answered
         iconSprite.on('pointerover', () => {
-            iconSprite.box.setStrokeStyle(2, 0xffff00);
-            iconSprite.setScale(0.6);
+            if (!iconSprite.isAnswered) {
+                iconSprite.setTint(0xcccccc);
+            }
         });
 
         iconSprite.on('pointerout', () => {
-            iconSprite.box.setStrokeStyle(2, 0x00ff00);
-            iconSprite.setScale(0.5);
+            if (!iconSprite.isAnswered) {
+                iconSprite.setTint(0xffffff);
+            }
         });
 
+        // Click handler
         iconSprite.on('pointerdown', () => {
-            if (!this.clickCooldown) {
+            if (!iconSprite.isAnswered && !this.clickCooldown) {
                 this.handleIconClick(iconSprite, iconConfig);
+                this.clickCooldown = true;
+                setTimeout(() => {
+                    this.clickCooldown = false;
+                }, 500);
             }
         });
     }
@@ -195,23 +233,120 @@ export default class Map2GameScene extends BaseGameScene {
 
         if (relevantQuestion) {
             // Show question and handle answer
-            this.showQuestion(relevantQuestion, correct => {
-                this.handleQuestionAnswered(correct);
-                if (correct) {
-                    iconSprite.setTint(0x00ff00);
-                    iconSprite.box.setStrokeStyle(2, 0x00ff00);
-                }
-            });
+            this.showQuestion(relevantQuestion, iconSprite);
         }
     }
 
-    showQuestion(question, callback) {
-        // Question display logic here
-        // This should be implemented based on your question display requirements
+    showQuestion(question, iconSprite) {
+        // Create semi-transparent dark overlay
+        const overlay = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8)
+            .setDepth(100);
+
+        // Create question text with background
+        const questionBg = this.add.rectangle(400, 150, 750, 100, 0x333333)
+            .setDepth(101);
+
+        const questionText = this.add.text(400, 150, question.question, {
+            fontSize: '24px',
+            fill: '#fff',
+            align: 'center',
+            wordWrap: { width: 700 },
+            lineSpacing: 10
+        }).setOrigin(0.5).setDepth(102);
+
+        // Create answer buttons
+        const answers = Object.entries(question.options);
+        const startY = 250;
+        const spacing = 70;
+        let isAnswered = false;  // Flag to prevent multiple answers
+
+        const answerButtons = answers.map(([key, value], index) => {
+            const y = startY + (index * spacing);
+            const button = this.add.rectangle(400, y, 600, 50, 0x333333)
+                .setInteractive()
+                .setDepth(101);
+
+            const text = this.add.text(400, y, `${key}: ${value}`, {
+                fontSize: '20px',
+                fill: '#fff',
+                wordWrap: { width: 550 },
+                align: 'center'
+            }).setOrigin(0.5).setDepth(102);
+
+            button.on('pointerover', () => {
+                if (!isAnswered) {
+                    button.setFillStyle(0x666666);
+                }
+            });
+
+            button.on('pointerout', () => {
+                if (!isAnswered) {
+                    button.setFillStyle(0x333333);
+                }
+            });
+
+            button.on('pointerdown', () => {
+                if (isAnswered) return;  // Prevent multiple answers
+                isAnswered = true;
+
+                const isCorrect = key === question.answer;
+
+                // Update score and icon appearance
+                if (isCorrect) {
+                    this.score += 100;
+                    this.scoreText.setText(`Score: ${this.score}`);
+                    iconSprite.setTint(0x00ff00);  // Green for correct
+                    this.add.image(iconSprite.x, iconSprite.y, 'checkMark')
+                        .setScale(1.0)
+                        .setDepth(50);
+                } else {
+                    iconSprite.setTint(0xff0000);  // Red for incorrect
+                    this.add.image(iconSprite.x, iconSprite.y, 'xMark')
+                        .setScale(1.0)
+                        .setDepth(50);
+                }
+
+                // Mark icon as answered
+                iconSprite.isAnswered = true;
+                iconSprite.disableInteractive();
+
+                // Show explanation with background
+                const explanationBg = this.add.rectangle(400, 500, 750, 100, isCorrect ? 0x004400 : 0x440000)
+                    .setDepth(101);
+
+                const explanation = this.add.text(400, 500, question.explanation, {
+                    fontSize: '20px',
+                    fill: isCorrect ? '#00ff00' : '#ff0000',
+                    align: 'center',
+                    wordWrap: { width: 700 },
+                    lineSpacing: 5
+                }).setOrigin(0.5).setDepth(102);
+
+                // Remove question interface after delay
+                setTimeout(() => {
+                    overlay.destroy();
+                    questionBg.destroy();
+                    questionText.destroy();
+                    explanationBg.destroy();
+                    explanation.destroy();
+                    answerButtons.forEach(({ button, text }) => {
+                        button.destroy();
+                        text.destroy();
+                    });
+
+                    this.answeredQuestions++;
+                    if (this.answeredQuestions === 5) {
+                        this.transitionToNextScene();
+                    }
+                }, 3000);
+            });
+
+            return { button, text };
+        });
     }
 
     setupScore() {
-        this.scoreText = this.add.text(16, 16, 'Score: 0', {
+        this.scoreText = this.add.text(16, 16, 'Score: ' + this.score, {
             fontSize: '32px',
             fill: '#fff',
             backgroundColor: '#000',

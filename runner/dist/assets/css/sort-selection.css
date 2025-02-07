@@ -1,0 +1,63 @@
+.sort-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.sort-button {
+    position: relative;
+    width: 180px;
+    height: 40px;
+    margin: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.sort-button:hover {
+    transform: scale(1.05);
+}
+
+.sort-button-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+/* Specific button styles */
+#bubble-sort-button { background-color: #4a90e2; }
+#quick-sort-button { background-color: #50e3c2; }
+#merge-sort-button { background-color: #e3506f; }
+#insertion-sort-button { background-color: #e3a150; }
+#selection-sort-button { background-color: #9b59b6; }
+#heap-sort-button { background-color: #1abc9c; }
+
+/* Button grid layout */
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .button-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .button-grid {
+        grid-template-columns: 1fr;
+    }
+} 

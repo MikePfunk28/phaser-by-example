@@ -1,97 +1,173 @@
-import SceneOrderManager from '@/utils/SceneOrderManager';
+// SceneTransition.js
 import { ProgressManager } from './ProgressManager';
 
-// src/constants/sceneTransitions.js
+// Scene transition states
+const TRANSITION_STATE = {
+    IDLE: 'idle',
+    TRANSITIONING: 'transitioning',
+    FADING: 'fading',
+    ERROR: 'error'
+};
+
+// Scene transitions configuration
 const SCENE_TRANSITIONS = {
     bootscene: 'mainmenu',
     mainmenu: {
         sort_selection: 'sort_selection',
         space_invaders: 'space_invaders',
-        practice_mode: 'practice_mode'
+        practice_mode: 'practice_mode',
+        map1scene1: 'map1scene1'
     },
-    sort_selection: 'space_invaders',
-    space_invaders_to_map1scene1: { from: 'space_invaders', to: 'map1scene1' },
-    map1scene1_to_space_invaders: { from: 'map1scene1', to: 'space_invaders', next: 'map1scene2' },
-    space_invaders_to_map1scene2: { from: 'space_invaders', to: 'map1scene2' },
-    map1scene2_to_space_invaders: { from: 'map1scene2', to: 'space_invaders', next: 'map1scene3' },
-    space_invaders_to_map1scene3: { from: 'space_invaders', to: 'map1scene3' },
-    map1scene3_to_space_invaders: { from: 'map1scene3', to: 'space_invaders', next: 'map1scene4' },
-    space_invaders_to_map1scene4: { from: 'space_invaders', to: 'map1scene4' },
-    map1scene4_to_space_invaders: { from: 'map1scene4', to: 'space_invaders', next: 'map2scene1' },
-    space_invaders_to_map2scene1: { from: 'space_invaders', to: 'map2scene1' },
-    map2scene1_to_space_invaders: { from: 'map2scene1', to: 'space_invaders', next: 'map2scene2' },
-    space_invaders_to_map2scene2: { from: 'space_invaders', to: 'map2scene2' },
-    map2scene2_to_space_invaders: { from: 'map2scene2', to: 'space_invaders', next: 'map2scene3' },
-    space_invaders_to_map2scene3: { from: 'space_invaders', to: 'map2scene3' },
-    map2scene3_to_space_invaders: { from: 'map2scene3', to: 'space_invaders', next: 'map2scene4' },
-    space_invaders_to_map2scene4: { from: 'space_invaders', to: 'map2scene4' },
-    map2scene4_to_space_invaders: { from: 'map2scene4', to: 'space_invaders', next: 'map3scene1' },
-    space_invaders_to_map3scene1: { from: 'space_invaders', to: 'map3scene1' },
-    map3scene1_to_space_invaders: { from: 'map3scene1', to: 'space_invaders', next: 'map3scene2' },
-    space_invaders_to_map3scene2: { from: 'space_invaders', to: 'map3scene2' },
-    map3scene2_to_space_invaders: { from: 'map3scene2', to: 'space_invaders', next: 'map3scene3' },
-    space_invaders_to_map3scene3: { from: 'space_invaders', to: 'map3scene3' },
-    map3scene3_to_space_invaders: { from: 'map3scene3', to: 'space_invaders', next: 'map3scene4' },
-    space_invaders_to_map3scene4: { from: 'space_invaders', to: 'map3scene4' },
-    map3scene4_to_space_invaders: { from: 'map3scene4', to: 'space_invaders', next: 'map4scene1' },
-    space_invaders_to_map4scene1: { from: 'space_invaders', to: 'map4scene1' },
-    map4scene1_to_space_invaders: { from: 'map4scene1', to: 'space_invaders', next: 'map4scene2' },
-    space_invaders_to_map4scene2: { from: 'space_invaders', to: 'map4scene2' },
-    map4scene2_to_space_invaders: { from: 'map4scene2', to: 'space_invaders', next: 'map4scene3' },
-    space_invaders_to_map4scene3: { from: 'space_invaders', to: 'map4scene3' },
-    map4scene3_to_space_invaders: { from: 'map4scene3', to: 'space_invaders', next: 'map4scene4' },
-    space_invaders_to_map4scene4: { from: 'space_invaders', to: 'map4scene4' },
-    map4scene4_to_gameover: { from: 'map4scene4', to: 'gameover' },
+    sort_selection: 'mainmenu',
+    space_invaders: {
+        mainmenu: 'mainmenu',
+        map1scene1: 'map1scene1',
+        map1scene2: 'map1scene2',
+        map1scene3: 'map1scene3',
+        map1scene4: 'map1scene4',
+        map2scene1: 'map2scene1',
+        map2scene2: 'map2scene2',
+        map2scene3: 'map2scene3',
+        map2scene4: 'map2scene4',
+        map3scene1: 'map3scene1',
+        map3scene2: 'map3scene2',
+        map3scene3: 'map3scene3',
+        map3scene4: 'map3scene4',
+        map4scene1: 'map4scene1',
+        map4scene2: 'map4scene2',
+        map4scene3: 'map4scene3',
+        map4scene4: 'map4scene4'
+    },
     gameover: 'mainmenu'
 };
 
-class SceneTransition {
+export class SceneTransition {
     constructor() {
-        this.isTransitioning = false;
+        this.state = TRANSITION_STATE.IDLE;
+        this.currentScene = null;
+        this.nextScene = null;
+        this.transitionData = null;
         this.progressManager = new ProgressManager();
-        this.sceneManager = new SceneOrderManager();
+        this.transitionHistory = [];
+    }
+
+    setCurrentScene(scene) {
+        this.currentScene = scene;
+        this.state = TRANSITION_STATE.IDLE;
+    }
+
+    getState() {
+        return this.state;
+    }
+
+    getTransitionHistory() {
+        return this.transitionHistory;
     }
 
     fadeIn(scene, duration = 500) {
+        if (!scene || !scene.cameras) {
+            console.error('Invalid scene for fadeIn');
+            return;
+        }
+        this.state = TRANSITION_STATE.FADING;
         scene.cameras.main.fadeIn(duration);
+        scene.cameras.main.once('camerafadeincomplete', () => {
+            this.state = TRANSITION_STATE.IDLE;
+        });
     }
 
     fadeOut(scene, callback, duration = 500) {
+        if (!scene || !scene.cameras) {
+            console.error('Invalid scene for fadeOut');
+            return;
+        }
+        this.state = TRANSITION_STATE.FADING;
         scene.cameras.main.fadeOut(duration);
         scene.cameras.main.once('camerafadeoutcomplete', () => {
             if (callback) callback();
+            this.state = TRANSITION_STATE.TRANSITIONING;
         });
     }
 
     getNextTransition(fromScene, toScene) {
-        // Handle the new mainmenu transitions structure
-        if (fromScene === 'mainmenu' && SCENE_TRANSITIONS.mainmenu[toScene]) {
-            return SCENE_TRANSITIONS.mainmenu[toScene];
+        const sequence = [
+            'map1scene1', 'space_invaders',
+            'map1scene2', 'space_invaders',
+            'map1scene3', 'space_invaders',
+            'map1scene4', 'space_invaders',
+            'map2scene1', 'space_invaders',
+            'map2scene2', 'space_invaders',
+            'map2scene3', 'space_invaders',
+            'map2scene4', 'space_invaders',
+            'map3scene1', 'space_invaders',
+            'map3scene2', 'space_invaders',
+            'map3scene3', 'space_invaders',
+            'map3scene4', 'space_invaders',
+            'map4scene1', 'space_invaders',
+            'map4scene2', 'space_invaders',
+            'map4scene3', 'space_invaders',
+            'map4scene4', 'space_invaders',
+            'game_over'
+        ];
+
+        if (fromScene === 'bootscene') return 'mainmenu';
+        if (fromScene === 'mainmenu') {
+            if (toScene === 'sort_selection') return 'sort_selection';
+            if (toScene === 'space_invaders') return 'space_invaders';
+            return 'map1scene1';
+        }
+        if (fromScene === 'sort_selection') return 'mainmenu';
+        if (fromScene === 'game_over') return 'mainmenu';
+
+        const currentIndex = sequence.indexOf(fromScene);
+        if (currentIndex !== -1 && currentIndex < sequence.length - 1) {
+            return sequence[currentIndex + 1];
         }
 
-        const transitionKey = Object.keys(SCENE_TRANSITIONS).find(key => {
-            const transition = SCENE_TRANSITIONS[key];
-            if (typeof transition === 'string') {
-                return key === fromScene && transition === toScene;
-            }
-            return transition.from === fromScene && transition.to === toScene;
-        });
-
-        return transitionKey ? SCENE_TRANSITIONS[transitionKey] : null;
+        console.error('Invalid scene transition:', { fromScene, toScene });
+        return 'mainmenu';
     }
 
     to(scene, targetScene, data = {}) {
-        if (this.isTransitioning) return;
-        this.isTransitioning = true;
-
-        const transition = this.getNextTransition(scene.scene.key, targetScene);
-        if (!transition) {
-            console.error(`No valid transition from ${scene.scene.key} to ${targetScene}`);
-            this.isTransitioning = false;
+        if (this.state === TRANSITION_STATE.TRANSITIONING) {
+            console.warn('Scene transition already in progress');
             return;
         }
 
-        // Save progress before transition
+        if (!scene || !scene.scene || !targetScene) {
+            console.error('Invalid scene parameters');
+            this.state = TRANSITION_STATE.ERROR;
+            return;
+        }
+
+        this.state = TRANSITION_STATE.TRANSITIONING;
+        this.nextScene = targetScene;
+        this.transitionData = data;
+
+        if (targetScene.match(/map\d+scene\d+/)) {
+            const match = targetScene.match(/map(\d+)scene(\d+)/);
+            if (match) {
+                const [_, mapNumber, sceneNumber] = match;
+                this.fadeOut(scene, () => {
+                    scene.scene.start('trivia_master', {
+                        ...data,
+                        mapNumber: parseInt(mapNumber),
+                        sceneNumber: parseInt(sceneNumber),
+                        fromScene: scene.scene.key
+                    });
+                    this.setCurrentScene('trivia_master');
+                });
+                return;
+            }
+        }
+
+        const transition = this.getNextTransition(scene.scene.key, targetScene);
+        if (!transition) {
+            console.error(`Invalid transition from ${scene.scene.key} to ${targetScene}`);
+            this.state = TRANSITION_STATE.ERROR;
+            return;
+        }
+
         this.progressManager.saveProgress({
             lastCompletedScene: scene.scene.key,
             score: data.score || 0,
@@ -99,34 +175,40 @@ class SceneTransition {
             currentMap: data.currentMap || 1
         });
 
-        // Emit scene end event before transitioning
+        this.transitionHistory.push({
+            from: scene.scene.key,
+            to: targetScene,
+            timestamp: Date.now(),
+            data: { ...data }
+        });
+
+        scene.events.emit('sceneCleanup');
         scene.events.emit('sceneEnd');
 
         this.fadeOut(scene, () => {
-            const nextScene = typeof transition === 'string' ? transition : transition.to;
-            const transitionData = {
+            scene.scene.start(targetScene, {
                 ...data,
-                fromScene: scene.scene.key,
-                nextScene: typeof transition === 'object' ? transition.next : null
-            };
-
-            scene.scene.start(nextScene, transitionData);
-            this.isTransitioning = false;
+                fromScene: scene.scene.key
+            });
+            this.setCurrentScene(targetScene);
         });
     }
 
     toSpaceInvaders(scene, nextScene, data = {}) {
+        if (this.state === TRANSITION_STATE.TRANSITIONING) {
+            console.warn('Scene transition already in progress');
+            return;
+        }
         const progress = this.progressManager.loadProgress();
         const spaceInvadersData = {
             score: data.score || progress.score || 0,
             powerUpBitmask: data.powerUpBitmask || progress.powerUpBitmask || 0,
             nextScene: nextScene,
-            fromScene: scene.scene.key
+            fromScene: data.fromScene || scene.scene.key,
+            currentMap: data.currentMap || progress.currentMap || 1
         };
 
-        // Emit scene pause event before going to space invaders
         scene.events.emit('scenePause');
-
         this.to(scene, 'space_invaders', spaceInvadersData);
     }
 
@@ -134,6 +216,7 @@ class SceneTransition {
         const nextScene = data.nextScene;
         if (!nextScene) {
             console.error('No next scene specified for space invaders transition');
+            this.state = TRANSITION_STATE.ERROR;
             return;
         }
 
@@ -144,28 +227,15 @@ class SceneTransition {
             fromScene: 'space_invaders'
         };
 
-        this.to(scene, nextScene, gameSceneData);
-    }
-
-    toGameScene(scene, mapNumber, sceneNumber, data = {}) {
-        const progress = this.progressManager.loadProgress();
-        const gameSceneData = {
-            score: data.score || progress.score || 0,
-            powerUpBitmask: data.powerUpBitmask || progress.powerUpBitmask || 0,
-            currentMap: mapNumber,
-            fromScene: scene.scene.key
-        };
-
-        // Emit scene start event when entering game scene
-        scene.events.emit('sceneStart');
-
-        const targetScene = `map${mapNumber}scene${sceneNumber}`;
-        this.to(scene, targetScene, gameSceneData);
+        if (nextScene === 'gameover') {
+            this.toGameOver(scene, gameSceneData);
+        } else {
+            this.to(scene, nextScene, gameSceneData);
+        }
     }
 
     toMainMenu(scene, data = {}) {
-        // Reset progress when going back to main menu
-        this.progressManager.resetProgress();
+        scene.events.emit('sceneCleanup');
         this.to(scene, 'mainmenu', data);
     }
 
@@ -178,8 +248,15 @@ class SceneTransition {
             fromScene: scene.scene.key
         };
 
+        scene.events.emit('sceneCleanup');
         this.to(scene, 'gameover', gameOverData);
+    }
+
+    reset() {
+        this.state = TRANSITION_STATE.IDLE;
+        this.nextScene = null;
+        this.transitionData = null;
     }
 }
 
-export { SceneTransition, SCENE_TRANSITIONS }; 
+export { SCENE_TRANSITIONS, TRANSITION_STATE };

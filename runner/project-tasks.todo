@@ -1,18 +1,63 @@
 Overview:
 * Amazon Q Game Developer Game - AWS Trainer
 * Trivia game with map and AWS Icons, which you can pick to be prompted a question.
-* If you answer correctly, you get points, and you use spend those points to upgrade your character.
-* Potentially add a feature allowing you to spend points on items, maybe they help you answer, or you get strong.
-* In-between each round of Trivia, which is 5 questions, you play spaceinvaders, and can pump that up.
+* If you answer correctly, you get points, and you use spend those points to upgrade your 
+character.
+* Potentially add a feature allowing you to spend points on items, maybe they help you 
+answer, or you get strong.
+* In-between each round of Trivia, which is 5 questions, you play spaceinvaders, and can 
+pump that up.
 * Eventually I will finish adding the player and he will interact with the game's objects.
 
+----------------------------------------------------
 
+
+
+CURRENT DEBUGGING TASKS:
+☐ Fixed blank screen issue in TriviaMasterScene:
+  ✓ Added comprehensive debug logging throughout scene lifecycle
+  ✓ Fixed asset paths to correctly use getAssetPath
+  ✓ Improved error handling with visual feedback
+  ✓ Added fallback assets for missing images, audio, and JSON files
+  ✓ Fixed scene transition from MainMenu to TriviaMasterScene
+  ✓ Fixed early asset loading by moving manager initialization to init
+  ✓ Fixed premature property initialization in constructor
+  ✓ Removed redundant map scenes from main.js
+  ✓ Fixed MainMenu not displaying due to early returns
+  ☐ Fix data reference error in preload method
+  ☐ Fix wrong_icon loading error
+  ☐ Verify map config loading and zone setup
+  ☐ Test AWS icon loading and placement
+  ☐ Validate question loading and interaction
+
+COMPLETED TASKS:
+✓ Implemented proper scene transitions
+✓ Added power-up system
+✓ Integrated sound effects
+✓ Added progress tracking
+✓ Improved asset loading error handling
+✓ Enhanced UI feedback
+✓ Fixed audio loading issues
+✓ Optimized scene initialization
+✓ Consolidated all map scenes into TriviaMasterScene
+✓ Fixed MainMenu initialization and display
+
+NEXT STEPS:
+☐ Test scene flow from map 1 through map 4
+☐ Verify power-up persistence between scenes
+☐ Add loading progress bar
+☐ Implement proper error recovery
+☐ Add scene transition animations
+☐ Enhance visual feedback for interactions
+
+----------------------------------------------------
 Game Project Assets:
 * AWS Icons for Services, and Resources, only 48x48, or really 64x64 size icons. 
     * Got from AWS, 64px by 64px, maps are 1024x768, but we display 800x600
 * Map Images, map sections, divide each map into four, each being their own scene.
     * One map per scene, one map-config.json per map, and one config.js file for the scene.
-* Create images for assets in the game, buttons, players, NPCs or enemies, any other maps.  Consider a tilemap, and 
+* Create images for assets in the game, buttons, players, NPCs or enemies, any other maps.  
+Consider a tilemap, and 
 * Create map-config.json for map files
 * Create js file for each map or scene to handle the logic for that scene.
 * Using vite for preview server.
@@ -66,30 +111,39 @@ Game Structure:
 Checks Test Cases:
 1. Check for Errors in the Browser Console
 * Open your browser's developer tools (usually by pressing F12 or Ctrl+Shift+I).
-* Go to the "Console" tab and look for any error messages. These messages can provide clues about what might be going wrong.
+* Go to the "Console" tab and look for any error messages. These messages can provide clues 
+about what might be going wrong.
 
 2. Verify File Paths
-* Ensure that all the imported scene files (e.g., BootScene, GameScene, etc.) are correctly located in the specified directories.
-* For example, if BootScene is supposed to be in ./scenes/bootscene.js, make sure that file exists in the correct location.
+* Ensure that all the imported scene files (e.g., BootScene, GameScene, etc.) are correctly 
+located in the specified directories.
+* For example, if BootScene is supposed to be in ./scenes/bootscene.js, make sure that file 
+exists in the correct location.
 
 3. Check for Missing Dependencies
-* Ensure that Phaser is correctly installed. If you're using a package manager like npm, make sure Phaser is listed in your package.json and installed.
+* Ensure that Phaser is correctly installed. If you're using a package manager like npm, 
+make sure Phaser is listed in your package.json and installed.
 
 * Run npm install or yarn install to ensure all dependencies are installed.
 
 4. Audio Context Initialization
-* Modern browsers require user interaction to initialize audio. Your code already handles this with the initAudio function, but ensure that the audio context is correctly initialized.
+* Modern browsers require user interaction to initialize audio. Your code already handles
+ this with the initAudio function, but ensure that the audio context is correctly initialized.
 
-* If you're still having issues with audio, try commenting out the audio-related code temporarily to see if the game runs without it.
+* If you're still having issues with audio, try commenting out the audio-related code 
+temporarily to see if the game runs without it.
 
 5. Check for Scene Duplication
-* In your config.scene array, SpaceInvadersScene is listed multiple times. Ensure that this is intentional and that it doesn't cause any conflicts.
+* In your config.scene array, SpaceInvadersScene is listed multiple times. Ensure that this is 
+intentional and that it doesn't cause any conflicts.
 
 6. Phaser Version Compatibility
-* Ensure that the version of Phaser you're using is compatible with your code. If you recently updated Phaser, there might be breaking changes.
+* Ensure that the version of Phaser you're using is compatible with your code. If you recently
+ updated Phaser, there might be breaking changes.
 
 7. Basic Debugging Steps
-* Add some console.log statements in your BootScene and PreLoader scenes to ensure they are being loaded correctly.
+* Add some console.log statements in your BootScene and PreLoader scenes to ensure they are 
+being loaded correctly.
 
 //For example, in BootScene.js:
 //javascript:
@@ -98,7 +152,8 @@ console.log('BootScene loaded');
 * This will help you verify if the scenes are being initialized properly.
 
 8. Check for Typos
-* Ensure there are no typos in your scene names or file paths. For example, Map2GameScene and Map2GameScene2 are used, but make sure they are correctly named and imported.
+* Ensure there are no typos in your scene names or file paths. For example, Map2GameScene and 
+Map2GameScene2 are used, but make sure they are correctly named and imported.
 
 9. Run a Simple Example
 To isolate the issue, try running a very simple Phaser game to ensure that your setup is correct. For example:
@@ -125,41 +180,54 @@ const game = new Phaser.Game(config);
 * If this simple example works, the issue might be in your scene logic or setup.
 
 10. Check for CORS Issues
-* If you're running the game from a local file system (e.g., file://), you might run into CORS issues when loading assets. Consider using a local server like http-server or live-server to serve your game.
+* If you're running the game from a local file system (e.g., file://), you might run into 
+CORS issues when loading assets. Consider using a local server like http-server or live-server 
+to serve your game.
 
 11. Use a Local Server
-* Running your game on a local server can help avoid issues related to file paths and CORS. You can use tools like:
+* Running your game on a local server can help avoid issues related to file paths and CORS. 
+You can use tools like:
 
-* http-server: Install it via npm (npm install -g http-server) and run it in your project directory.
+* http-server: Install it via npm (npm install -g http-server) and run it in your project 
+directory.
 
 * live-server: Another simple HTTP server with live reload capability.
 
 12. Check for Asset Loading Issues
-* Ensure that all assets (images, sounds, etc.) are correctly loaded. If an asset fails to load, it might prevent the game from running properly.
+* Ensure that all assets (images, sounds, etc.) are correctly loaded. If an asset 
+fails to load, it might prevent the game from running properly.
 
 13. Review the PreLoader Scene
-* The PreLoader scene is responsible for loading assets. Ensure that it correctly preloads all necessary assets before transitioning to other scenes.
+* The PreLoader scene is responsible for loading assets. Ensure that it correctly 
+preloads all necessary assets before transitioning to other scenes.
 
 14. Check for Infinite Loops or Blocking Code
-* Ensure that none of your scenes contain infinite loops or blocking code that might prevent the game from rendering.
+* Ensure that none of your scenes contain infinite loops or blocking code that might 
+prevent the game from rendering.
 
 15. Update Phaser
-* If you're using an older version of Phaser, consider updating to the latest version, as it might contain bug fixes and improvements.
+* If you're using an older version of Phaser, consider updating to the latest version, 
+as it might contain bug fixes and improvements.
 
 16. Check for Browser Compatibility
-* Ensure that the browser you're using supports the features you're using in Phaser. Some older browsers might not support certain WebGL or audio features.
+* Ensure that the browser you're using supports the features you're using in Phaser. Some 
+older browsers might not support certain WebGL or audio features.
 
 17. Review the GameOver Scene
-* Ensure that the GameOver scene is correctly implemented and doesn't contain any errors that might prevent the game from running.
+* Ensure that the GameOver scene is correctly implemented and doesn't contain any errors 
+that might prevent the game from running.
 
 18. Check for Conflicting CSS or HTML
-* Ensure that the HTML and CSS surrounding your game container (game-container) are not causing any layout or rendering issues.
+* Ensure that the HTML and CSS surrounding your game container (game-container) are not 
+causing any layout or rendering issues.
 
 19. Check for JavaScript Errors
-* If there are any JavaScript errors in your scene files, they might prevent the game from running. Review the code in each scene for potential issues.
+* If there are any JavaScript errors in your scene files, they might prevent the game 
+from running. Review the code in each scene for potential issues.
 
 20. Test in Different Browsers
-* Sometimes, issues are browser-specific. Test your game in different browsers (Chrome, Firefox, Edge) to see if the problem persists.
+* Sometimes, issues are browser-specific. Test your game in different browsers (Chrome, 
+Firefox, Edge) to see if the problem persists.
 
 
 
@@ -176,7 +244,42 @@ latest
 
 
 Prompts:
-@Map2GameScene.js @Map2GameScene2.js @Map2GameScene3.js @Map2GameScene4.js @Map3GameScene.js @Map3GameScene2.js @Map3GameScene3.js @Map3GameScene4.js @Map4GameScene.js @Map4GameScene2.js @Map4GameScene3.js @Map4GameScene4.js @GameScene4.js Everyone of these files I listed
+@Map2GameScene.js @Map2GameScene2.js @Map2GameScene3.js @Map2GameScene4.js @Map3GameScene.js 
+@Map3GameScene2.js @Map3GameScene3.js @Map3GameScene4.js @Map4GameScene.js @Map4GameScene2.js 
+@Map4GameScene3.js @Map4GameScene4.js @GameScene4.js Everyone of these files I listed
 
-@Map2GameScene.js @Map2GameScene2.js @Map2GameScene3.js @Map2GameScene4.js @Map3GameScene.js @Map3GameScene2.js @Map3GameScene3.js @Map3GameScene4.js @Map4GameScene.js @Map4GameScene2.js @Map4GameScene3.js @Map4GameScene4.js@GameScene4.js Everyone of these files I listed fix the transition to what it was, @SceneTransition.js SceneTransition.to, unless there is an easier way.  However, @SceneOrderManager.js only manages the sortselectionscene.  SceneTrainsition.js has the scenes listed how I want them to appear.  Lastly @SortSelectionScene.js uses images, yes I did make a config for what is a map, and I should use the @background.png image on that, maybe even the aws logo, but then the thumbnails are images not scenes, @map-config64.json is the config for that scene
+@Map2GameScene.js @Map2GameScene2.js @Map2GameScene3.js @Map2GameScene4.js @Map3GameScene.js 
+@Map3GameScene2.js @Map3GameScene3.js @Map3GameScene4.js @Map4GameScene.js @Map4GameScene2.js 
+@Map4GameScene3.js @Map4GameScene4.js@GameScene4.js Everyone of these files I listed fix 
+the transition to what it was, @SceneTransition.js SceneTransition.to, unless there is an 
+easier way.  However, @SceneOrderManager.js only manages the sortselectionscene.  
+SceneTrainsition.js has the scenes listed how I want them to appear.  Lastly 
+@SortSelectionScene.js uses images, yes I did make a config for what is a map, and I should 
+use the @background.png image on that, maybe even the aws logo, but then the thumbnails are 
+images not scenes, @map-config64.json is the config for that scene
+
+
+can you help me to make the 16 scenes in this which all have the same code but use different 
+questions, icon images(which are aws icons or pngs), map images, config files, but all do 
+the same thing, you answer 5 questions, and then transition to the space invader mini game, 
+from there to the next scene.
+
+For example:
+bootscene goes to mainmenu, from there I can select sort selection, or space invader, 
+continue, and new game.  New game brings me to map1scene1, after I answer all 5 questions,
+ it brings me to space_invaders, after I die in space invaders, map1scene2, then I answer 
+ 5 different questions, obviously, and then to space_invaders.  And if I got all 5 questions 
+ correct in one scene, I get a bonus, one of the 16 bonuses for 16 scenes.  The bonus or 
+ powerup manager handles that, but there are two power ups, in game which are temporary 
+ and ones you get from the trivia, and answer all 5 correct in that scene.  which last 
+ for the game, until you complete all maps, 4 maps 4 scene 16 scenes.  SO we should be 
+ able to have a @main.js @SceneTransition.js and a triviamasterscene, plus a basegamescene, 
+ which I doubt we need all of these but as long as it works for all scenes, should this 
+ be that easy
+
+----------------------------------------------------
+This is where you add the updates, however you want to remember Claude Sonnet, and 
+the updates you made to the code.
+
+
 

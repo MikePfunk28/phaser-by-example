@@ -1,0 +1,54 @@
+{
+    "background": "images/map1scene1.png",
+    "nextScene": "map1scene2",
+    "requiredAnswers": 5,
+    "zones": [{
+        "name": "downtown",
+        "x": 800,
+        "y": 600,
+        "scale": 1,
+        "icons": [{
+                "name": "Arch_Amazon-GuardDuty_48.png",
+                "category": "Arch_Security-Identity-Compliance",
+                "x": 300,
+                "y": 200,
+                "questionTypes": ["Security", "GD"]
+            },
+            {
+                "name": "Arch_Amazon-Athena_48.png",
+                "category": "Arch_Analytics",
+                "x": 500,
+                "y": 200,
+                "questionTypes": ["Analytics", "AA"]
+            },
+            {
+                "name": "Arch_AWS-Snowball-Edge_48.png",
+                "category": "Arch_Storage",
+                "x": 350,
+                "y": 300,
+                "questionTypes": ["Storage", "SB"]
+            },
+            {
+                "name": "Arch_Amazon-Elastic-Container-Registry_48.png",
+                "category": "Arch_Containers",
+                "x": 450,
+                "y": 300,
+                "questionTypes": ["Container", "ECR"]
+            },
+            {
+                "name": "Arch_Amazon-SageMaker_48.png",
+                "category": "Arch_Artificial-Intelligence",
+                "x": 150,
+                "y": 250,
+                "questionTypes": ["SageMaker", "SM"]
+            }
+        ]
+    }],
+    "defaultZoom": 1,
+    "boundaries": {
+        "minX": 0,
+        "maxX": 800,
+        "minY": 0,
+        "maxY": 600
+    }
+}

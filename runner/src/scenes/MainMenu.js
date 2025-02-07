@@ -6,155 +6,131 @@ import { ProgressManager } from '@/utils/ProgressManager';
 export default class MainMenu extends Phaser.Scene {
     constructor() {
         super({ key: 'mainmenu' });
-        this.progressManager = window.progressManager;
-        this.sceneTransition = window.sceneTransition;
+        this.menuButtons = [];
+        this.isTransitioning = false;
+        console.log('MainMenu: Constructor called');
+    }
+
+    init(data) {
+        console.log('MainMenu: Init called');
+        // Initialize managers even if window.gameManager doesn't exist
+        this.progressManager = window.gameManager?.progressManager || new ProgressManager();
+        this.sceneTransition = window.gameManager?.sceneTransition || new SceneTransition(this.scene);
+        this.menuButtons = [];
+        this.isTransitioning = false;
     }
 
     preload() {
-        // Load assets with correct filenames
+        console.log('MainMenu: Preload started');
         this.load.image('logo', getAssetPath('images/logo.png'));
-        this.load.image('cloud-trainer', getAssetPath('images/Not_Used/AWS-Cloud-Trainer.webp'));
         this.load.image('background', getAssetPath('images/background.png'));
     }
 
     create() {
-        // Add background
-        const bg = this.add.image(400, 300, 'background');
-        bg.setDisplaySize(800, 600);
-        bg.setAlpha(0.5);
+        console.log('MainMenu: Create started');
+        // Remove the early return and create the menu regardless
+        this.add.image(400, 300, 'background').setDisplaySize(800, 600);
+        this.add.image(400, 150, 'logo').setScale(0.5);
 
-        // Add cloud trainer logo at the top
-        const logo = this.add.image(400, 125, 'logo');
-        logo.setScale(0.5);
-        logo.setDepth(2);
-
-        // Add title text below logo
-        const title = this.add.text(400, 200, 'AWS Cloud Game', {
-            fontSize: '64px',
-            fill: '#fff',
-            fontFamily: 'Arial',
-            stroke: '#000000',
-            strokeThickness: 8
-        });
-        title.setOrigin(0.5);
-        title.setDepth(2);
-
-        // Create menu container
-        const menuContainer = this.add.container(400, 300);
-        menuContainer.setDepth(1);
-
-        // Menu options with proper transitions
-        const menuItems = [
-            {
-                text: 'Start New Game',
-                callback: () => {
-                    this.progressManager.resetProgress();
-                    this.sceneTransition.to(this, 'sort_selection', {
-                        score: 0,
-                        powerUpBitmask: 0,
-                        currentMap: 1
-                    });
-                }
-            },
-            {
-                text: 'Continue',
-                callback: () => {
-                    const progress = this.progressManager.loadProgress();
-                    if (progress && progress.lastCompletedScene) {
-                        this.sceneTransition.to(this, progress.lastCompletedScene, {
-                            score: progress.score || 0,
-                            powerUpBitmask: progress.powerUpBitmask || 0,
-                            currentMap: progress.currentMap || 1
-                        });
-                    } else {
-                        // If no progress, start new game
-                        this.sceneTransition.to(this, 'sort_selection', {
-                            score: 0,
-                            powerUpBitmask: 0,
-                            currentMap: 1
-                        });
-                    }
-                }
-            },
-            {
-                text: 'Sort Selection',
-                callback: () => {
-                    this.sceneTransition.to(this, 'sort_selection', {
-                        score: 0,
-                        powerUpBitmask: 0,
-                        currentMap: 1
-                    });
-                }
-            },
-            {
-                text: 'Space Invaders',
-                callback: () => {
-                    this.sceneTransition.to(this, 'space_invaders', {
-                        score: 0,
-                        powerUpBitmask: 0,
-                        nextScene: 'mainmenu'
-                    });
-                }
-            }
-        ];
-
-        // Create menu buttons with proper spacing
-        menuItems.forEach((item, index) => {
-            const yOffset = index * 70; // Increased spacing between buttons
-            const button = this.createButton(0, yOffset, item.text, item.callback);
-            menuContainer.add(button);
-        });
-
-        // Add version text at bottom left
-        const version = this.add.text(16, 570, 'v1.0.0', {
-            fontSize: '16px',
-            fill: '#ffffff',
-            fontFamily: 'Arial'
-        });
-        version.setDepth(2);
-
-        // Add fade-in transition
-        this.cameras.main.fadeIn(500);
+        this.createButtons();
+        console.log('MainMenu: Create completed');
     }
 
-    createButton(x, y, text, callback) {
-        const button = this.add.container(x, y);
+    createButtons() {
+        const buttons = [
+            { text: 'New Game', y: 277, callback: () => this.startNewGame() },
+            { text: 'Continue', y: 347, callback: () => this.continueGame() },
+            { text: 'Sort Selection', y: 417, callback: () => this.startSortSelection() },
+            { text: 'Space Invaders', y: 487, callback: () => this.startSpaceInvaders() }
+        ];
 
-        // Create button background with green outline
-        const bg = this.add.rectangle(0, 0, 300, 50, 0x333333);
-        bg.setStrokeStyle(2, 0x00ff00);
+        buttons.forEach(({ text, y, callback }) => {
+            // Create button background
+            const button = this.add.rectangle(400, y, 200, 40, 0x333333)
+                .setInteractive({ useHandCursor: true });
 
-        // Create button text
-        const buttonText = this.add.text(0, 0, text, {
-            fontSize: '24px',
-            fill: '#fff',
-            fontFamily: 'Arial'
-        }).setOrigin(0.5);
-
-        // Add background and text to button container
-        button.add([bg, buttonText]);
-
-        // Make button interactive with hover effects
-        bg.setInteractive({ useHandCursor: true })
-            .on('pointerover', () => {
-                bg.setFillStyle(0x666666);
-                buttonText.setStyle({ fill: '#00ff00' });
-            })
-            .on('pointerout', () => {
-                bg.setFillStyle(0x333333);
-                buttonText.setStyle({ fill: '#ffffff' });
-            })
-            .on('pointerdown', () => {
-                // Visual feedback
-                bg.setFillStyle(0x00ff00);
-                buttonText.setStyle({ fill: '#000000' });
-
-                // Add a small delay before transition
-                this.time.delayedCall(100, () => {
-                    if (callback) callback();
-                });
+            // Add hover effects
+            button.on('pointerover', () => {
+                button.setFillStyle(0x666666);
             });
+            button.on('pointerout', () => {
+                button.setFillStyle(0x333333);
+            });
+            button.on('pointerdown', callback);
 
-        return button;
+            // Add button text
+            const buttonText = this.add.text(400, y, text, {
+                fontSize: '24px',
+                fill: '#fff',
+                backgroundColor: null
+            }).setOrigin(0.5);
+
+            this.menuButtons.push(button);
+        });
+
+        // Disable continue button if no save data
+        if (!this.progressManager.loadProgress()?.lastCompletedScene) {
+            this.menuButtons[1].setAlpha(0.5).disableInteractive();
+        }
+    }
+
+    startNewGame() {
+        if (this.isTransitioning) return;
+        this.isTransitioning = true;
+        console.log('Starting new game...');
+        this.scene.start('trivia_master', {
+            mapNumber: 1,
+            sceneNumber: 1,
+            isNewGame: true,
+            score: 0,
+            powerUpBitmask: 0,
+            currentMap: 1
+        });
+    }
+
+    continueGame() {
+        if (this.isTransitioning) return;
+        this.isTransitioning = true;
+        console.log('Continuing game...');
+        const savedData = this.progressManager.loadProgress();
+        if (savedData?.lastCompletedScene) {
+            // Parse the saved scene to get map and scene numbers
+            const match = savedData.lastCompletedScene.match(/map(\d+)scene(\d+)/);
+            if (match) {
+                const [_, mapNumber, sceneNumber] = match;
+                console.log('Continuing from:', { mapNumber, sceneNumber, savedData });
+                this.scene.start('trivia_master', {
+                    mapNumber: parseInt(mapNumber),
+                    sceneNumber: parseInt(sceneNumber),
+                    score: savedData.score,
+                    powerUpBitmask: savedData.powerUpBitmask,
+                    currentMap: savedData.currentMap
+                });
+            } else {
+                console.warn('Invalid save format, starting new game');
+                this.startNewGame();
+            }
+        } else {
+            console.warn('No save data found, starting new game');
+            this.startNewGame();
+        }
+    }
+
+    startSortSelection() {
+        if (this.isTransitioning) return;
+        this.isTransitioning = true;
+        this.sceneTransition.to(this, 'sort_selection', { fromMainMenu: true });
+    }
+
+    startSpaceInvaders() {
+        if (this.isTransitioning) return;
+        this.isTransitioning = true;
+        this.sceneTransition.to(this, 'space_invaders', { fromMainMenu: true });
+    }
+
+    shutdown() {
+        this.isTransitioning = false;
+        this.menuButtons.forEach(button => button.destroy());
+        this.menuButtons = [];
     }
 }

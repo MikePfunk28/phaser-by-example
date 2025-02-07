@@ -12,7 +12,9 @@ const assetCache = new Map();
 export function getAssetPath(path) {
     // Normalize path
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-    return `${BASE_PATH}${normalizedPath}`;
+    const fullPath = `${BASE_PATH}${normalizedPath}`;
+    console.log('Asset path requested:', { original: path, normalized: normalizedPath, full: fullPath });
+    return fullPath;
 }
 
 /**
@@ -23,9 +25,11 @@ export function getAssetPath(path) {
  */
 export function loadAsset(path, type) {
     const fullPath = getAssetPath(path);
+    console.log('Loading asset:', { path, type, fullPath });
 
     // Check cache first
     if (assetCache.has(fullPath)) {
+        console.log('Asset found in cache:', fullPath);
         return Promise.resolve(assetCache.get(fullPath));
     }
 
@@ -35,31 +39,50 @@ export function loadAsset(path, type) {
             case 'image':
                 loadImage(fullPath)
                     .then(asset => {
+                        console.log('Image loaded successfully:', fullPath);
                         assetCache.set(fullPath, asset);
                         resolve(asset);
                     })
-                    .catch(reject);
+                    .catch(error => {
+                        console.error('Failed to load image:', fullPath, error);
+                        reject(error);
+                    });
+                break;
+
+            case 'json':
+                fetch(fullPath)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('JSON loaded successfully:', fullPath);
+                        assetCache.set(fullPath, data);
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        console.error('Failed to load JSON:', fullPath, error);
+                        reject(error);
+                    });
                 break;
 
             case 'audio':
                 loadAudio(fullPath)
                     .then(asset => {
+                        console.log('Audio loaded successfully:', fullPath);
                         assetCache.set(fullPath, asset);
                         resolve(asset);
                     })
-                    .catch(reject);
-                break;
-
-            case 'json':
-                loadJSON(fullPath)
-                    .then(asset => {
-                        assetCache.set(fullPath, asset);
-                        resolve(asset);
-                    })
-                    .catch(reject);
+                    .catch(error => {
+                        console.error('Failed to load audio:', fullPath, error);
+                        reject(error);
+                    });
                 break;
 
             default:
+                console.error('Unsupported asset type:', type);
                 reject(new Error(`Unsupported asset type: ${type}`));
         }
     });
@@ -91,21 +114,6 @@ function loadAudio(path) {
         audio.onerror = () => reject(new Error(`Failed to load audio: ${path}`));
         audio.src = path;
     });
-}
-
-/**
- * Load a JSON asset
- * @param {string} path - Path to the JSON file
- * @returns {Promise} Promise that resolves with the parsed JSON
- */
-function loadJSON(path) {
-    return fetch(path)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Failed to load JSON: ${path}`);
-            }
-            return response.json();
-        });
 }
 
 /**

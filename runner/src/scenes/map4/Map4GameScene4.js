@@ -8,7 +8,7 @@ import { ProgressManager } from '@/utils/ProgressManager';
 
 export default class Map4GameScene4 extends BaseGameScene {
     constructor() {
-        super({ key: 'map4gamescene4' });
+        super({ key: 'map4scene4' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -21,6 +21,20 @@ export default class Map4GameScene4 extends BaseGameScene {
         this.powerUpBitmask = 0;
         this.progressManager = new ProgressManager();
         this.sceneTransition = new SceneTransition();
+    }
+
+    init(data) {
+        this.score = data.score || 0;
+        this.powerUpBitmask = data.powerUpBitmask || 0;
+        this.currentMap = data.currentMap || 4;
+
+        // Save progress
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map4scene4',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
     }
 
     preload() {
@@ -95,8 +109,10 @@ export default class Map4GameScene4 extends BaseGameScene {
 
             // Save progress
             this.progressManager.saveProgress({
-                lastCompletedScene: 'map4gamescene4',
-                currentMap: 4
+                lastCompletedScene: 'map4scene4',
+                currentMap: this.currentMap,
+                powerUpBitmask: this.powerUpBitmask,
+                score: this.score
             });
 
         } catch (error) {
@@ -111,7 +127,7 @@ export default class Map4GameScene4 extends BaseGameScene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map4gamescene4');
+                this.scene.start('map4scene4');
             }, 2000);
         }
     }
@@ -324,9 +340,21 @@ export default class Map4GameScene4 extends BaseGameScene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
-        SceneTransition.to(this, 'space_invaders', {
-            nextScene: 'gameover',
+
+        // Save progress before transition
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map4scene4',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
             score: this.score
+        });
+
+        // Transition to space invaders
+        this.sceneTransition.to(this, 'space_invaders', {
+            nextScene: 'game_over',
+            score: this.score,
+            powerUpBitmask: this.powerUpBitmask,
+            currentMap: this.currentMap
         });
     }
 }

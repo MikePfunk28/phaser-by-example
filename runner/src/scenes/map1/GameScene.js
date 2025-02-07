@@ -1,9 +1,10 @@
+import BaseGameScene from '../BaseGameScene';
 import { getAssetPath } from '@/utils/assetLoader';
 import Phaser from 'phaser';
-import { SceneTransition } from '@/utils/SceneTransition';
+import { SceneTransition, TRANSITION_STATE } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
 
-export default class GameScene extends Phaser.Scene {
+export default class map1scene1 extends BaseGameScene {
     constructor() {
         super({ key: 'map1scene1' });
         this.player = null;
@@ -18,6 +19,26 @@ export default class GameScene extends Phaser.Scene {
         this.powerUpBitmask = 0;
         this.progressManager = new ProgressManager();
         this.sceneTransition = new SceneTransition();
+        this.isActive = false;
+        this.isPaused = false;
+    }
+
+    init(data) {
+        this.isActive = true;
+        this.isPaused = false;
+        this.fromScene = data?.fromScene;
+        this.score = data?.score || 0;
+        this.powerUpBitmask = data?.powerUpBitmask || 0;
+        this.currentMap = data?.currentMap || 1;
+
+        // Register cleanup handlers
+        this.events.on('sceneCleanup', this.cleanup, this);
+        this.events.on('scenePause', this.pause, this);
+        this.events.on('sceneResume', this.resume, this);
+        this.events.on('sceneEnd', this.end, this);
+
+        // Set current scene in transition manager
+        this.sceneTransition.setCurrentScene(this);
     }
 
     preload() {
@@ -28,24 +49,30 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('checkMark', getAssetPath('images/checkmark.png'));
         this.load.image('xMark', getAssetPath('images/xmark.png'));
 
-        // Load sound effects
-        this.load.audio('click', getAssetPath('sounds/click.wav'));
-        this.load.audio('correct', getAssetPath('sounds/correct.wav'));
-        this.load.audio('wrong', getAssetPath('sounds/wrong.wav'));
+        // Load sound effects with error handling
+        try {
+            this.load.audio('click', getAssetPath('sounds/click.mp3'));
+            this.load.audio('correct', getAssetPath('sounds/correct.mp3'));
+            this.load.audio('wrong', getAssetPath('sounds/wrong.mp3'));
+
+            // Add error handler for audio loading
+            this.load.on('loaderror', (fileObj) => {
+                console.warn('Error loading audio:', fileObj.key);
+                // Create dummy sound to prevent errors
+                this.cache.audio.add(fileObj.key, new Audio());
+            });
+        } catch (error) {
+            console.warn('Error setting up audio:', error);
+        }
     }
 
     create() {
-        // Add semi-transparent dark background
-        const bg = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8);
-        bg.setOrigin(0.5);
+        // Set up the map to fit 800x600
+        const map = this.add.image(400, 300, 'map1scene1');
+        map.setOrigin(0.5);
 
-        // Initialize sound settings
-        if (this.sound && this.sound.context) {
-            this.sound.pauseOnBlur = false;
-        }
-
-        // Set up score display first
-        this.setupScore();
+        // Set up UI elements
+        this.setupUI();
 
         // Get the loaded questions and map config with error handling
         try {
@@ -55,22 +82,6 @@ export default class GameScene extends Phaser.Scene {
             if (!mapConfig || !mapConfig.zones) {
                 throw new Error('Invalid map config structure');
             }
-
-            // Set up the map based on config
-            const activeZone = mapConfig.zones[0];
-
-            if (!activeZone) {
-                throw new Error('No valid zone found in config');
-            }
-
-            // Set up the map with default values if needed
-            const map = this.add.image(
-                activeZone.x || 400,
-                activeZone.y || 300,
-                'map1scene1'
-            );
-            map.setOrigin(0.5);
-            map.setScale(1.0); // Full size for 800x600
 
             // Load AWS icons after we have the config
             this.loadAwsIcons(mapConfig);
@@ -89,8 +100,38 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
+    setupUI() {
+        // Create UI container at the top
+        const uiContainer = this.add.container(0, 0);
+
+        // Add semi-transparent background for UI
+        const uiBg = this.add.rectangle(400, 30, 800, 60, 0x000000, 0.7);
+
+        // Add score
+        this.scoreText = this.add.text(20, 20, `Score: ${this.score}`, {
+            fontSize: '24px',
+            fontStyle: 'bold',
+            fill: '#fff'
+        });
+
+        // Add power-ups display
+        const powerUps = [];
+        if (this.powerUpBitmask & 1) powerUps.push('❤️');  // Life
+        if (this.powerUpBitmask & 2) powerUps.push('⚡');  // Speed
+        if (this.powerUpBitmask & 4) powerUps.push('🛡️');  // Shield
+        if (this.powerUpBitmask & 8) powerUps.push('🔥');  // Power
+
+        const powerUpText = this.add.text(200, 20, powerUps.join(' '), {
+            fontSize: '24px',
+            fill: '#fff'
+        });
+
+        uiContainer.add([uiBg, this.scoreText, powerUpText]);
+        uiContainer.setDepth(100);
+    }
+
     loadAwsIcons(mapConfig) {
-        // Preload all icons with proper error handling
+        // Preload all icons
         mapConfig.zones.forEach(zone => {
             zone.icons.forEach(iconConfig => {
                 const iconPath = `assets/images/services16/${iconConfig.category}/48/${iconConfig.name}`;
@@ -106,13 +147,20 @@ export default class GameScene extends Phaser.Scene {
                     const iconKey = `icon_${iconConfig.name}`;
                     console.log('Creating icon:', iconKey);
 
-                    // Create icon sprite at 1.3x size
+                    // Create icon sprite with natural size (scale 1.0)
                     const iconSprite = this.add.image(iconConfig.x, iconConfig.y, iconKey)
                         .setInteractive()
-                        .setScale(1.3);
+                        .setScale(1.0); // Natural size
 
-                    // Add green box around icon
-                    const box = this.add.rectangle(iconConfig.x, iconConfig.y, 62, 62, 0x00ff00, 0);
+                    // Add highlight box that matches icon size
+                    const box = this.add.rectangle(
+                        iconConfig.x,
+                        iconConfig.y,
+                        48, // Fixed size for AWS icons
+                        48,
+                        0x00ff00,
+                        0
+                    );
                     box.setStrokeStyle(2, 0x00ff00);
                     iconSprite.box = box;
 
@@ -126,14 +174,15 @@ export default class GameScene extends Phaser.Scene {
     }
 
     setupIconInteraction(iconSprite, iconConfig) {
+        // No tint by default
         iconSprite.setTint(0xffffff);
         iconSprite.isAnswered = false;
 
-        // Hover effects
+        // Hover effects only if not answered
         iconSprite.on('pointerover', () => {
             if (!iconSprite.isAnswered) {
-                iconSprite.setTint(0x00ff00);
-                this.sound.play('click', { volume: 0.5 });
+                iconSprite.setTint(0xcccccc);
+                this.playSound('click');
             }
         });
 
@@ -143,133 +192,169 @@ export default class GameScene extends Phaser.Scene {
             }
         });
 
-        // Click handler
+        // Click handler with cooldown
         iconSprite.on('pointerdown', () => {
             if (!iconSprite.isAnswered && !this.clickCooldown) {
                 this.handleIconClick(iconSprite, iconConfig);
+                this.clickCooldown = true;
+                setTimeout(() => {
+                    this.clickCooldown = false;
+                }, 500);
             }
         });
     }
 
     handleIconClick(iconSprite, iconConfig) {
-        this.clickCooldown = true;
-        this.sound.play('click');
-
-        // Find relevant questions for this icon
-        const relevantQuestions = this.questions.filter(q =>
+        const relevantQuestion = this.questions.find(q =>
             iconConfig.questionTypes.some(type =>
                 q.question.toLowerCase().includes(type.toLowerCase())
             )
         );
 
-        if (relevantQuestions.length > 0) {
-            const randomQuestion = Phaser.Utils.Array.GetRandom(relevantQuestions);
-            this.showQuestion(randomQuestion, iconSprite);
+        if (relevantQuestion) {
+            this.showQuestion(relevantQuestion, iconSprite);
         }
-
-        // Reset cooldown after 500ms
-        setTimeout(() => {
-            this.clickCooldown = false;
-        }, 500);
     }
 
     showQuestion(question, iconSprite) {
-        // Create semi-transparent overlay
-        const overlay = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8);
-        overlay.setDepth(100);
+        const SCREEN_WIDTH = 800;
+        const SCREEN_HEIGHT = 600;
+        const PADDING = 20;
+        const QUESTION_WIDTH = SCREEN_WIDTH * 0.85; // 85% of screen width
 
-        // Create question text
-        const questionText = this.add.text(400, 150, question.question, {
-            fontSize: '24px',
+        // Create container for all question elements
+        const container = this.add.container(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+        container.setDepth(100);
+
+        // Add question text first to measure its height
+        const questionText = this.add.text(0, 0, question.question, {
+            fontSize: '20px',
+            fontStyle: 'bold',
             fill: '#fff',
             align: 'center',
-            wordWrap: { width: 700 }
-        }).setOrigin(0.5).setDepth(101);
+            wordWrap: { width: QUESTION_WIDTH - (PADDING * 2) }
+        }).setOrigin(0.5);
+
+        const questionBounds = questionText.getBounds();
+
+        // Create background for question
+        const questionBg = this.add.rectangle(
+            0,
+            0,
+            QUESTION_WIDTH,
+            questionBounds.height + (PADDING * 2),
+            0x333333,
+            0.95
+        ).setOrigin(0.5);
+
+        // Position question text vertically
+        questionText.setY(-SCREEN_HEIGHT / 4);
+        questionBg.setY(questionText.y);
 
         // Create answer buttons
         const answers = Object.entries(question.options);
-        const startY = 250;
-        const spacing = 70;
+        const buttonWidth = QUESTION_WIDTH - (PADDING * 4);
+        let nextButtonY = questionText.y + questionBounds.height + (PADDING * 3);
 
-        const answerButtons = answers.map(([key, value], index) => {
-            const y = startY + (index * spacing);
+        const answerButtons = answers.map(([key, value]) => {
+            const button = this.add.rectangle(0, nextButtonY, buttonWidth, 50, 0x666666)
+                .setInteractive();
 
-            const button = this.add.rectangle(400, y, 600, 50, 0x333333)
-                .setInteractive()
-                .setDepth(101);
+            const text = this.add.text(0, nextButtonY, `${key}: ${value}`, {
+                fontSize: '18px',
+                fontStyle: 'bold',
+                fill: '#fff',
+                align: 'center'
+            }).setOrigin(0.5);
 
-            const text = this.add.text(400, y, `${key}: ${value}`, {
-                fontSize: '20px',
-                fill: '#fff'
-            }).setOrigin(0.5).setDepth(102);
+            // Update Y position for next button
+            nextButtonY += 70;
 
-            button.on('pointerover', () => {
-                button.setFillStyle(0x666666);
-                this.sound.play('click', { volume: 0.3 });
-            });
-
-            button.on('pointerout', () => {
-                button.setFillStyle(0x333333);
-            });
-
-            button.on('pointerdown', () => {
-                const isCorrect = key === question.answer;
-
-                // Play sound effect
-                this.sound.play(isCorrect ? 'correct' : 'wrong');
-
-                // Update score
-                if (isCorrect) {
-                    this.score += 100;
-                    this.scoreText.setText(`Score: ${this.score}`);
-                }
-
-                // Show feedback
-                const feedbackMark = this.add.image(iconSprite.x, iconSprite.y,
-                    isCorrect ? 'checkMark' : 'xMark')
-                    .setScale(1.0)
-                    .setDepth(50);
-
-                // Grey out the icon
-                iconSprite.setAlpha(0.5);
-                iconSprite.isAnswered = true;
-                this.tweens.killTweensOf(iconSprite);
-
-                // Show explanation
-                const explanation = this.add.text(400, 500, question.explanation, {
-                    fontSize: '20px',
-                    fill: isCorrect ? '#00ff00' : '#ff0000',
-                    align: 'center',
-                    wordWrap: { width: 700 }
-                }).setOrigin(0.5).setDepth(101);
-
-                // Remove question interface after delay
-                setTimeout(() => {
-                    overlay.destroy();
-                    questionText.destroy();
-                    answerButtons.forEach(({ button, text }) => {
-                        button.destroy();
-                        text.destroy();
-                    });
-                    explanation.destroy();
-
-                    this.answeredQuestions++;
-                    if (this.answeredQuestions === 5) {
-                        this.transitionToNextScene();
-                    }
-                }, 3000);
-            });
-
+            this.setupAnswerButton(button, text, key === question.answer, iconSprite, container);
             return { button, text };
+        });
+
+        // Add everything to container
+        container.add([questionBg, questionText]);
+        answerButtons.forEach(({ button, text }) => container.add([button, text]));
+        //add a word wrap for answer buttons
+        answerButtons.forEach(({ button, text }) => {
+            text.setWordWrapWidth(buttonWidth - (PADDING * 2));
+            text.setAlign('center');
+        });
+
+        // Add semi-transparent background behind everything
+        const fullBg = this.add.rectangle(
+            SCREEN_WIDTH / 2,
+            SCREEN_HEIGHT / 2,
+            SCREEN_WIDTH,
+            SCREEN_HEIGHT,
+            0x000000,
+            0.7
+        ).setDepth(99);
+
+        // Store background reference in container for cleanup
+        container.fullBg = fullBg;
+    }
+
+    setupAnswerButton(button, text, isCorrect, iconSprite, container) {
+        let isAnswered = false;
+
+        button.on('pointerover', () => {
+            if (!isAnswered) {
+                button.setFillStyle(0x888888);
+                text.setColor('#ffff00');
+                this.playSound('click');
+            }
+        });
+
+        button.on('pointerout', () => {
+            if (!isAnswered) {
+                button.setFillStyle(0x666666);
+                text.setColor('#ffffff');
+            }
+        });
+
+        button.on('pointerdown', () => {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            // Highlight selected answer
+            button.setFillStyle(isCorrect ? 0x00aa00 : 0xaa0000);
+            text.setColor(isCorrect ? '#00ff00' : '#ff0000');
+
+            this.handleAnswer(isCorrect, iconSprite, container);
         });
     }
 
-    setupScore() {
-        this.scoreText = this.add.text(16, 16, 'Score: 0', {
-            fontSize: '32px',
-            fill: '#fff',
-            backgroundColor: '#000',
-            padding: { x: 10, y: 5 }
+    handleAnswer(isCorrect, iconSprite, container) {
+        this.playSound(isCorrect ? 'correct' : 'wrong');
+
+        if (isCorrect) {
+            this.score += 100;
+            this.scoreText.setText(`Score: ${this.score}`);
+            iconSprite.setTint(0x00ff00);
+            this.add.image(iconSprite.x, iconSprite.y, 'checkMark')
+                .setScale(1.0)
+                .setDepth(50);
+        } else {
+            iconSprite.setTint(0xff0000);
+            this.add.image(iconSprite.x, iconSprite.y, 'xMark')
+                .setScale(1.0)
+                .setDepth(50);
+        }
+
+        iconSprite.isAnswered = true;
+        iconSprite.disableInteractive();
+
+        // Remove question after delay
+        this.time.delayedCall(3000, () => {
+            container.fullBg.destroy();
+            container.destroy();
+            this.answeredQuestions++;
+            if (this.answeredQuestions === 5) {
+                this.transitionToNextScene();
+            }
         });
     }
 
@@ -292,5 +377,39 @@ export default class GameScene extends Phaser.Scene {
             powerUpBitmask: this.powerUpBitmask,
             currentMap: this.currentMap
         });
+    }
+
+    playSound(key) {
+        try {
+            if (this.sound && this.cache.audio.exists(key)) {
+                this.sound.play(key, { volume: 0.5 });
+            }
+        } catch (error) {
+            console.warn('Error playing sound:', key, error);
+        }
+    }
+
+    cleanup() {
+        if (this.currentQuestion) {
+            this.currentQuestion.background.destroy();
+            this.currentQuestion.container.destroy();
+            this.currentQuestion = null;
+        }
+    }
+
+    pause() {
+        this.isPaused = true;
+        // Additional pause logic if needed
+    }
+
+    resume() {
+        this.isPaused = false;
+        // Additional resume logic if needed
+    }
+
+    end() {
+        this.isActive = false;
+        this.cleanup();
+        // Additional end logic if needed
     }
 }

@@ -8,7 +8,7 @@ import { ProgressManager } from '@/utils/ProgressManager';
 
 export default class Map4GameScene2 extends BaseGameScene {
     constructor() {
-        super({ key: 'map4gamescene2' });
+        super({ key: 'map4scene2' });
         this.player = null;
         this.score = 0;
         this.scoreText = null;
@@ -21,6 +21,20 @@ export default class Map4GameScene2 extends BaseGameScene {
         this.powerUpBitmask = 0;
         this.progressManager = new ProgressManager();
         this.sceneTransition = new SceneTransition();
+    }
+
+    init(data) {
+        this.score = data.score || 0;
+        this.powerUpBitmask = data.powerUpBitmask || 0;
+        this.currentMap = data.currentMap || 4;
+
+        // Save progress
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map4scene2',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
     }
 
     preload() {
@@ -95,8 +109,10 @@ export default class Map4GameScene2 extends BaseGameScene {
 
             // Save progress
             this.progressManager.saveProgress({
-                lastCompletedScene: 'map4gamescene2',
-                currentMap: 4
+                lastCompletedScene: 'map4scene2',
+                currentMap: this.currentMap,
+                powerUpBitmask: this.powerUpBitmask,
+                score: this.score
             });
 
         } catch (error) {
@@ -111,7 +127,7 @@ export default class Map4GameScene2 extends BaseGameScene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map4gamescene2');
+                this.scene.start('map4scene2');
             }, 2000);
         }
     }
@@ -297,7 +313,7 @@ export default class Map4GameScene2 extends BaseGameScene {
                     if (this.answeredQuestions === 5) {
                         console.log('All 5 questions answered, transitioning to Space Invaders...');
                         setTimeout(() => {
-                            this.scene.start('space_invaders', { nextScene: 'map4gamescene3' });
+                            this.scene.start('space_invaders', { nextScene: 'map4scene3' });
                         }, 3000);
                     }
                 }, 2000);
@@ -322,9 +338,21 @@ export default class Map4GameScene2 extends BaseGameScene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
-        SceneTransition.to(this, 'space_invaders', {
-            nextScene: 'map4scene3',
+
+        // Save progress before transition
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map4scene2',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
             score: this.score
+        });
+
+        // Transition to space invaders
+        this.sceneTransition.to(this, 'space_invaders', {
+            nextScene: 'map4scene3',
+            score: this.score,
+            powerUpBitmask: this.powerUpBitmask,
+            currentMap: this.currentMap
         });
     }
 }

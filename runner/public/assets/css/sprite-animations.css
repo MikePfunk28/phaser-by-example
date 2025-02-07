@@ -1,0 +1,66 @@
+.sprite {
+    position: absolute;
+    width: 87px;
+    height: 190px;
+    transform-origin: center;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.sprite-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-origin: center;
+}
+
+.sprite-shadow {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+}
+
+@keyframes walk-right {
+    0% { background-position: 0 0; }
+    25% { background-position: -87px 0; }
+    50% { background-position: -174px 0; }
+    75% { background-position: -261px 0; }
+    100% { background-position: 0 0; }
+}
+
+@keyframes walk-left {
+    0% { background-position: 0 -190px; }
+    25% { background-position: -87px -190px; }
+    50% { background-position: -174px -190px; }
+    75% { background-position: -261px -190px; }
+    100% { background-position: 0 -190px; }
+}
+
+.walking-right {
+    animation: walk-right 0.8s steps(4) infinite;
+}
+
+.walking-left {
+    animation: walk-left 0.8s steps(4) infinite;
+}
+
+.sprite-highlight {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #00ff00;
+    border-radius: 50%;
+    animation: pulse 1s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+} 

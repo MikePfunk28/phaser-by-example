@@ -1,1 +1,175 @@
-[{"name":"sprite516","x":87,"y":937,"width":137,"height":189},{"name":"sprite9","x":0,"y":0,"width":87,"height":190},{"name":"sprite10","x":0,"y":190,"width":137,"height":371},{"name":"sprite11","x":137,"y":374,"width":87,"height":187},{"name":"sprite12","x":87,"y":748,"width":137,"height":189},{"name":"sprite13","x":0,"y":561,"width":87,"height":940},{"name":"sprite14","x":137,"y":0,"width":87,"height":185},{"name":"sprite15","x":87,"y":1315,"width":116,"height":184},{"name":"sprite16","x":137,"y":185,"width":87,"height":189},{"name":"sprite17","x":87,"y":561,"width":137,"height":187},{"name":"sprite18","x":87,"y":1126,"width":87,"height":189}]
+{
+    "frames": {
+        "walk-right-1": {
+            "frame": {
+                "x": 0,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "sourceSize": {
+                "w": 87,
+                "h": 190
+            }
+        },
+        "walk-right-2": {
+            "frame": {
+                "x": 87,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "sourceSize": {
+                "w": 87,
+                "h": 190
+            }
+        },
+        "walk-right-3": {
+            "frame": {
+                "x": 174,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "sourceSize": {
+                "w": 87,
+                "h": 190
+            }
+        },
+        "walk-right-4": {
+            "frame": {
+                "x": 261,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "sourceSize": {
+                "w": 87,
+                "h": 190
+            }
+        },
+        "walk-left-1": {
+            "frame": {
+                "x": 0,
+                "y": 190,
+                "w": 87,
+                "h": 190
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "sourceSize": {
+                "w": 87,
+                "h": 190
+            }
+        },
+        "walk-left-2": {
+            "frame": {
+                "x": 87,
+                "y": 190,
+                "w": 87,
+                "h": 190
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "sourceSize": {
+                "w": 87,
+                "h": 190
+            }
+        },
+        "walk-left-3": {
+            "frame": {
+                "x": 174,
+                "y": 190,
+                "w": 87,
+                "h": 190
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "sourceSize": {
+                "w": 87,
+                "h": 190
+            }
+        },
+        "walk-left-4": {
+            "frame": {
+                "x": 261,
+                "y": 190,
+                "w": 87,
+                "h": 190
+            },
+            "rotated": false,
+            "trimmed": false,
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 87,
+                "h": 190
+            },
+            "sourceSize": {
+                "w": 87,
+                "h": 190
+            }
+        }
+    },
+    "meta": {
+        "app": "Phaser Editor",
+        "version": "1.0",
+        "image": "spritesheetanime.png",
+        "format": "RGBA8888",
+        "size": {
+            "w": 348,
+            "h": 380
+        },
+        "scale": "1"
+    }
+}

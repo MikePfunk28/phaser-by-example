@@ -30,7 +30,7 @@ export default class Map2GameScene4 extends BaseGameScene {
 
         // Save progress
         this.progressManager.saveProgress({
-            lastCompletedScene: 'map2gamescene4',
+            lastCompletedScene: 'map2scene4',
             currentMap: this.currentMap,
             powerUpBitmask: this.powerUpBitmask,
             score: this.score
@@ -38,7 +38,7 @@ export default class Map2GameScene4 extends BaseGameScene {
     }
 
     preload() {
-        this.load.scene('map2gamescene4', getAssetPath('images/map2gamescene4.png'));
+        this.load.scene('map2scene4', getAssetPath('images/map2scene4.png'));
         this.load.json('map-config4', getAssetPath('data/map2/map-config4.json'));
         this.load.json('questions', getAssetPath('data/questions.json'));
         this.load.image('checkMark', getAssetPath('images/checkmark.png'));
@@ -109,7 +109,7 @@ export default class Map2GameScene4 extends BaseGameScene {
             const map = this.add.image(
                 activeZone.x || 400,
                 activeZone.y || 300,
-                'map2gamescene4'
+                'map2scene4'
             );
             map.setOrigin(0.5);
             map.setScale(activeZone.scale || 1);
@@ -132,7 +132,7 @@ export default class Map2GameScene4 extends BaseGameScene {
 
             // Restart the scene after a delay
             setTimeout(() => {
-                this.scene.start('map2gamescene4');
+                this.scene.start('map2scene4');
             }, 2000);
         }
     }
@@ -147,182 +147,152 @@ export default class Map2GameScene4 extends BaseGameScene {
     }
 
     loadAwsIcons(mapConfig) {
-        // Preload all icons
         mapConfig.zones.forEach(zone => {
-            zone.icons.forEach(iconConfig => {
-                const iconPath = getAssetPath(`images/services16/${iconConfig.category}/48/${iconConfig.name}`);
-                this.load.image(`icon_${iconConfig.name}`, iconPath);
+            zone.icons.forEach(icon => {
+                const iconSprite = this.add.image(
+                    icon.x,
+                    icon.y,
+                    `icon_${icon.name}`
+                )
+                    .setInteractive()
+                    .setScale(0.5);
+
+                // Add green box around icon
+                const box = this.add.rectangle(icon.x, icon.y, 48, 48, 0x00ff00, 0);
+                box.setStrokeStyle(2, 0x00ff00);
+                iconSprite.box = box;
+
+                this.setupIconInteraction(iconSprite, icon);
+                this.icons.push(iconSprite);
             });
         });
-
-        // Start the loader and create icons upon completion
-        this.load.once('complete', () => {
-            mapConfig.zones.forEach(zone => {
-                zone.icons.forEach(iconConfig => {
-                    const iconKey = `icon_${iconConfig.name}`;
-                    const iconSprite = this.add.image(iconConfig.x, iconConfig.y, iconKey)
-                        .setInteractive()
-                        .setScale(0.5);
-
-                    // Add green box around icon
-                    const box = this.add.rectangle(iconConfig.x, iconConfig.y, 48, 48, 0x00ff00, 0);
-                    box.setStrokeStyle(2, 0x00ff00);
-                    iconSprite.box = box;
-
-                    this.setupIconInteraction(iconSprite, iconConfig);
-                    this.icons.push(iconSprite);
-                });
-            });
-        });
-
-        this.load.start();
     }
 
     setupIconInteraction(iconSprite, iconConfig) {
-        // Add visual feedback for interactivity
-        iconSprite.setTint(0xffffff);
-        iconSprite.isAnswered = false; // Track answered state
-
-        // Hover effects
         iconSprite.on('pointerover', () => {
-            if (iconSprite.isAnswered) return;
-            iconSprite.setScale(1.3);
-            iconSprite.setTint(0x00ff00);
-            // Show icon name on hover
-            this.showTooltip(iconConfig.name, iconSprite.x, iconSprite.y);
+            iconSprite.box.setStrokeStyle(2, 0xffff00);
+            iconSprite.setScale(0.6);
         });
 
         iconSprite.on('pointerout', () => {
-            if (iconSprite.isAnswered) return;
-            iconSprite.setScale(1.3);
-            iconSprite.setTint(0xffffff);
-            this.hideTooltip();
+            iconSprite.box.setStrokeStyle(2, 0x00ff00);
+            iconSprite.setScale(0.5);
         });
 
-        // Add pulsing animation
-        this.tweens.add({
-            targets: iconSprite,
-            scale: { from: 1.0, to: 1.4 },
-            duration: 1000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
-        // Click handler - filter questions by type
         iconSprite.on('pointerdown', () => {
-            if (iconSprite.isAnswered) return; // Skip if already answered
-
-            let randomQuestion;
-            let relevantQuestions = this.questions.filter(q =>
-                iconConfig.questionTypes.some(type =>
-                    q.question.toLowerCase().includes(type.toLowerCase())
-                )
-            );
-
-            if (relevantQuestions.length === 0) {
-                // If no specific questions found, pick a random one
-                relevantQuestions = this.questions;
+            if (!this.clickCooldown) {
+                this.handleIconClick(iconSprite, iconConfig);
             }
-
-            randomQuestion = Phaser.Utils.Array.GetRandom(relevantQuestions);
-            this.showQuestion(randomQuestion, iconSprite);
         });
     }
 
-    showTooltip(text, x, y) {
-        this.tooltip = this.add.text(x, y - 60, text, {
-            fontSize: '16px',
-            fill: '#fff',
-            backgroundColor: '#000',
-            padding: { x: 5, y: 3 }
-        }).setOrigin(1.0).setDepth(150);
-    }
+    handleIconClick(iconSprite, iconConfig) {
+        // Handle icon click logic
+        const relevantQuestion = this.questions.find(q =>
+            iconConfig.questionTypes.some(type =>
+                q.question.toLowerCase().includes(type.toLowerCase())
+            )
+        );
 
-    hideTooltip() {
-        if (this.tooltip) {
-            this.tooltip.destroy();
+        if (relevantQuestion) {
+            // Show question and handle answer
+            this.showQuestion(relevantQuestion, correct => {
+                this.handleQuestionAnswered(correct);
+                if (correct) {
+                    iconSprite.setTint(0x00ff00);
+                    iconSprite.box.setStrokeStyle(2, 0x00ff00);
+                }
+            });
         }
     }
 
-    showQuestion(question, iconSprite) {
-        // Create DOM elements for question
-        const questionContainer = document.createElement('div');
-        questionContainer.className = 'question-container';
+    showQuestion(question, callback) {
+        // Create semi-transparent background overlay
+        const overlay = this.add.rectangle(0, 0, 800, 600, 0x000000, 0.8)
+            .setOrigin(0)
+            .setDepth(100);
 
-        const overlay = document.createElement('div');
-        overlay.className = 'overlay';
+        // Create question container
+        const container = this.add.container(400, 300);
+        container.setDepth(101);
 
-        const questionElement = document.createElement('div');
-        questionElement.className = 'question';
-        questionElement.textContent = question.question;
+        // Add question text with word wrap
+        const questionText = this.add.text(0, -100, question.question, {
+            fontSize: '24px',
+            fill: '#fff',
+            wordWrap: { width: 600 },
+            align: 'center'
+        }).setOrigin(0.5);
+        container.add(questionText);
 
-        questionContainer.appendChild(questionElement);
+        // Add answer buttons
+        const answers = [...question.incorrect_answers, question.correct_answer];
+        this.shuffleArray(answers);
 
-        Object.entries(question.options).forEach(([key, value]) => {
-            const option = document.createElement('div');
-            option.className = 'option';
+        answers.forEach((answer, index) => {
+            const yOffset = index * 60 - 90;
+            const button = this.createAnswerButton(0, yOffset, answer);
 
-            const letter = document.createElement('span');
-            letter.className = 'option-letter';
-            letter.textContent = key;
+            button.setInteractive({ useHandCursor: true })
+                .on('pointerdown', () => {
+                    const isCorrect = answer === question.correct_answer;
 
-            const text = document.createElement('span');
-            text.className = 'option-text';
-            text.textContent = value;
+                    // Visual feedback
+                    const feedbackImage = this.add.image(
+                        button.x + 150,
+                        button.y,
+                        isCorrect ? 'checkmark' : 'xmark'
+                    ).setScale(0.5);
 
-            option.appendChild(letter);
-            option.appendChild(text);
+                    // Disable all buttons
+                    container.list.forEach(item => {
+                        if (item.removeInteractive) item.removeInteractive();
+                    });
 
-            option.addEventListener('click', () => {
-                const isCorrect = key === question.answer;
-                if (isCorrect) {
-                    this.score += 100;
-                    this.scoreText.setText(`Score: ${this.score}`);
-                }
+                    // Show feedback and transition
+                    this.time.delayedCall(1000, () => {
+                        container.destroy();
+                        overlay.destroy();
+                        if (callback) callback(isCorrect);
+                    });
+                });
 
-                // Display feedback
-                const feedbackMark = isCorrect ? 'checkMark' : 'xMark';
-                const feedback = this.add.image(iconSprite.x, iconSprite.y, feedbackMark)
-                    .setScale(1.0)
-                    .setDepth(150);
+            container.add(button);
+        });
+    }
 
-                // Disable the icon and stop its animation
-                iconSprite.isAnswered = true;
-                iconSprite.setAlpha(0.5);
-                this.tweens.killTweensOf(iconSprite);
-                iconSprite.setScale(1.0);
-                iconSprite.disableInteractive();
-                this.answeredQuestions++;
+    createAnswerButton(x, y, text) {
+        const button = this.add.container(x, y);
 
-                // Show explanation
-                if (question.explanation) {
-                    const explanation = document.createElement('div');
-                    explanation.className = 'explanation';
-                    explanation.textContent = question.explanation;
-                    questionContainer.appendChild(explanation);
-                }
+        const bg = this.add.rectangle(0, 0, 400, 50, 0x333333)
+            .setStrokeStyle(2, 0x00ff00);
 
-                // Remove after delay
-                setTimeout(() => {
-                    document.body.removeChild(overlay);
-                    document.body.removeChild(questionContainer);
-                    feedback.destroy();
+        const buttonText = this.add.text(0, 0, text, {
+            fontSize: '20px',
+            fill: '#fff'
+        }).setOrigin(0.5);
 
-                    if (this.answeredQuestions === 5) {
-                        console.log('All 5 questions answered, transitioning to Space Invaders...');
-                        setTimeout(() => {
-                            this.scene.start('space_invaders', { nextScene: 'map3gamescene1' });
-                        }, 3000);
-                    }
-                }, 2000);
+        button.add([bg, buttonText]);
+
+        // Add hover effects
+        bg.setInteractive()
+            .on('pointerover', () => {
+                bg.setFillStyle(0x666666);
+                buttonText.setStyle({ fill: '#00ff00' });
+            })
+            .on('pointerout', () => {
+                bg.setFillStyle(0x333333);
+                buttonText.setStyle({ fill: '#ffffff' });
             });
 
-            questionContainer.appendChild(option);
-        });
+        return button;
+    }
 
-        document.body.appendChild(overlay);
-        document.body.appendChild(questionContainer);
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
     }
 
     setupScore() {

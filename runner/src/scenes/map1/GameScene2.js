@@ -7,7 +7,7 @@ import { SceneTransition } from '@/utils/SceneTransition';
 import { ProgressManager } from '@/utils/ProgressManager';
 
 
-export default class GameScene2 extends BaseGameScene {
+export default class map1scene2 extends BaseGameScene {
     constructor() {
         super({ key: 'map1scene2' });
         this.player = null;
@@ -25,8 +25,17 @@ export default class GameScene2 extends BaseGameScene {
     }
     // In the receiving scene's init method:
     init(data) {
-        this.score = data?.score || 0;
-        this.isTransitioning = false;
+        this.score = data.score || 0;
+        this.powerUpBitmask = data.powerUpBitmask || 0;
+        this.currentMap = data.currentMap || 1;
+
+        // Save progress
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map1scene2',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
 
         // Optional: Add fade in effect
         this.cameras.main.fadeIn(500);
@@ -35,6 +44,24 @@ export default class GameScene2 extends BaseGameScene {
         super.preload();
         this.load.image('map1scene2', getAssetPath('images/map1scene2.png'));
         this.load.json('map-config', getAssetPath('data/map1/map-config2.json'));
+        this.load.json('questions', getAssetPath('data/questions.json'));
+        this.load.image('checkMark', getAssetPath('images/checkmark.png'));
+        this.load.image('xMark', getAssetPath('images/xmark.png'));
+        // Load sound effects with error handling
+        try {
+            this.load.audio('click', getAssetPath('sounds/click.mp3'));
+            this.load.audio('correct', getAssetPath('sounds/correct.mp3'));
+            this.load.audio('wrong', getAssetPath('sounds/wrong.mp3'));
+
+            // Add error handler for audio loading
+            this.load.on('loaderror', (fileObj) => {
+                console.warn('Error loading audio:', fileObj.key);
+                // Create dummy sound to prevent errors
+                this.cache.audio.add(fileObj.key, new Audio());
+            });
+        } catch (error) {
+            console.warn('Error setting up audio:', error);
+        }
     }
 
     getNextSceneKey() {
@@ -93,10 +120,15 @@ export default class GameScene2 extends BaseGameScene {
             const map = this.add.image(
                 activeZone.x || 400,
                 activeZone.y || 300,
-                'map1gamescene2'
+                'map1scene2'
             );
             map.setOrigin(0.5);
-            map.setScale(activeZone.scale || 1);
+
+            // Calculate scale to fit screen
+            const scaleX = this.cameras.main.width / map.width;
+            const scaleY = this.cameras.main.height / map.height;
+            const scale = Math.max(scaleX, scaleY);
+            map.setScale(scale);
 
             // Load AWS icons after we have the config
             this.loadAwsIcons(mapConfig);
@@ -122,45 +154,40 @@ export default class GameScene2 extends BaseGameScene {
     }
 
     loadAwsIcons(mapConfig) {
-        // Preload all icons
         mapConfig.zones.forEach(zone => {
-            zone.icons.forEach(icon => {
-                const relevantQuestion = this.questions.find(q =>
-                    icon.questionTypes.some(type =>
-                        q.question.toLowerCase().includes(type.toLowerCase())
-                    )
-                );
-
-                if (relevantQuestion && relevantQuestion.image) {
-                    console.log('Loading icon from question:', relevantQuestion.image);
-                    this.load.image(`icon_${icon.name}`, relevantQuestion.image);
-                } else {
-                    const iconPath = `assets/images/services16/${icon.category}/48/${icon.name}.png`;
-                    console.log('Loading icon with constructed path:', iconPath);
-                    this.load.image(`icon_${icon.name}`, iconPath);
-                }
+            zone.icons.forEach(iconConfig => {
+                const iconPath = `assets/images/services16/${iconConfig.category}/48/${iconConfig.name}`;
+                console.log('Loading icon:', iconConfig.name, 'from path:', iconPath);
+                this.load.image(`icon_${iconConfig.name}`, iconPath);
             });
-        });
-
-        // Add error handling
-        this.load.on('loaderror', (fileObj) => {
-            console.error('Error loading file:', fileObj.key);
         });
 
         // Start the loader and create icons upon completion
         this.load.once('complete', () => {
             mapConfig.zones.forEach(zone => {
-                zone.icons.forEach(icon => {
-                    const iconSprite = this.add.image(
-                        icon.x,
-                        icon.y,
-                        `icon_${icon.name}`
-                    )
-                        .setInteractive()
-                        .setScale(1.0);
+                zone.icons.forEach(iconConfig => {
+                    const iconKey = `icon_${iconConfig.name}`;
+                    console.log('Creating icon:', iconKey);
 
-                    console.log('Creating icon sprite:', icon.name);
-                    this.setupIconInteraction(iconSprite, icon);
+                    // Create icon sprite with auto sizing
+                    const iconSprite = this.add.image(iconConfig.x, iconConfig.y, iconKey)
+                        .setInteractive()
+                        .setScale(0.5); // Base scale for 48x48 icons
+
+                    // Add highlight box that matches icon size
+                    const iconBounds = iconSprite.getBounds();
+                    const box = this.add.rectangle(
+                        iconConfig.x,
+                        iconConfig.y,
+                        iconBounds.width,
+                        iconBounds.height,
+                        0x00ff00,
+                        0
+                    );
+                    box.setStrokeStyle(2, 0x00ff00);
+                    iconSprite.box = box;
+
+                    this.setupIconInteraction(iconSprite, iconConfig);
                     this.icons.push(iconSprite);
                 });
             });
@@ -170,60 +197,45 @@ export default class GameScene2 extends BaseGameScene {
     }
 
     setupIconInteraction(iconSprite, iconConfig) {
-        // Add visual feedback for interactivity
+        // No tint by default
         iconSprite.setTint(0xffffff);
-        iconSprite.isAnswered = false; // Track answered state
+        iconSprite.isAnswered = false;
+        iconSprite.inCooldown = false;
 
-        // Hover effects
-        iconSprite.on('pointerover', () => {
-            if (iconSprite.isAnswered) return;
-            iconSprite.setScale(1.3);
-            iconSprite.setTint(0x00ff00);
-            // Show icon name on hover
-            this.showTooltip(iconConfig.name, iconSprite.x, iconSprite.y);
-        });
-
-        iconSprite.on('pointerout', () => {
-            if (iconSprite.isAnswered) return;
-            iconSprite.setScale(1.0);
-            iconSprite.setTint(0xffffff);
-            this.hideTooltip();
-        });
-
-        // Add pulsing animation
+        // Add subtle pulse animation for normal state
         this.tweens.add({
             targets: iconSprite,
-            scale: { from: 1.0, to: 1.4 },
+            scale: { from: 0.5, to: 0.55 }, // Smaller scale range for subtle effect
             duration: 1000,
             yoyo: true,
             repeat: -1,
             ease: 'Sine.easeInOut'
         });
 
-        // Click handler - filter questions by type
-        iconSprite.on('pointerdown', () => {
-            if (iconSprite.isAnswered || this.clickCooldown) return; // Skip if answered or in cooldown
-
-            // Set cooldown
-            this.clickCooldown = true;
-            this.time.delayedCall(500, () => { // 500ms cooldown
-                this.clickCooldown = false;
-            });
-
-            let randomQuestion;
-            let relevantQuestions = this.questions.filter(q =>
-                iconConfig.questionTypes.some(type =>
-                    q.question.toLowerCase().includes(type.toLowerCase())
-                )
-            );
-
-            if (relevantQuestions.length === 0) {
-                // If no specific questions found, pick a random one
-                relevantQuestions = this.questions;
+        // Hover effects
+        iconSprite.on('pointerover', () => {
+            if (!iconSprite.isAnswered && !iconSprite.inCooldown) {
+                // Scale up slightly and add glow effect
+                this.tweens.add({
+                    targets: iconSprite,
+                    scale: 0.6,
+                    duration: 200
+                });
+                iconSprite.preFX.addGlow(0xffffff, 0.5);
+                this.sound.play('click', { volume: 0.5 });
             }
+        });
 
-            randomQuestion = Phaser.Utils.Array.GetRandom(relevantQuestions);
-            this.showQuestion(randomQuestion, iconSprite);
+        iconSprite.on('pointerout', () => {
+            if (!iconSprite.isAnswered && !iconSprite.inCooldown) {
+                // Return to normal scale and remove glow
+                this.tweens.add({
+                    targets: iconSprite,
+                    scale: 0.5,
+                    duration: 200
+                });
+                iconSprite.preFX.clear();
+            }
         });
     }
 
@@ -359,12 +371,21 @@ export default class GameScene2 extends BaseGameScene {
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
-        // Pause any ongoing animations/updates
-        this.scene.pause();
 
-        this.camera.main.fadeOut(500);
-        this.cameras.main.once('camerafadeoutcomplete', () => {
-            SceneTransition.toWithLoading(this, 'space-invaders', { nextScene: this.getNextSceneKey(), score: this.score })
+        // Save progress before transition
+        this.progressManager.saveProgress({
+            lastCompletedScene: 'map1scene2',
+            currentMap: this.currentMap,
+            powerUpBitmask: this.powerUpBitmask,
+            score: this.score
+        });
+
+        // Transition to space invaders
+        this.sceneTransition.to(this, 'space_invaders', {
+            nextScene: 'map1scene3',
+            score: this.score,
+            powerUpBitmask: this.powerUpBitmask,
+            currentMap: this.currentMap
         });
     }
 }
