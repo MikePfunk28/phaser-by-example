@@ -272,7 +272,7 @@ export default class TriviaMasterScene extends BaseGameScene {
     }
 
     updateData(parent, key, data) {
-        switch(key) {
+        switch (key) {
             case 'score':
                 this.score = data;
                 this.scoreText.setText(`Score: ${this.score}`);
@@ -430,7 +430,7 @@ export default class TriviaMasterScene extends BaseGameScene {
     handleAnswer(isCorrect, iconSprite, container, question) {
         this.currentQuestion = null;
         this.answeredQuestions++;
-        
+
         if (isCorrect) {
             this.correctAnswers++;
             this.score += 100;
