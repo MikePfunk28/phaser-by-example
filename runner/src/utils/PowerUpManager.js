@@ -81,54 +81,73 @@ export class PowerUpManager {
 
     handleCorrectAnswer() {
         this.sceneCorrectAnswers++;
+        console.log('Correct answers this scene:', this.sceneCorrectAnswers);
 
         if (this.sceneCorrectAnswers >= 5) {
+            console.log('All questions correct! Applying permanent upgrade');
             this.sceneCorrectAnswers = 0;
-            return this.applyRandomPermanentUpgrade();
+            const upgrade = this.applyRandomPermanentUpgrade();
+            if (upgrade) {
+                console.log('Applied upgrade:', upgrade);
+                // Save progress immediately when upgrade is applied
+                this.savePowerUps();
+                return upgrade;
+            }
         }
         return null;
     }
 
     applyRandomPermanentUpgrade() {
-        const availableUpgrades = Object.values(this.POWERUP_TYPES)
-            .filter(type => !this.hasUpgrade(type));
+        const availableUpgrades = Object.entries(this.POWERUP_TYPES)
+            .filter(([_, type]) => !this.hasUpgrade(type))
+            .map(([name, type]) => ({ name, type }));
 
         if (availableUpgrades.length > 0) {
             const randomUpgrade = availableUpgrades[Math.floor(Math.random() * availableUpgrades.length)];
-            this.applyUpgrade(randomUpgrade);
-            return randomUpgrade;
+            console.log('Applying upgrade:', randomUpgrade.name);
+            this.powerUpBitmask |= randomUpgrade.type;
+            this.savePowerUps();
+            return randomUpgrade.name;
         }
         return null;
     }
 
-    getUpgradedStats() {
+    updatePowerUpStats() {
+        console.log('Updating power-up stats, current bitmask:', this.powerUpBitmask.toString(2));
+
+        // Reset stats to base values
         const stats = { ...this.BASE_STATS };
 
-        // Apply permanent upgrades
-        if (this.hasUpgrade(this.POWERUP_TYPES.LIFE)) {
+        // Apply permanent upgrades based on bitmask
+        if (this.powerUpBitmask & this.POWERUP_TYPES.LIFE) {
             stats.health += 2;
+            console.log('Applied LIFE upgrade');
         }
-        if (this.hasUpgrade(this.POWERUP_TYPES.SHIELD)) {
+        if (this.powerUpBitmask & this.POWERUP_TYPES.SHIELD) {
             stats.shield += 1;
+            console.log('Applied SHIELD upgrade');
         }
-        if (this.hasUpgrade(this.POWERUP_TYPES.SPEED)) {
-            stats.speed *= 1.25;
+        if (this.powerUpBitmask & this.POWERUP_TYPES.SPEED) {
+            stats.speed += 100;
+            console.log('Applied SPEED upgrade');
         }
-        if (this.hasUpgrade(this.POWERUP_TYPES.FIRE)) {
-            stats.fireRate = this.getFireRate();
+        if (this.powerUpBitmask & this.POWERUP_TYPES.FIRE) {
+            stats.fireRate += 2;
+            console.log('Applied FIRE upgrade');
         }
-        if (this.hasUpgrade(this.POWERUP_TYPES.BULLET_SPEED)) {
-            stats.bulletSpeed *= 1.5;
-        }
-        if (this.hasUpgrade(this.POWERUP_TYPES.CRAFT_SIZE)) {
-            stats.craftSize *= 0.8;
-        }
-        if (this.hasUpgrade(this.POWERUP_TYPES.POWER_UP_COLLECT)) {
-            stats.powerUpCollectRadius *= 1.5;
-        }
-        if (this.hasUpgrade(this.POWERUP_TYPES.BONUS_POINTS)) {
-            stats.pointsMultiplier *= 1.5;
-        }
+
+        // Save the updated stats
+        this.progressManager.progress.powerUpStats = stats;
+        this.savePowerUps();
+
+        return stats;
+    }
+
+    getUpgradedStats() {
+        // Ensure stats are up to date
+        this.updatePowerUpStats();
+
+        const stats = { ...this.progressManager.progress.powerUpStats };
 
         // Apply temporary power-ups
         stats.fireRate += (this.tempPowerUps.fireRate * 0.2 * this.BASE_STATS.fireRate);

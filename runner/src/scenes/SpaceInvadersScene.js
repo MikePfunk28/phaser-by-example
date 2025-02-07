@@ -197,6 +197,22 @@ export default class SpaceInvadersScene extends Phaser.Scene {
         });
 
         this.cameras.main.fadeIn(500);
+
+        // Initialize power-up tracking
+        this.powerUpManager = this.scene.get('PowerUpManager');
+        this.tempPowerUps = {
+            shield: 0,
+            speed: 0,
+            fireRate: 0,
+            bulletSpeed: 0
+        };
+
+        // Apply any existing shield upgrades
+        const stats = this.powerUpManager.getUpgradedStats();
+        if (stats.shield > 0) {
+            this.tempPowerUps.shield = stats.shield;
+            this.updateShieldDisplay();
+        }
     }
 
     createHUD() {
@@ -622,10 +638,10 @@ export default class SpaceInvadersScene extends Phaser.Scene {
         switch (powerUp.type) {
             case 'temp_shield':
                 this.powerUpManager.addTemporaryPowerUp('shield', powerUp.duration);
-                this.updateShieldVisuals();
+                this.updateShieldDisplay();
                 this.time.delayedCall(powerUp.duration, () => {
                     this.powerUpManager.removeTemporaryPowerUp('shield');
-                    this.updateShieldVisuals();
+                    this.updateShieldDisplay();
                 });
                 break;
             case 'temp_speed':
@@ -745,68 +761,23 @@ export default class SpaceInvadersScene extends Phaser.Scene {
     }
 
     handlePlayerHit() {
-        const currentStats = this.getPlayerStats();
-        const totalShields = currentStats.shield;
+        if (this.isInvulnerable) return;
 
-        if (totalShields > 0) {
-            // Remove one shield layer
-            if (this.tempBonuses.shield > 0) {
-                this.tempBonuses.shield--;
-                this.powerUpManager.removeTemporaryPowerUp('shield');
-            } else if (this.upgrades.shield > 0) {
-                this.upgrades.shield--;
-                this.powerUpManager.removeUpgrade(this.powerUpManager.POWERUP_TYPES.SHIELD);
-            }
+        // Get current stats including shield
+        const stats = this.powerUpManager.getUpgradedStats();
 
-            // Update shield display
-            if (this.shieldText) {
-                const newTotal = this.tempBonuses.shield + (this.upgrades.shield || 0);
-                if (newTotal > 0) {
-                    this.shieldText.setText(`Shield: ${newTotal}`);
-                } else {
-                    this.shieldText.destroy();
-                    this.shieldText = null;
-                }
-            }
-
-            // Visual feedback
-            this.updateShieldVisuals();
+        if (stats.shield > 0) {
+            // If we have shield, absorb the hit and show shield effect
             this.showShieldEffect();
-            this.sound.play('satellite_destroy', { volume: 0.3 });
+            // Reduce shield count
+            this.powerUpManager.tempPowerUps.shield = Math.max(0, this.powerUpManager.tempPowerUps.shield - 1);
 
-            const blockText = this.add.text(this.player.x, this.player.y - 40, 'SHIELD BREAK!', {
-                fontFamily: 'Courier',
-                fontSize: '24px',
-                fill: '#00ffff',
-                stroke: '#000000',
-                strokeThickness: 2
-            }).setOrigin(0.5);
-
-            this.tweens.add({
-                targets: blockText,
-                y: blockText.y - 50,
-                alpha: 0,
-                duration: 1000,
-                onComplete: () => blockText.destroy()
-            });
-        } else {
-            this.health--;
-            this.healthText.setText(`Health: ${this.health}`);
-
-            if (this.health <= 0) {
-                this.showGameOver();
-                return;
-            }
-
-            // Visual feedback
-            this.showDamageEffect();
-            this.sound.play('explosion', { volume: 0.4 });
-
-            // Score penalty
+            // Add score penalty for shield break
             this.score = Math.max(0, this.score - 25);
             this.scoreText.setText(`Score: ${this.score}`);
 
-            const penaltyText = this.add.text(this.player.x, this.player.y - 40, '-25 DAMAGE!', {
+            // Show penalty text
+            const penaltyText = this.add.text(this.player.x, this.player.y - 60, '-25 SHIELD BREAK!', {
                 fontFamily: 'Courier',
                 fontSize: '24px',
                 fill: '#ff0000',
@@ -820,6 +791,23 @@ export default class SpaceInvadersScene extends Phaser.Scene {
                 alpha: 0,
                 duration: 1000,
                 onComplete: () => penaltyText.destroy()
+            });
+            return;
+        }
+
+        // No shield, take damage
+        this.health--;
+        this.showDamageEffect();
+
+        if (this.health <= 0) {
+            this.handleGameOver();
+        } else {
+            // Make player temporarily invulnerable
+            this.isInvulnerable = true;
+            this.player.setAlpha(0.5);
+            this.time.delayedCall(1000, () => {
+                this.isInvulnerable = false;
+                this.player.setAlpha(1);
             });
         }
     }
@@ -838,16 +826,38 @@ export default class SpaceInvadersScene extends Phaser.Scene {
     }
 
     showShieldEffect() {
-        if (this.player && this.player.list) {
-            this.player.list.forEach(child => {
-                if (child.setFillStyle) {
-                    child.setFillStyle('#00ffff');
-                    this.time.delayedCall(100, () => {
-                        child.setFillStyle('#ffffff');
-                    });
-                }
-            });
+        // Create shield visual effect
+        const shield = this.add.circle(this.player.x, this.player.y, 40, 0x00ff00, 0.3);
+        shield.setStrokeStyle(2, 0x00ff00);
+
+        // Add shield break text
+        const shieldText = this.add.text(this.player.x, this.player.y - 40, 'SHIELD BREAK!', {
+            fontFamily: 'Courier',
+            fontSize: '24px',
+            fill: '#00ffff',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+
+        // Animate shield effect
+        this.tweens.add({
+            targets: [shield, shieldText],
+            alpha: 0,
+            scale: 1.5,
+            duration: 500,
+            onComplete: () => {
+                shield.destroy();
+                shieldText.destroy();
+            }
+        });
+
+        // Play shield sound if available
+        if (this.sound.get('shield')) {
+            this.sound.play('shield', { volume: 0.3 });
         }
+
+        // Update shield display
+        this.updateShieldDisplay();
     }
 
     checkOverlap(spriteA, spriteB) {
@@ -1217,5 +1227,72 @@ export default class SpaceInvadersScene extends Phaser.Scene {
 
             container.add([buttonBg, buttonText]);
         });
+    }
+
+    handleGameOver() {
+        if (this.isTransitioning) return;
+        this.isTransitioning = true;
+
+        // Save current progress
+        this.progressManager.saveProgress({
+            score: this.score,
+            powerUpBitmask: this.powerUpBitmask,
+            currentMap: this.currentMap
+        });
+
+        // Get next scene from transition data
+        const nextScene = this.transitionData?.nextScene;
+        if (!nextScene) {
+            console.error('No next scene specified in transition data');
+            this.scene.start('mainmenu');
+            return;
+        }
+
+        // Show game over text with transition to next scene
+        const gameOverText = this.add.text(400, 300, 'Game Over', {
+            fontSize: '48px',
+            fill: '#fff'
+        }).setOrigin(0.5);
+
+        // Add score display
+        this.add.text(400, 350, `Final Score: ${this.score}`, {
+            fontSize: '24px',
+            fill: '#fff'
+        }).setOrigin(0.5);
+
+        this.time.delayedCall(2000, () => {
+            // Transition to next scene
+            if (this.sceneTransition) {
+                this.sceneTransition.to(this, nextScene, {
+                    score: this.score,
+                    powerUpBitmask: this.powerUpBitmask,
+                    currentMap: this.currentMap,
+                    fromScene: 'space_invaders'
+                });
+            } else {
+                this.scene.start(nextScene, {
+                    score: this.score,
+                    powerUpBitmask: this.powerUpBitmask,
+                    currentMap: this.currentMap,
+                    fromScene: 'space_invaders'
+                });
+            }
+        });
+    }
+
+    updateShieldDisplay() {
+        if (this.tempPowerUps.shield > 0) {
+            if (!this.shieldText) {
+                this.shieldText = this.add.text(16, 50, '', {
+                    fontFamily: 'Courier',
+                    fontSize: '20px',
+                    fill: '#00ff00'
+                });
+            }
+            this.shieldText.setText(`Shield: ${this.tempPowerUps.shield}`);
+        } else if (this.shieldText) {
+            this.shieldText.destroy();
+            this.shieldText = null;
+        }
     }
 }

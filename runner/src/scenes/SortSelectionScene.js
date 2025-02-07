@@ -31,6 +31,8 @@ export default class SortSelectionScene extends Phaser.Scene {
         this.sceneTransition = null;
         this.progressManager = null;
         this.sceneManager = null;
+        // Store computed time so it can be referenced later in finishSort()
+        this.computeTime = "0.0000";
     }
 
     init(data) {
@@ -49,7 +51,6 @@ export default class SortSelectionScene extends Phaser.Scene {
         // Instead of using gameManager, get sceneTransition and progressManager from window
         this.sceneTransition = window.sceneTransition;
         this.progressManager = window.progressManager;
-        // Optionally, if you have a sceneManager set globally, use that:
         if (window.sceneManager) {
             this.sceneManager = window.sceneManager;
         }
@@ -95,10 +96,11 @@ export default class SortSelectionScene extends Phaser.Scene {
         this.load.image('map3scene364', getAssetPath('images/map3scene364.png'));
         this.load.image('map3scene464', getAssetPath('images/map3scene464.png'));
 
-        // Add missing thumbnails
+        // Add missing thumbnails for Map 4
         this.load.image('map4scene364', getAssetPath('images/map4scene364.png'));
         this.load.image('map4scene464', getAssetPath('images/map4scene464.png'));
 
+        // Load core JSON files and bitmap font
         this.load.json('map-config', getAssetPath('data/map1/map-config.json'));
         this.load.json('questions', getAssetPath('data/questions.json'));
         this.load.bitmapFont('arcade',
@@ -110,9 +112,8 @@ export default class SortSelectionScene extends Phaser.Scene {
         // Add background
         this.load.image('background', getAssetPath('images/backgrounds/space-background.png'));
 
-        // Load sound effects with improved error handling and debug logging
+        // Load sound effects with debug logging
         console.log('Loading sound effects...');
-
         this.load.audio('fail', getAssetPath('sounds/cartoon_fail.mp3'))
             .on('filecomplete', () => console.log('Fail sound loaded successfully'))
             .on('loaderror', (file) => console.error('Failed to load fail sound:', file));
@@ -121,7 +122,6 @@ export default class SortSelectionScene extends Phaser.Scene {
             .on('filecomplete', () => console.log('Buzzer sound loaded successfully'))
             .on('loaderror', (file) => console.error('Failed to load buzzer sound:', file));
 
-        // Add load complete handler
         this.load.on('complete', () => {
             console.log('All assets loaded. Sound cache status:', {
                 fail: this.cache.audio.exists('fail'),
@@ -138,7 +138,7 @@ export default class SortSelectionScene extends Phaser.Scene {
         }
     }
 
-    // Improved sound playing method with debug
+    // Improved sound playing method with debug logging
     playSound(key) {
         console.log(`Attempting to play sound: ${key}`);
         try {
@@ -159,11 +159,9 @@ export default class SortSelectionScene extends Phaser.Scene {
     }
 
     create() {
-        // Add animated background
+        // Add animated background and gradient overlay
         const bg = this.add.image(400, 300, 'background');
-        bg.setAlpha(0.3);  // Semi-transparent background
-
-        // Add a gradient overlay
+        bg.setAlpha(0.3);
         const gradient = this.add.graphics();
         gradient.fillGradientStyle(0x000000, 0x000000, 0x112244, 0x112244, 0.7);
         gradient.fillRect(0, 0, 800, 600);
@@ -188,13 +186,11 @@ export default class SortSelectionScene extends Phaser.Scene {
             fontSize: '18px',
             fill: '#fff'
         });
-
         const colors = [
             { color: 0xff0000, label: 'Pivot/Current' },
             { color: 0x0000ff, label: 'Comparing' },
             { color: 0x00ff00, label: 'Sorted/Default' }
         ];
-
         colors.forEach((item, index) => {
             const boxY = legendY + 30 + (index * 25);
             this.add.rectangle(legendX, boxY, 20, 20, item.color);
@@ -210,42 +206,34 @@ export default class SortSelectionScene extends Phaser.Scene {
             fill: '#fff'
         }).setOrigin(0.5);
 
-        // Create graph container
+        // Create container for thumbnails
         this.container = this.add.container(425, 250);
-
-        // Create thumbnails in a grid layout
         const thumbnailKeys = [
             'map1scene164', 'map1scene264', 'map1scene364', 'map1scene464',
             'map2scene164', 'map2scene264', 'map2scene364', 'map2scene464',
             'map3scene164', 'map3scene264', 'map3scene364', 'map3scene464',
             'map4scene364', 'map4scene464'
         ];
-
         const GRID_COLS = 7;
         const GRID_ROWS = 2;
         const THUMB_WIDTH = 64;
         const THUMB_HEIGHT = 64;
         const SPACING_X = 20;
         const SPACING_Y = 20;
-
         const thumbnailGridWidth = (GRID_COLS * THUMB_WIDTH) + ((GRID_COLS - 1) * SPACING_X);
         const totalGridHeight = (GRID_ROWS * THUMB_HEIGHT) + ((GRID_ROWS - 1) * SPACING_Y);
         const startX = -thumbnailGridWidth / 2;
         const startY = -totalGridHeight / 2;
-
         this.initialPositions = [];
-
         thumbnailKeys.forEach((key, index) => {
             const row = Math.floor(index / GRID_COLS);
             const col = index % GRID_COLS;
             const x = startX + (col * (THUMB_WIDTH + SPACING_X));
             const y = startY + (row * (THUMB_HEIGHT + SPACING_Y));
             this.initialPositions[index] = { x, y };
-
             const thumb = this.add.image(x, y, key)
                 .setScale(0.8)
                 .setInteractive();
-
             thumb.on('pointerover', () => {
                 this.tweens.add({
                     targets: thumb,
@@ -254,7 +242,6 @@ export default class SortSelectionScene extends Phaser.Scene {
                     duration: 200
                 });
             });
-
             thumb.on('pointerout', () => {
                 this.tweens.add({
                     targets: thumb,
@@ -263,12 +250,11 @@ export default class SortSelectionScene extends Phaser.Scene {
                     duration: 200
                 });
             });
-
             this.thumbnails.push(thumb);
             this.container.add(thumb);
         });
 
-        // Create sort buttons in two rows
+        // Create sort buttons
         const sorts = [
             {
                 text: 'Bubble Sort',
@@ -497,11 +483,13 @@ export default class SortSelectionScene extends Phaser.Scene {
             fill: '#fff',
             fontFamily: 'monospace'
         });
-        this.sortStartTime = performance.now();
+        // Start timing the compute portion
+        this.timingInfo.startTime = performance.now();
         const elements = this.thumbnails;
         const wrappedElements = this.initializeElements(elements);
         const startTime = performance.now();
         const computedElements = [...wrappedElements];
+        // Reset timingInfo with fresh startTime
         this.timingInfo = {
             startTime: startTime,
             endTime: null,
@@ -569,6 +557,7 @@ export default class SortSelectionScene extends Phaser.Scene {
                     if (right < n && arr[right].value > arr[largest].value) largest = right;
                     if (largest !== i) {
                         [arr[i], arr[largest]] = [arr[largest], arr[i]];
+                        heapify(arr, n, largest);
                     }
                 };
                 for (let i = Math.floor(computedElements.length / 2) - 1; i >= 0; i--) {
@@ -604,9 +593,12 @@ export default class SortSelectionScene extends Phaser.Scene {
         }
         this.timingInfo.endTime = performance.now();
         this.timingInfo.totalTime = this.timingInfo.endTime - this.timingInfo.startTime;
-        const computeTime = this.timingInfo.totalTime.toFixed(4);
-        console.log(`${method} Sort Time: ${computeTime}ms`);
-        this.statsText.setText(`Computing sort... ${computeTime}ms`);
+        // Save the computed time as a property for later display
+        const computeTimeMicros = (this.timingInfo.totalTime * 1000).toFixed(5);
+        console.log(`Compute time: ${computeTimeMicros}µs`);
+        this.computeTime = this.timingInfo.totalTime.toFixed(6);
+        console.log(`${method} Sort Time: ${this.computeTime}ms`);
+        this.statsText.setText(`Computing sort... ${this.computeTime}ms`);
         this.timingInfo.animationStartTime = performance.now();
         switch (method) {
             case 'bubble':
@@ -865,8 +857,8 @@ export default class SortSelectionScene extends Phaser.Scene {
 
     finishSort(elements) {
         this.timingInfo.animationEndTime = performance.now();
-        const animationTime = (this.timingInfo.animationEndTime - this.timingInfo.animationStartTime).toFixed(4);
-        const totalTime = (this.timingInfo.animationEndTime - this.timingInfo.startTime).toFixed(4);
+        const animationTime = (this.timingInfo.animationEndTime - this.timingInfo.animationStartTime).toFixed(6);
+        const totalTime = (this.timingInfo.animationEndTime - this.timingInfo.startTime).toFixed(6);
         if (this.timingInfo.totalTime > 5000) {
             this.playSound('fail');
         } else if (this.timingInfo.totalTime > 3000) {
@@ -1062,5 +1054,25 @@ export default class SortSelectionScene extends Phaser.Scene {
         this.time.delayedCall(100, () => {
             this.isTransitioning = false;
         });
+    }
+
+    // ----------------------------
+    // Diagram scenes logic (if needed)
+    // ----------------------------
+    // (This file contains sorting methods for a sort selection scene.
+    // If you are using a separate diagram scene, that would be a separate file.
+    // If your diagram scenes are handled within this same scene via some flag,
+    // then you would add that branch here. For now, we assume this file is only for sort selection.)
+
+    // ----------------------------
+    // End of diagram section
+    // ----------------------------
+
+    // Utility method for shuffling an array
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
     }
 }

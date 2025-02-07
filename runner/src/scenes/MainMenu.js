@@ -107,8 +107,17 @@ export default class MainMenu extends Phaser.Scene {
                     currentMap: savedData.currentMap
                 });
             } else {
-                console.warn('Invalid save format, starting new game');
-                this.startNewGame();
+                console.warn('Invalid save format, attempting fallback to continue game');
+                const fallbackMap = savedData.currentMap || 1;
+                const fallbackScene = 1; // default to the first scene of the current map
+                console.log('Continuing (fallback) from map:', fallbackMap, 'scene:', fallbackScene);
+                this.scene.start('trivia_master', {
+                    mapNumber: parseInt(fallbackMap),
+                    sceneNumber: fallbackScene,
+                    score: savedData.score,
+                    powerUpBitmask: savedData.powerUpBitmask,
+                    currentMap: parseInt(fallbackMap)
+                });
             }
         } else {
             console.warn('No save data found, starting new game');

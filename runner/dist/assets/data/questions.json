@@ -832,13 +832,6 @@
         "image": "../images/services16/Arch_Containers/48/Arch_Amazon-ECR_48.png"
     },
     {
-        "question": "True or False: When using Amazon ECS with the Fargate launch type, you can directly attach an EBS volume to your containers for persistent storage.",
-        "type": "true/false",
-        "answer": "False",
-        "explanation": "Fargate does not support direct EBS volume attachments. Use EFS or other network file systems for persistent storage with Fargate.",
-        "image": "../images/services16/Arch_Containers/48/Arch_AWS-Fargate_48.png"
-    },
-    {
         "question": "You're optimizing an ECS cluster that runs CPU-intensive batch processing jobs. Which of the following configurations would likely provide the best performance-to-cost ratio?",
         "options": {
             "A": "Fargate launch type with Spot capacity providers",
@@ -863,13 +856,6 @@
         "image": "../images/services16/Arch_Compute/48/Arch_Amazon-EC2_48.png"
     },
     {
-        "question": "True or False: When using Amazon ECS with the EC2 launch type, you can use different container runtimes like containered or cri-o instead of Docker.",
-        "type": "true/false",
-        "answer": "True",
-        "explanation": "ECS with EC2 launch type supports multiple container runtimes through the Amazon ECS-optimized AMI.",
-        "image": "../images/services16/Arch_Compute/48/Arch_Amazon-EC2_48.png"
-    },
-    {
         "question": "Which of the following is NOT a valid strategy for reducing ECS task startup times?",
         "options": {
             "A": "Using ECR pull-through cache repositories",
@@ -880,13 +866,6 @@
         "answer": "C",
         "explanation": "EFS is a network file system and while useful for shared persistent storage, it does not directly improve container startup times. Pre-cached images, pull-through caches, and placement strategies are effective for faster startups.",
         "image": "../images/services16/Arch_Storage/48/Arch_Amazon-EFS_48.png"
-    },
-    {
-        "question": "True or False: When using AWS Fargate, you can specify the exact vCPU and memory combinations for your tasks, allowing for fine-grained control over resource allocation.",
-        "type": "true/false",
-        "answer": "False",
-        "explanation": "Fargate offers predefined vCPU and memory combinations. You select a combination that's closest to your needs, but you can't specify arbitrary values.",
-        "image": "../images/services16/Arch_Containers/48/Arch_AWS-Fargate_48.png"
     },
     {
         "question": "A large enterprise is migrating its on-premises applications to AWS. They need to ensure that their EC2 instances can securely access services like S3 and DynamoDB without traversing the public internet. Which combination of AWS services and features would best address this requirement?",

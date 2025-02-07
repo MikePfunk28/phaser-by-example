@@ -1,0 +1,12 @@
+---
+description: Log every action you make, and check the file before you do anything so you know where you last left off.  Then make the change and document the change and if it worked.  I will also update that file if needed, but project-task.todo is the file.
+globs: *
+---
+
+# Your rule content
+
+- You can @ files here
+- [project-tasks.todo](mdc:project-tasks.todo) log every action you take into that file.  Make sure by checking that file every time befor eyou start and action to make sure you hadn't done it before or you should be doing it.  
+- make sure to check [project-tasks.todo](mdc:project-tasks.todo) before taking action, and write what you did after.
+- Search embedded file list and cross reference it with [project-tasks.todo](mdc:project-tasks.todo) to make sure you are not just repeating the same thing over and over.
+- You can use markdown but dont have to

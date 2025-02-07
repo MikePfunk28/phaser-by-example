@@ -89,7 +89,7 @@ export class SceneTransition {
         });
     }
 
-    getNextTransition(fromScene, toScene) {
+    getNextSceneInSequence(currentScene) {
         const sequence = [
             'map1scene1', 'space_invaders',
             'map1scene2', 'space_invaders',
@@ -107,9 +107,18 @@ export class SceneTransition {
             'map4scene2', 'space_invaders',
             'map4scene3', 'space_invaders',
             'map4scene4', 'space_invaders',
-            'game_over'
+            'gameover'
         ];
 
+        const currentIndex = sequence.indexOf(currentScene);
+        if (currentIndex !== -1 && currentIndex < sequence.length - 1) {
+            return sequence[currentIndex + 1];
+        }
+        return null;
+    }
+
+    getNextTransition(fromScene, toScene) {
+        // Handle basic transitions
         if (fromScene === 'bootscene') return 'mainmenu';
         if (fromScene === 'mainmenu') {
             if (toScene === 'sort_selection') return 'sort_selection';
@@ -117,12 +126,18 @@ export class SceneTransition {
             return 'map1scene1';
         }
         if (fromScene === 'sort_selection') return 'mainmenu';
-        if (fromScene === 'game_over') return 'mainmenu';
+        if (fromScene === 'gameover') return 'mainmenu';
 
-        const currentIndex = sequence.indexOf(fromScene);
-        if (currentIndex !== -1 && currentIndex < sequence.length - 1) {
-            return sequence[currentIndex + 1];
+        // Handle space invaders transitions
+        if (fromScene === 'space_invaders') {
+            const nextScene = toScene || this.transitionData?.nextScene;
+            if (nextScene) return nextScene;
+            return 'mainmenu';
         }
+
+        // Get next scene in sequence
+        const nextScene = this.getNextSceneInSequence(fromScene);
+        if (nextScene) return nextScene;
 
         console.error('Invalid scene transition:', { fromScene, toScene });
         return 'mainmenu';
@@ -144,30 +159,7 @@ export class SceneTransition {
         this.nextScene = targetScene;
         this.transitionData = data;
 
-        if (targetScene.match(/map\d+scene\d+/)) {
-            const match = targetScene.match(/map(\d+)scene(\d+)/);
-            if (match) {
-                const [_, mapNumber, sceneNumber] = match;
-                this.fadeOut(scene, () => {
-                    scene.scene.start('trivia_master', {
-                        ...data,
-                        mapNumber: parseInt(mapNumber),
-                        sceneNumber: parseInt(sceneNumber),
-                        fromScene: scene.scene.key
-                    });
-                    this.setCurrentScene('trivia_master');
-                });
-                return;
-            }
-        }
-
-        const transition = this.getNextTransition(scene.scene.key, targetScene);
-        if (!transition) {
-            console.error(`Invalid transition from ${scene.scene.key} to ${targetScene}`);
-            this.state = TRANSITION_STATE.ERROR;
-            return;
-        }
-
+        // Save progress before transition
         this.progressManager.saveProgress({
             lastCompletedScene: scene.scene.key,
             score: data.score || 0,
@@ -175,6 +167,7 @@ export class SceneTransition {
             currentMap: data.currentMap || 1
         });
 
+        // Add to transition history
         this.transitionHistory.push({
             from: scene.scene.key,
             to: targetScene,
@@ -182,6 +175,7 @@ export class SceneTransition {
             data: { ...data }
         });
 
+        // Handle cleanup and scene transition
         scene.events.emit('sceneCleanup');
         scene.events.emit('sceneEnd');
 
@@ -199,12 +193,13 @@ export class SceneTransition {
             console.warn('Scene transition already in progress');
             return;
         }
+
         const progress = this.progressManager.loadProgress();
         const spaceInvadersData = {
             score: data.score || progress.score || 0,
             powerUpBitmask: data.powerUpBitmask || progress.powerUpBitmask || 0,
             nextScene: nextScene,
-            fromScene: data.fromScene || scene.scene.key,
+            fromScene: scene.scene.key,
             currentMap: data.currentMap || progress.currentMap || 1
         };
 

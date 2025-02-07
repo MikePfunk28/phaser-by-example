@@ -23,6 +23,10 @@ export default class TriviaMasterScene extends BaseGameScene {
         this.mapNumber = 1;
         this.sceneNumber = 1;
         this.requiredCorrectAnswers = 5;
+
+        // In the constructor, add bound functions
+        this.boundOnWindowBlur = this.onWindowBlur.bind(this);
+        this.boundOnWindowFocus = this.onWindowFocus.bind(this);
     }
 
     init(data) {
@@ -33,10 +37,19 @@ export default class TriviaMasterScene extends BaseGameScene {
         this.sceneTransition = new SceneTransition();
         this.powerUpManager = new PowerUpManager();
 
-        // Get scene configuration from data
+        // Set mapNumber, sceneNumber, and sceneKey from data
         this.mapNumber = data.mapNumber || 1;
-        this.sceneNumber = data.sceneNumber || 1;
-        this.sceneKey = `map${this.mapNumber}scene${this.sceneNumber}`;
+        this.sceneNumber = (data.sceneNumber !== undefined) ? data.sceneNumber : 1;
+        this.sceneKey = data.sceneKey || `map${this.mapNumber}scene${this.sceneNumber}`;
+
+        // Remove any previously added listeners and add our bound listeners
+        window.removeEventListener('blur', this.boundOnWindowBlur);
+        window.removeEventListener('focus', this.boundOnWindowFocus);
+        window.addEventListener('blur', this.boundOnWindowBlur);
+        window.addEventListener('focus', this.boundOnWindowFocus);
+
+        // Register shutdown event to clean up listeners
+        this.events.on('shutdown', this.shutdown, this);
 
         // Initialize game state
         this.score = data.score || 0;
@@ -57,10 +70,10 @@ export default class TriviaMasterScene extends BaseGameScene {
         });
 
         // Handle window focus/blur
-        window.removeEventListener('blur', this.onWindowBlur);
-        window.removeEventListener('focus', this.onWindowFocus);
-        window.addEventListener('blur', this.onWindowBlur.bind(this));
-        window.addEventListener('focus', this.onWindowFocus.bind(this));
+        window.removeEventListener('blur', this.boundOnWindowBlur);
+        window.removeEventListener('focus', this.boundOnWindowFocus);
+        window.addEventListener('blur', this.boundOnWindowBlur);
+        window.addEventListener('focus', this.boundOnWindowFocus);
 
         console.log('TriviaMasterScene: Scene configuration:', {
             mapNumber: this.mapNumber,
@@ -70,87 +83,52 @@ export default class TriviaMasterScene extends BaseGameScene {
     }
 
     onWindowBlur() {
-        // Don't pause if we're in a question dialog
         if (this.currentQuestion) return;
-        this.scene.pause();
+        try {
+            if (this.scene && this.scene.isActive && this.scene.isActive()) {
+                this.scene.pause();
+            } else {
+                console.warn('onWindowBlur: Scene is not active, skipping pause.');
+            }
+        } catch (e) {
+            console.error('Error pausing scene on blur:', e);
+        }
     }
 
     onWindowFocus() {
-        if (this.scene.isPaused()) {
-            this.scene.resume();
+        try {
+            if (this.scene && this.scene.isPaused && this.scene.isPaused()) {
+                this.scene.resume();
+            } else {
+                console.warn('onWindowFocus: Scene is not paused or not running, skipping resume.');
+            }
+        } catch (e) {
+            console.error('Error resuming scene on focus:', e);
         }
     }
 
     preload() {
         console.log('TriviaMasterScene: Preload started with map:', this.mapNumber, 'scene:', this.sceneNumber);
 
-        // Create fallback feedback icons first
-        const graphics = this.add.graphics();
-
-        // Create checkmark
-        graphics.clear();
-        graphics.lineStyle(4, 0x00ff00);
-        graphics.beginPath();
-        graphics.moveTo(10, 25);
-        graphics.lineTo(20, 35);
-        graphics.lineTo(38, 15);
-        graphics.strokePath();
-        graphics.generateTexture('checkMark', 48, 48);
-
-        // Create X mark
-        graphics.clear();
-        graphics.lineStyle(4, 0xff0000);
-        graphics.beginPath();
-        graphics.moveTo(15, 15);
-        graphics.lineTo(33, 33);
-        graphics.moveTo(33, 15);
-        graphics.lineTo(15, 33);
-        graphics.strokePath();
-        graphics.generateTexture('xMark', 48, 48);
-
-        graphics.destroy();
-
-        // Load scene-specific assets
-        const mapImagePath = `images/map${this.mapNumber}scene${this.sceneNumber}.png`;
+        // Load the correct map config based on current map and scene
         const mapConfigPath = `data/map${this.mapNumber}/map-config${this.sceneNumber}.json`;
-        const questionsPath = 'data/questions.json';
-
-        console.log('Loading assets from paths:', {
-            mapImage: mapImagePath,
-            mapConfig: mapConfigPath,
-            questions: questionsPath
-        });
-
-        // Load the map config and questions
-        this.load.image('mapImage', getAssetPath(mapImagePath));
         this.load.json('map-config', getAssetPath(mapConfigPath));
-        this.load.json('questions', getAssetPath(questionsPath));
+        console.log('Loading map config:', mapConfigPath);
 
-        // Load AWS icons after map config is loaded
-        this.load.on('filecomplete-json-map-config', (key, type, data) => {
-            console.log('Map config loaded:', data);
+        // Load questions
+        this.load.json('questions', getAssetPath('data/questions.json'));
 
-            if (data.mapImage) {
-                console.log('Loading background from config:', data.mapImage);
-                this.load.image('background', getAssetPath(data.mapImage));
-            }
+        // Load UI elements
+        this.load.image('checkMark', getAssetPath('images/checkmark.png'));
+        this.load.image('xMark', getAssetPath('images/xmark.png'));
 
-            // Load AWS icons from map config
-            if (data.zones) {
-                data.zones.forEach(zone => {
-                    zone.icons.forEach(icon => {
-                        const iconPath = `images/services16/${icon.category}/48/${icon.name}`;
-                        console.log('Loading AWS icon:', iconPath);
-                        this.load.image(`icon_${icon.name}`, getAssetPath(iconPath));
-                    });
-                });
-                // Start loading the queued assets
-                this.load.start();
-            }
-        });
+        // Load the correct background image
+        const bgPath = `images/map${this.mapNumber}scene${this.sceneNumber}.png`;
+        this.load.image('background', getAssetPath(bgPath));
+        console.log('Loading background:', bgPath);
 
-        // Add error handler for asset loading
-        this.load.on('loaderror', this.handleAssetLoadError.bind(this));
+        // Add error handlers
+        this.setupLoadErrorHandlers();
     }
 
     handleAssetLoadError(fileObj) {
@@ -203,26 +181,34 @@ export default class TriviaMasterScene extends BaseGameScene {
     create() {
         console.log('TriviaMasterScene: Create started');
         try {
-            // Add semi-transparent black background first
-            this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8);
-
-            // Add the map background image
-            const background = this.add.image(400, 300, 'mapImage');
-            background.setOrigin(0.5);
-
-            // Get the questions and map config
-            this.questions = this.cache.json.get('questions');
+            // Get the loaded map config and questions
             const mapConfig = this.cache.json.get('map-config');
+            this.questions = this.cache.json.get('questions');
 
             if (!mapConfig || !mapConfig.zones) {
-                throw new Error('Invalid map config structure');
+                throw new Error(`Invalid map config for map${this.mapNumber}scene${this.sceneNumber}`);
             }
 
-            // Set up UI elements
+            // Set up background
+            const bg = this.add.image(400, 300, 'background');
+            bg.setScale(0.8);
+
+            // Set up UI
             this.setupUI();
 
-            // Load AWS icons
+            // Load AWS icons after we have the config
             this.loadAwsIcons(mapConfig);
+
+            // Save current progress
+            this.progressManager.saveProgress({
+                lastCompletedScene: `map${this.mapNumber}scene${this.sceneNumber}`,
+                currentMap: this.mapNumber,
+                powerUpBitmask: this.powerUpBitmask,
+                score: this.score
+            });
+
+            // Add fade-in transition
+            this.cameras.main.fadeIn(500);
 
         } catch (error) {
             console.error('Error in create:', error);
@@ -468,7 +454,7 @@ export default class TriviaMasterScene extends BaseGameScene {
                     }
                 }
                 this.time.delayedCall(1000, () => {
-                    this.transitionToNextScene();
+                    this.finishQuestions();
                 });
             }
         });
@@ -492,35 +478,65 @@ export default class TriviaMasterScene extends BaseGameScene {
         });
     }
 
-    transitionToNextScene() {
-        if (this.isTransitioning) return;
-        this.isTransitioning = true;
+    finishQuestions() {
+        // Save progress before transitioning
+        const sceneKey = `map${this.currentMap}scene${this.sceneNumber}`;
+        this.progressManager.setLastCompletedScene(sceneKey);
 
-        // Save progress
-        this.progressManager.saveProgress({
-            lastCompletedScene: this.sceneKey,
-            currentMap: this.currentMap,
-            powerUpBitmask: this.powerUpBitmask,
-            score: this.score
-        });
+        // Check if all questions were answered correctly for power-up
+        if (this.correctAnswers === 5) {
+            const powerUpType = this.getPowerUpForScene(this.currentMap, this.sceneNumber);
+            if (powerUpType) {
+                this.progressManager.addPowerUp(powerUpType);
+                this.showPowerUpNotification(powerUpType);
+            }
+        }
 
-        // Transition to space invaders
-        this.sceneTransition.to(this, 'space_invaders', {
+        // Prepare transition data
+        const nextSceneData = {
             score: this.score,
             powerUpBitmask: this.powerUpBitmask,
             currentMap: this.currentMap,
-            nextScene: this.getNextSceneKey()
-        });
+            fromScene: this.scene.key,
+            nextScene: `map${this.currentMap}scene${this.sceneNumber + 1}`
+        };
+
+        // Transition to space invaders
+        if (this.sceneTransition) {
+            this.sceneTransition.to(this, 'space_invaders', nextSceneData);
+        } else {
+            this.scene.start('space_invaders', nextSceneData);
+        }
     }
 
-    getNextSceneKey() {
-        if (this.sceneNumber === 4) {
-            if (this.mapNumber === 4) {
-                return 'gameover';
-            }
-            return `map${this.mapNumber + 1}scene1`;
-        }
-        return `map${this.mapNumber}scene${this.sceneNumber + 1}`;
+    getPowerUpForScene(mapNumber, sceneNumber) {
+        const powerUpIndex = ((mapNumber - 1) * 4) + (sceneNumber - 1);
+        // Return power-up type based on scene (1, 2, 4, 8 for different types)
+        return Math.pow(2, powerUpIndex % 4);
+    }
+
+    showPowerUpNotification(powerUpType) {
+        const powerUpNames = {
+            1: 'LIFE +2',
+            2: 'CRAFT SIZE +20%',
+            4: 'SPEED +100',
+            8: 'FIRE RATE +2'
+        };
+
+        const notification = this.add.text(400, 300,
+            `Perfect Score!\nPower-Up Unlocked: ${powerUpNames[powerUpType]}`, {
+            fontSize: '24px',
+            fill: '#fff',
+            align: 'center'
+        }).setOrigin(0.5);
+
+        this.tweens.add({
+            targets: notification,
+            alpha: { from: 1, to: 0 },
+            y: 250,
+            duration: 2000,
+            onComplete: () => notification.destroy()
+        });
     }
 
     showTooltip(text, x, y) {
@@ -565,5 +581,133 @@ export default class TriviaMasterScene extends BaseGameScene {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
+    }
+
+    setupDiagramScene() {
+        console.log('Setting up diagram scene');
+        // Use unique keys as in preload
+        const mapImageKey = `map${this.mapNumber}scene${this.sceneNumber}.png`;
+        const mapConfigKey = `map${this.mapNumber}/map-config${this.sceneNumber}.json`;
+
+        // Show the diagram background image
+        const bg = this.add.image(400, 300, mapImageKey);
+        bg.setOrigin(0.5);
+
+        // Get diagram configuration from cache
+        const diagramConfig = this.cache.json.get(mapConfigKey);
+        if (!diagramConfig) {
+            console.error('Diagram config missing for scene', this.sceneKey);
+            return;
+        }
+
+        // Assume diagramConfig contains:
+        // - placeholders: an array of objects with x, y, width, height, and expectedIcon properties.
+        // - availableIcons: an array of icon filenames that the player may drag
+        this.placeholders = [];
+        diagramConfig.placeholders.forEach(ph => {
+            const placeholder = this.add.rectangle(ph.x, ph.y, ph.width, ph.height, 0xffffff, 0.2)
+                .setStrokeStyle(2, 0x00ff00);
+            placeholder.expectedIcon = ph.expectedIcon; // e.g. "SageMaker_Canvas_48.png"
+            placeholder.filled = false;
+            this.placeholders.push(placeholder);
+        });
+
+        // Create a draggable panel of available icons
+        this.diagramIcons = [];
+        const availableIcons = diagramConfig.availableIcons; // e.g. [ "SageMaker_Canvas_48.png", "Route53_48.png", ... ]
+        const panelY = 550;
+        const iconSpacing = 80;
+        const panelStartX = 100;
+        availableIcons.forEach((iconName, index) => {
+            const iconKey = `icon_${iconName}`;
+            const x = panelStartX + index * iconSpacing;
+            let iconSprite = this.add.image(x, panelY, iconKey).setInteractive();
+            iconSprite.originalX = x;
+            iconSprite.originalY = panelY;
+            this.input.setDraggable(iconSprite);
+            iconSprite.on('dragstart', () => {
+                iconSprite.setScale(1.2);
+            });
+            iconSprite.on('drag', (pointer, dragX, dragY) => {
+                iconSprite.x = dragX;
+                iconSprite.y = dragY;
+            });
+            iconSprite.on('dragend', (pointer, dragX, dragY, dropped) => {
+                let correctPlaceholder = null;
+                this.placeholders.forEach(ph => {
+                    if (!ph.filled && Phaser.Geom.Intersects.RectangleToRectangle(iconSprite.getBounds(), ph.getBounds())) {
+                        correctPlaceholder = ph;
+                    }
+                });
+                if (correctPlaceholder && iconSprite.texture.key.endsWith(correctPlaceholder.expectedIcon)) {
+                    // Snap icon to placeholder and mark as filled
+                    iconSprite.x = correctPlaceholder.x;
+                    iconSprite.y = correctPlaceholder.y;
+                    iconSprite.setScale(1);
+                    correctPlaceholder.filled = true;
+                    iconSprite.disableInteractive();
+                } else {
+                    // Tween icon back to original position
+                    this.tweens.add({
+                        targets: iconSprite,
+                        x: iconSprite.originalX,
+                        y: iconSprite.originalY,
+                        duration: 500,
+                        ease: 'Power2'
+                    });
+                }
+                this.checkDiagramCompletion();
+            });
+            this.diagramIcons.push(iconSprite);
+        });
+
+        // Auto-fill missing placeholders after 10 seconds
+        this.time.delayedCall(10000, () => {
+            this.placeholders.forEach(ph => {
+                if (!ph.filled) {
+                    // Create a black fallback box with a red stroke
+                    const fallbackBox = this.add.rectangle(ph.x, ph.y, ph.width, ph.height, 0x000000)
+                        .setOrigin(0.5)
+                        .setStrokeStyle(2, 0xff0000);
+                    ph.filled = true;
+                }
+            });
+            this.checkDiagramCompletion();
+        }, [], this);
+    }
+
+    checkDiagramCompletion() {
+        const allFilled = this.placeholders.every(ph => ph.filled);
+        if (allFilled) {
+            console.log('Diagram completed successfully');
+            this.triggerDiagramTransition();
+        }
+    }
+
+    triggerDiagramTransition() {
+        const nextTriviaSceneKey = this.getNextSceneKey();
+        const match = nextTriviaSceneKey.match(/map(\d+)scene(\d+)/);
+        if (match) {
+            const mapNumber = parseInt(match[1], 10);
+            const sceneNumber = parseInt(match[2], 10);
+            // Transition to new trivia_master scene with updated data
+            this.sceneTransition.to(this, 'trivia_master', {
+                mapNumber: mapNumber,
+                sceneNumber: sceneNumber,
+                score: this.score,
+                powerUpBitmask: this.powerUpBitmask,
+                currentMap: this.currentMap
+            });
+        } else {
+            console.warn('Invalid nextTriviaSceneKey:', nextTriviaSceneKey);
+            // Fallback transition if next scene key is invalid
+            this.sceneTransition.toSpaceInvaders(this);
+        }
+    }
+
+    // Add shutdown method to remove window event listeners
+    shutdown() {
+        window.removeEventListener('blur', this.boundOnWindowBlur);
+        window.removeEventListener('focus', this.boundOnWindowFocus);
     }
 } 

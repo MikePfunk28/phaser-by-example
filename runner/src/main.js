@@ -5,32 +5,31 @@ import GameOver from "./scenes/gameover";
 import MainMenu from './scenes/MainMenu';
 import SpaceInvadersScene from "./scenes/SpaceInvadersScene";
 import SortSelectionScene from './scenes/SortSelectionScene';
-import DynamicGameScene from './scenes/DynamicGameScene';
 import TriviaMasterScene from './scenes/TriviaMasterScene';
 
-// Map 1 Scenes
+// Map 1 Scenes (Trivia)
 import Map1Scene1 from "./scenes/map1/GameScene";
 import Map1Scene2 from "./scenes/map1/GameScene2";
 import Map1Scene3 from "./scenes/map1/GameScene3";
 import Map1Scene4 from "./scenes/map1/GameScene4";
 
-// Map 2 Scenes
+// Map 2 Scenes (Trivia)
 import Map2Scene1 from "./scenes/map2/Map2GameScene";
 import Map2Scene2 from "./scenes/map2/Map2GameScene2";
 import Map2Scene3 from "./scenes/map2/Map2GameScene3";
 import Map2Scene4 from "./scenes/map2/Map2GameScene4";
 
-// Map 3 Scenes
+// Map 3 Scenes (Trivia)
 import Map3Scene1 from "./scenes/map3/Map3GameScene";
 import Map3Scene2 from "./scenes/map3/Map3GameScene2";
 import Map3Scene3 from "./scenes/map3/Map3GameScene3";
 import Map3Scene4 from "./scenes/map3/Map3GameScene4";
 
-// Map 4 Scenes
-import Map4Scene1 from "./scenes/map4/Map4GameScene";
-import Map4Scene2 from "./scenes/map4/Map4GameScene2";
-import Map4Scene3 from "./scenes/map4/Map4GameScene3";
-import map3scene4 from "./scenes/map4/Map4GameScene4";
+// Map 4 Scenes (Diagram + Trivia)
+import Map4Scene1 from "./scenes/map4/Map4GameScene";  // Diagram
+import Map4Scene2 from "./scenes/map4/Map4GameScene2"; // Diagram
+import Map4Scene3 from "./scenes/map4/Map4GameScene3"; // Trivia
+import Map4Scene4 from "./scenes/map4/Map4GameScene4"; // Trivia
 
 import { ProgressManager } from "./utils/ProgressManager";
 
@@ -66,6 +65,22 @@ const config = {
         SortSelectionScene,
         SpaceInvadersScene,
         TriviaMasterScene,
+        Map1Scene1,
+        Map1Scene2,
+        Map1Scene3,
+        Map1Scene4,
+        Map2Scene1,
+        Map2Scene2,
+        Map2Scene3,
+        Map2Scene4,
+        Map3Scene1,
+        Map3Scene2,
+        Map3Scene3,
+        Map3Scene4,
+        Map4Scene1,
+        Map4Scene2,
+        Map4Scene3,
+        Map4Scene4,
         GameOver
     ]
 };
@@ -89,19 +104,20 @@ window.addEventListener('load', () => {
         document.removeEventListener('click', initAudio);
     });
 
-    window.addEventListener('blur', () => {
-        const currentScene = window.game.scene.getScenes(true)[0];
-        if (currentScene && !currentScene.scene.isTransitioning) {
-            currentScene.scene.pause();
-        }
-    });
+    // Removed automatic pausing/resuming on window blur/focus
+    // window.addEventListener('blur', () => {
+    //     const currentScene = window.game.scene.getScenes(true)[0];
+    //     if (currentScene && !currentScene.scene.isTransitioning) {
+    //         currentScene.scene.pause();
+    //     }
+    // });
 
-    window.addEventListener('focus', () => {
-        const currentScene = window.game.scene.getScenes(true)[0];
-        if (currentScene && !currentScene.scene.isTransitioning) {
-            currentScene.scene.resume();
-        }
-    });
+    // window.addEventListener('focus', () => {
+    //     const currentScene = window.game.scene.getScenes(true)[0];
+    //     if (currentScene && !currentScene.scene.isTransitioning) {
+    //         currentScene.scene.resume();
+    //     }
+    // });
 
     window.addEventListener('beforeunload', () => {
         const currentScene = window.game.scene.getScenes(true)[0];

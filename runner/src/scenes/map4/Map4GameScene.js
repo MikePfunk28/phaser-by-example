@@ -21,12 +21,26 @@ export default class Map4GameScene extends BaseGameScene {
         this.powerUpBitmask = 0;
         this.progressManager = new ProgressManager();
         this.sceneTransition = new SceneTransition();
+        this.isActive = false;
+        this.isPaused = false;
+        this.draggedIcon = null;
+        this.dropZones = [];
     }
 
     init(data) {
-        this.score = data.score || 0;
-        this.powerUpBitmask = data.powerUpBitmask || 0;
-        this.currentMap = data.currentMap || 4;
+        this.isActive = true;
+        this.isPaused = false;
+        this.fromScene = data?.fromScene;
+        this.score = data?.score || 0;
+        this.powerUpBitmask = data?.powerUpBitmask || 0;
+        this.currentMap = data?.currentMap || 4;
+
+        this.events.on('sceneCleanup', this.cleanup, this);
+        this.events.on('scenePause', this.pause, this);
+        this.events.on('sceneResume', this.resume, this);
+        this.events.on('sceneEnd', this.end, this);
+
+        this.sceneTransition.setCurrentScene(this);
 
         // Save progress
         this.progressManager.saveProgress({
@@ -129,6 +143,9 @@ export default class Map4GameScene extends BaseGameScene {
                 this.scene.start('map4scene1');
             }, 2000);
         }
+
+        this.setupUI();
+        this.setupDragAndDrop();
     }
 
     loadAwsIcons(mapConfig) {
@@ -333,6 +350,99 @@ export default class Map4GameScene extends BaseGameScene {
         }).setScrollFactor(0).setDepth(200);
     }
 
+    setupUI() {
+        const uiContainer = this.add.container(0, 0);
+        const uiBg = this.add.rectangle(400, 30, 800, 60, 0x000000, 0.7);
+        this.scoreText = this.add.text(20, 20, `Score: ${this.score}`, {
+            fontSize: '24px',
+            fontStyle: 'bold',
+            fill: '#fff'
+        });
+
+        const powerUps = [];
+        if (this.powerUpBitmask & 1) powerUps.push('❤️');
+        if (this.powerUpBitmask & 2) powerUps.push('⚡');
+        if (this.powerUpBitmask & 4) powerUps.push('🛡️');
+        if (this.powerUpBitmask & 8) powerUps.push('🔥');
+
+        const powerUpText = this.add.text(200, 20, powerUps.join(' '), {
+            fontSize: '24px',
+            fill: '#fff'
+        });
+
+        uiContainer.add([uiBg, this.scoreText, powerUpText]);
+        uiContainer.setDepth(100);
+    }
+
+    setupDragAndDrop() {
+        const mapConfig = this.cache.json.get('map-config');
+        if (!mapConfig || !mapConfig.zones) return;
+
+        // Create draggable icons
+        mapConfig.zones.forEach(zone => {
+            zone.icons.forEach(iconConfig => {
+                const icon = this.add.image(iconConfig.startX, iconConfig.startY, `icon_${iconConfig.name}`)
+                    .setInteractive({ draggable: true })
+                    .setScale(0.8);
+
+                // Create drop zone
+                const dropZone = this.add.rectangle(iconConfig.x, iconConfig.y, 64, 64, 0x00ff00, 0.2)
+                    .setOrigin(0.5)
+                    .setInteractive();
+
+                this.dropZones.push({
+                    zone: dropZone,
+                    correctIcon: iconConfig.name
+                });
+
+                // Setup drag events
+                icon.on('dragstart', () => {
+                    this.draggedIcon = icon;
+                    icon.setTint(0x00ff00);
+                });
+
+                icon.on('drag', (pointer, dragX, dragY) => {
+                    icon.x = dragX;
+                    icon.y = dragY;
+                });
+
+                icon.on('dragend', () => {
+                    this.checkIconPlacement(icon, iconConfig);
+                });
+            });
+        });
+    }
+
+    checkIconPlacement(icon, iconConfig) {
+        let placed = false;
+        this.dropZones.forEach(({ zone, correctIcon }) => {
+            if (Phaser.Geom.Rectangle.Contains(zone.getBounds(), icon.x, icon.y)) {
+                if (correctIcon === iconConfig.name) {
+                    icon.setPosition(zone.x, zone.y);
+                    icon.setTint(0x00ff00);
+                    icon.input.draggable = false;
+                    this.score += 100;
+                    this.scoreText.setText(`Score: ${this.score}`);
+                    this.answeredQuestions++;
+                    placed = true;
+
+                    if (this.answeredQuestions === this.dropZones.length) {
+                        this.time.delayedCall(1000, () => this.transitionToNextScene());
+                    }
+                } else {
+                    icon.setPosition(iconConfig.startX, iconConfig.startY);
+                    icon.setTint(0xff0000);
+                    this.time.delayedCall(500, () => icon.clearTint());
+                }
+            }
+        });
+
+        if (!placed) {
+            icon.setPosition(iconConfig.startX, iconConfig.startY);
+            icon.clearTint();
+        }
+    }
+
     transitionToNextScene() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
@@ -345,12 +455,29 @@ export default class Map4GameScene extends BaseGameScene {
             score: this.score
         });
 
-        // Transition to space invaders
-        this.sceneTransition.to(this, 'space_invaders', {
-            nextScene: 'map4scene2',
+        // Transition to space invaders with next scene info
+        this.sceneTransition.toSpaceInvaders(this, 'map4scene2', {
             score: this.score,
             powerUpBitmask: this.powerUpBitmask,
             currentMap: this.currentMap
         });
+    }
+
+    cleanup() {
+        this.draggedIcon = null;
+        this.dropZones = [];
+    }
+
+    pause() {
+        this.isPaused = true;
+    }
+
+    resume() {
+        this.isPaused = false;
+    }
+
+    end() {
+        this.isActive = false;
+        this.cleanup();
     }
 }

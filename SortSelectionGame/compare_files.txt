@@ -1,0 +1,150 @@
+// SpaceInvadersScene.js
+import ProgressManager from './ProgressManager.js';
+//add other imports that you may need
+
+class SpaceInvadersScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'space_invaders' });
+
+        this.progressManager = new ProgressManager(0); // Initialize the progress manager.
+        this.score = 0;
+
+        this.progressManager.update(this.score) // update the first time
+
+        AssetLoader(getAssetPath);
+
+        //... rest of your constructor code
+    }
+    updateStats(score){
+      //updates and return a score
+      this.score += score;
+      this.progressManager.update(this.score)
+      return this.score;
+    }
+
+    // ... other methods in SpaceInvadersScene
+}
+
+//progressManager.js
+// ProgressManager.js
+export default class ProgressManager {
+    constructor(initialProgress) {
+        this.progress = initialProgress || 0;
+    }
+
+    update(newProgress) {
+        this.progress = newProgress;
+        console.log(`Progress updated: ${this.progress}`);
+    }
+
+    get(){
+        return this.progress;
+    }
+    // Add other methods for managing progress here
+}
+
+
+//add this to the html
+<script src="ProgressManager.js"></script>
+    <script src="SpaceInvadersScene.js"></script>
+
+//spaceinvadersscene.js
+class SpaceInvadersScene extends Phaser.Scene {
+            constructor() {
+                super({ key: 'space_invaders' });
+
+                // Define ProgressManager function here
+                function ProgressManager(progress) {
+                    console.log(`Current Progress: ${progress}`);
+                }
+
+                ProgressManager(0); // Now it's defined and can be used
+               //... rest of the code
+            }
+        }
+
+// In SpaceInvadersScene.js
+        import ProgressManager from './ProgressManager.js'; // adjust the path as needed
+
+        class SpaceInvadersScene extends Phaser.Scene {
+            constructor() {
+                super({ key: 'space_invaders' });
+                //this.scene = new Phaser.Scene("space_invaders"); remove this
+                let loadProgress = 0;
+                let score = 0;
+                ProgressManager(loadProgress);
+                ProgressManager(this.updateStats(score))
+               //... rest of the code
+            }
+            updateStats(score) {
+                //your function must return something that can be used to update
+                // the progress manager
+                return score
+            }
+        }
+
+// In ProgressManager.js (example)
+        function ProgressManager(progress) {
+            console.log(`Current Progress: ${progress}`);
+            // ... other logic for managing progress
+        }
+
+        export default ProgressManager; // or export { ProgressManager };
+
+    *   **If `ProgressManager` is a function:**
+
+// In SpaceInvadersScene.js
+        import ProgressManager from './ProgressManager.js'; // adjust the path as needed
+
+        class SpaceInvadersScene extends Phaser.Scene {
+            constructor() {
+                super({ key: 'space_invaders' });
+               // this.scene = new Phaser.Scene("space_invaders"); -- remove this, super should take care of it
+                this.loadProgress = 0 // initialize a value for the progress
+                this.progressManager = new ProgressManager(this.loadProgress); // Create an instance.
+               
+                this.score = 0
+                this.progressManager.update(this.score);
+               // ProgressManager(loadProgress); // Now it is a class instance method call
+                //ProgressManager(updateStats(score)) // this line will not work like this it must be inside a method and update the class
+               
+                //... rest of the code
+            }
+            updateStats(score) {
+                //your function must return something that can be used to update
+                // the progress manager
+                this.score += score
+                return this.score
+            }
+        }
+
+// In ProgressManager.js (example)
+        class ProgressManager {
+            constructor(initialProgress) {
+                this.progress = initialProgress || 0;
+            }
+
+            // ... other methods to update and manage progress
+        }
+
+        export default ProgressManager; // or export { ProgressManager };
+
+        this.load.json('map-config', getAssetPath('data/map1/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map1/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map1/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map1/map-config4.json'));
+
+        this.load.json('map-config', getAssetPath('data/map2/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map2/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map2/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map2/map-config4.json'));
+
+        this.load.json('map-config', getAssetPath('data/map3/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map3/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map3/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map3/map-config4.json'));
+
+        this.load.json('map-config', getAssetPath('data/map4/map-config.json'));
+        this.load.json('map-config2', getAssetPath('data/map4/map-config2.json'));
+        this.load.json('map-config3', getAssetPath('data/map4/map-config3.json'));
+        this.load.json('map-config4', getAssetPath('data/map4/map-config4.json'));

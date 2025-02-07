@@ -41,6 +41,14 @@ COMPLETED TASKS:
 ✓ Optimized scene initialization
 ✓ Consolidated all map scenes into TriviaMasterScene
 ✓ Fixed MainMenu initialization and display
+✓ Updated sort timing mechanism in SortSelectionScene: stored computeTime as an instance property and updated finishSort display.
+✓ Enhanced sort timing measurement in SortSelectionScene: increased precision by using toFixed(5) for computeTime.
+✓ Updated MainMenu continue game logic: on invalid save format, fallback to continue from currentMap (default to 1) and scene 1, preserving score and powerUpBitmask.
+✓ Fixed scene transitions between map scenes and space invaders:
+  - Updated SceneTransition to properly handle scene sequence
+  - Enhanced TriviaMasterScene with proper progress saving and power-up handling
+  - Improved SpaceInvadersScene game over handling with next scene transitions
+  - Added visual feedback for power-up unlocks
 
 NEXT STEPS:
 ☐ Test scene flow from map 1 through map 4

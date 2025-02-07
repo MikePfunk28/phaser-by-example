@@ -162,7 +162,10 @@ export default class BootScene extends Phaser.Scene {
             ];
 
             audioFiles.forEach(key => {
-                this.load.audio(key, getAssetPath(`sounds/${key}.mp3`));
+                this.load.audio(key, [
+                    getAssetPath(`sounds/${key}.mp3`),
+                    getAssetPath(`sounds/${key}.ogg`)
+                ]);
             });
 
             // Load questions data
